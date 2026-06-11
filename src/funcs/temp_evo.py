@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from dataclasses import replace
 
 from proto.msg.pokemon_settings import PokemonSettings
@@ -7,10 +5,10 @@ from proto.msg.pokemon_extended_settings import PokemonExtendedSettings, SizeSet
 
 
 class TempEvolutions:
-    TEMP_EVOLUTION_MEGA = "TEMP_EVOLUTION_MEGA"
-    TEMP_EVOLUTION_MEGA_X = "TEMP_EVOLUTION_MEGA_X"
-    TEMP_EVOLUTION_MEGA_Y = "TEMP_EVOLUTION_MEGA_Y"
-    TEMP_EVOLUTION_PRIMAL = "TEMP_EVOLUTION_PRIMAL"
+    MEGA = "TEMP_EVOLUTION_MEGA"
+    MEGA_X = "TEMP_EVOLUTION_MEGA_X"
+    MEGA_Y = "TEMP_EVOLUTION_MEGA_Y"
+    PRIMAL = "TEMP_EVOLUTION_PRIMAL"
 
 def temp_evo_pokemon_settings(
     pokemon_settings: PokemonSettings,
