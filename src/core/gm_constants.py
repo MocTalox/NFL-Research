@@ -1,0 +1,5 @@
+TIMESTAMP_REMOTE = "https://github.com/alexelgt/game_masters/blob/master/timestamp.json"
+GAMEMASTER_REMOTE = "https://github.com/alexelgt/game_masters/blob/master/GAME_MASTER.txt"
+TIMESTAMP_LOCAL = "data/timestamp.json"
+GAMEMASTER_LOCAL = "data/game_master.txt"
+OVERRIDES_LOCAL = "data/overrides.txt"
