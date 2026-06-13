@@ -2,7 +2,7 @@ import re
 
 from functools import cache
 
-from core import gm_constants
+from core.gm_constants import GAMEMASTER_LOCAL, OVERRIDES_LOCAL
 from proto.message import Message
 
 
@@ -11,7 +11,7 @@ _ELEM_PATTERN = re.compile(r"([a-zA-Z0-9_]*): (.*)")
 _CLOSE_PATTERN = re.compile(r"\}")
 
 
-def read_proto_file(filename: str) -> Message:
+def _read_proto_file(filename: str) -> Message:
     with open(filename, encoding="utf-8") as f:
         lines = f.readlines()
 
@@ -63,9 +63,9 @@ def _parse_line(line: str) -> tuple[str, ...] | None:
     return None
 
 @cache
-def game_master() -> Message:
-    return read_proto_file(gm_constants.GAMEMASTER_LOCAL)
+def read_game_master() -> Message:
+    return _read_proto_file(GAMEMASTER_LOCAL)
 
 @cache
-def overrides() -> Message:
-    return read_proto_file(gm_constants.OVERRIDES_LOCAL)
+def read_overrides() -> Message:
+    return _read_proto_file(OVERRIDES_LOCAL)

@@ -4,7 +4,7 @@ from collections import defaultdict
 from typing import Iterable
 
 from proto.message import Message
-from core.gm_holoholo import GAME_MASTER
+from core.gm_holoholo import game_master
 
 
 class GMProto:
@@ -72,7 +72,7 @@ class GMProto:
 
     @classmethod
     def extract_proto(cls, key: str) -> GMProto:
-        assert (templates := GAME_MASTER.get(key))
+        assert (templates := game_master().get(key))
         messages = [template.value for template in templates.values()]
 
         proto = cls(None)

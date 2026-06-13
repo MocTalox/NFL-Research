@@ -1,6 +1,8 @@
-from typing import Callable, TypeVar
+from typing import Callable, TypeVar, Any
+from pathlib import Path
+import pickle
 
-from core.gm_holoholo import GAME_MASTER
+from core.gm_holoholo import game_master
 from proto.message import Message
 from proto.msg.battle_settings import BattleSettings
 from proto.msg.bread_move_mappings import BreadMoveMappings
@@ -25,22 +27,49 @@ from proto.msg.weather_affinities import WeatherAffinities
 T = TypeVar("T")
 
 
+def _cache_file(key: str) -> Path:
+    return Path(f"data/cache/{key}.pkl")
+
+def _load_cache(key: str):
+    file = _cache_file(key)
+    if file.exists():
+        with file.open("rb") as f:
+            return pickle.load(f)
+
+def _save_cache(key: str, data: Any):
+    file = _cache_file(key)
+    file.parent.mkdir(parents=True, exist_ok=True)
+    with file.open("wb") as f:
+        pickle.dump(data, f, protocol=pickle.HIGHEST_PROTOCOL)
+
 def _load_set(key: str, constructor: Callable[[Message], T]) -> set[T]:
-    return {
+    if elements := _load_cache(key):
+        return elements
+
+    elements = {
         constructor(template.value)
-        for template in GAME_MASTER[key].values()
+        for template in game_master()[key].values()
     }
 
+    _save_cache(key, elements)
+
+    return elements
+
 def _load_elem(key: str, constructor: Callable[[Message], T]) -> T:
+    if elements := _load_cache(key):
+        return elements
+
     elements = [
         constructor(template.value)
-        for template in GAME_MASTER[key].values()
+        for template in game_master()[key].values()
     ]
 
     if len(elements) != 1:
         raise ValueError(
             f"Multiple or none templates for key: {key}"
         )
+
+    _save_cache(key, elements)
 
     return elements[0]
 
