@@ -17,7 +17,7 @@ def get_cp(poke: PokemonSettings, cpm: float, iv_atk: int, iv_def: int, iv_sta: 
     atk_stat = (poke.stats.base_attack + iv_atk) * cpm
     def_stat = (poke.stats.base_defense + iv_def) * cpm
     sta_stat = (poke.stats.base_stamina + iv_sta) * cpm
-    return max(10, floor(atk_stat * (def_stat * sta_stat)**0.5 / 10))
+    return max(10, floor(atk_stat * (def_stat * sta_stat)**0.5 * 0.1))
 
 def get_hp(poke: PokemonSettings, cpm: float, iv_sta: int) -> int:
     sta_stat = (poke.stats.base_stamina + iv_sta) * cpm
