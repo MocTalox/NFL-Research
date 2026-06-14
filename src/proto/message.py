@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Callable, Iterable, Literal, TypeVar, cast, overload
 
-from utils.utils import f32
+from utils.float32 import f32
 
 T = TypeVar("T")
 

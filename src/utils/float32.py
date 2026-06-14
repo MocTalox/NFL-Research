@@ -1,12 +1,4 @@
-from typing import TypeAlias, TypeVar
-from collections.abc import Iterable, Callable
-
-import re
 import struct
-
-T = TypeVar("T")
-
-DuoMap: TypeAlias = dict[str, dict[str | None, T]]
 
 
 def f32(value: float | str) -> float:
@@ -66,32 +58,3 @@ def f32_str(value: float | str) -> str:
 
 def f64(value: float | str) -> float:
     return float(f32_str(value))
-
-def to_duo_map(
-    items: Iterable[T],
-    key1: Callable[[T], str],
-    key2: Callable[[T], str | None],
-) -> DuoMap[T]:
-    result: DuoMap[T] = {}
-
-    for item in items:
-        result.setdefault(key1(item), {})[key2(item)] = item
-
-    return result
-
-def duo_get(data: DuoMap[T], key1: str, key2: str | None) -> T | None:
-    inner = data.get(key1)
-    return None if inner is None else inner.get(key2)
-
-def to_screaming_snake_case(text: str) -> str:
-    # Convert camelCase/PascalCase boundaries to underscores
-    text = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", text)
-
-    # Replace non-alphanumeric sequences with underscores
-    text = re.sub(r"[^A-Za-z0-9]+", "_", text)
-
-    # Collapse multiple underscores
-    text = re.sub(r"_+", "_", text)
-
-    # Remove leading/trailing underscores and turn upper case
-    return text.strip("_").upper()

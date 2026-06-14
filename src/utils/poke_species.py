@@ -1,9 +1,21 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import re
 
-from utils.utils import to_screaming_snake_case
 
+def _to_screaming_snake_case(text: str) -> str:
+    # Convert camelCase/PascalCase boundaries to underscores
+    text = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", text)
+
+    # Replace non-alphanumeric sequences with underscores
+    text = re.sub(r"[^A-Za-z0-9]+", "_", text)
+
+    # Collapse multiple underscores
+    text = re.sub(r"_+", "_", text)
+
+    # Remove leading/trailing underscores and turn upper case
+    return text.strip("_").upper()
 
 @dataclass(frozen=True)
 class PokeSpecies:
@@ -29,56 +41,56 @@ class PokeSpecies:
     @classmethod
     def by_name(cls, name: str) -> PokeSpecies:
         return cls(
-            name=to_screaming_snake_case(name),
+            name=_to_screaming_snake_case(name),
         )
 
     @classmethod
     def by_name_form(cls, name: str, form: str) -> PokeSpecies:
         return cls(
-            name=to_screaming_snake_case(name),
-            form=to_screaming_snake_case(f"{name}_{form}"),
+            name=_to_screaming_snake_case(name),
+            form=_to_screaming_snake_case(f"{name}_{form}"),
         )
 
     @classmethod
     def by_full_form(cls, name: str, form: str) -> PokeSpecies:
         return cls(
-            name=to_screaming_snake_case(name),
-            form=to_screaming_snake_case(form),
+            name=_to_screaming_snake_case(name),
+            form=_to_screaming_snake_case(form),
         )
 
     @classmethod
     def by_name_temp_evo(cls, name: str, temp_evo: str) -> PokeSpecies:
         return cls(
-            name=to_screaming_snake_case(name),
-            temp_evo=to_screaming_snake_case(f"TEMP_EVOLUTION_{temp_evo}"),
+            name=_to_screaming_snake_case(name),
+            temp_evo=_to_screaming_snake_case(f"TEMP_EVOLUTION_{temp_evo}"),
         )
 
     @classmethod
     def by_full_temp_evo(cls, name: str, temp_evo: str) -> PokeSpecies:
         return cls(
-            name=to_screaming_snake_case(name),
-            temp_evo=to_screaming_snake_case(temp_evo),
+            name=_to_screaming_snake_case(name),
+            temp_evo=_to_screaming_snake_case(temp_evo),
         )
 
     @classmethod
     def by_name_shadow(cls, name: str) -> PokeSpecies:
         return cls(
-            name=to_screaming_snake_case(name),
+            name=_to_screaming_snake_case(name),
             shadow=True,
         )
 
     @classmethod
     def by_name_form_shadow(cls, name: str, form: str) -> PokeSpecies:
         return cls(
-            name=to_screaming_snake_case(name),
-            form=to_screaming_snake_case(f"{name}_{form}"),
+            name=_to_screaming_snake_case(name),
+            form=_to_screaming_snake_case(f"{name}_{form}"),
             shadow=True,
         )
 
     @classmethod
     def by_full_form_shadow(cls, name: str, form: str) -> PokeSpecies:
         return cls(
-            name=to_screaming_snake_case(name),
-            form=to_screaming_snake_case(form),
+            name=_to_screaming_snake_case(name),
+            form=_to_screaming_snake_case(form),
             shadow=True,
         )

@@ -2,7 +2,7 @@ from math import floor
 
 from core.gm_templates import PLAYER_LEVEL
 from proto.msg.pokemon_settings import PokemonSettings
-from utils.utils import f32
+from utils.float32 import f32
 
 
 CPM_LIST = [cpm for cpm in PLAYER_LEVEL.cp_multiplier]

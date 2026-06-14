@@ -5,7 +5,7 @@ from core.gm_holoholo import TYPES_ENUM
 from core.gm_templates import BATTLE_SETTINGS, FRIENDSHIP_MILESTONE_SETTINGS, RAID_SETTINGS, TYPE_EFFECTIVE, WEATHER_AFFINITIES
 from proto.msg.move_settings import MoveSettings
 from proto.msg.pokemon_settings import PokemonSettings
-from utils.utils import f32
+from utils.float32 import f32
 
 
 remote_damage_modifier = RAID_SETTINGS.remote_damage_modifier
