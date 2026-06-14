@@ -69,7 +69,7 @@ def _load_elem(key: str, constructor: Callable[[Message], T]) -> T:
             f"Multiple or none templates for key: {key}"
         )
 
-    _save_cache(key, elements)
+    _save_cache(key, elements[0])
 
     return elements[0]
 
