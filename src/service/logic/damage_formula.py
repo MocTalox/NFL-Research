@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from functools import reduce
 
-from core.gm_holoholo import TYPES_ENUM
+from core.gm_holoholo import HoloPokemonType
 from core.gm_templates import BATTLE_SETTINGS, FRIENDSHIP_MILESTONE_SETTINGS, RAID_SETTINGS, TYPE_EFFECTIVE, WEATHER_AFFINITIES
 from proto.msg.move_settings import MoveSettings
 from proto.msg.pokemon_settings import PokemonSettings
@@ -39,13 +39,13 @@ class Pokemon:
 
 @dataclass
 class BattleState:
-    mega_boosted_types: tuple[str] | None = None
+    mega_boosted_types: tuple[HoloPokemonType] | None = None
     weather_id: str | None = None
     friendship_level: int = 0
     blade_ae: bool = False
     bash_ae: bool = False
 
-def get_mega_boost(move_type: str, mega_boosted_types: tuple[str] | None) -> float:
+def get_mega_boost(move_type: HoloPokemonType, mega_boosted_types: tuple[HoloPokemonType] | None) -> float:
     if not mega_boosted_types:
         return 1.0
     return same_type_mega_boost if move_type in mega_boosted_types else general_mega_boost
@@ -58,21 +58,21 @@ def get_shadow_attack_bonus(shadow_attacker: bool, shadow_target: bool) -> float
     shadow_defense_bonus = shadow_pokemon_defense_bonus_multiplier if shadow_target else 1.0
     return f32(shadow_attack_bonus / shadow_defense_bonus)
 
-def get_weather_boost(move_type: str, weather_id: str | None) -> float:
+def get_weather_boost(move_type: HoloPokemonType, weather_id: str | None) -> float:
     if not weather_id:
         return 1.0
     return weather_attack_bonus_multiplier if move_type in weather[weather_id].pokemon_type else 1.0
 
-def get_stab(move_type: str, atk_type_1: str, atk_type_2: str | None) -> float:
+def get_stab(move_type: HoloPokemonType, atk_type_1: HoloPokemonType, atk_type_2: HoloPokemonType | None) -> float:
     return same_type_attack_bonus_multiplier if move_type == atk_type_1 or move_type == atk_type_2 else 1.0
 
 def get_fiendship_boost(friend_level: int) -> float:
     return friend[friend_level] if friend_level >= 0 else 1.0
 
-def get_effect(move_type: str, def_type_1: str, def_type_2: str | None = None) -> float:
+def get_effect(move_type: HoloPokemonType, def_type_1: HoloPokemonType, def_type_2: HoloPokemonType | None = None) -> float:
     if def_type_2:
         return get_effect(move_type, def_type_1) * get_effect(move_type, def_type_2)
-    return types[move_type].attack_scalar[TYPES_ENUM[def_type_1] - 1]
+    return types[move_type].attack_scalar[def_type_1 - 1]
 
 def get_dodge_boost(dodged: bool) -> float:
     return f32(1.0 - dodge_damage_reduction_percent) if dodged else 1.0

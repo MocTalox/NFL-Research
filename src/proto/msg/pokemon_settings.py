@@ -1,13 +1,14 @@
 from __future__ import annotations
 from dataclasses import dataclass
+from core.gm_holoholo import HoloPokemonType
 from proto.message import Message
 
 
 @dataclass(frozen=True)
 class PokemonSettings:
     pokemon_id: str
-    type: str
-    type_2: str | None
+    type: HoloPokemonType
+    type_2: HoloPokemonType | None
     stats: Stats
     quick_moves: tuple[str, ...]
     cinematic_moves: tuple[str, ...]
@@ -29,8 +30,8 @@ class PokemonSettings:
     def from_message(cls, msg: Message) -> PokemonSettings:
         return cls(
             pokemon_id=msg.get_string("pokemonId"),
-            type=msg.get_string("type"),
-            type_2=msg.get_string_or_none("type2"),
+            type=msg.get_enum("type", HoloPokemonType),
+            type_2=msg.get_enum_or_none("type2", HoloPokemonType),
             stats=msg.get_object("stats", Stats.from_message),
             quick_moves=msg.get_string_list("quickMoves"),
             cinematic_moves=msg.get_string_list("cinematicMoves"),
@@ -97,8 +98,8 @@ class TempEvoOverrides:
     stats: Stats
     average_height_m: float
     average_weight_kg: float
-    type_override_1: str
-    type_override_2: str | None
+    type_override_1: HoloPokemonType
+    type_override_2: HoloPokemonType | None
 
     @classmethod
     def from_message(cls, msg: Message) -> TempEvoOverrides:
@@ -107,6 +108,6 @@ class TempEvoOverrides:
             stats=msg.get_object("stats", Stats.from_message),
             average_height_m=msg.get_float("averageHeightM"),
             average_weight_kg=msg.get_float("averageWeightKg"),
-            type_override_1=msg.get_string("typeOverride1"),
-            type_override_2=msg.get_string_or_none("typeOverride2"),
+            type_override_1=msg.get_enum("typeOverride1", HoloPokemonType),
+            type_override_2=msg.get_enum_or_none("typeOverride2", HoloPokemonType),
         )

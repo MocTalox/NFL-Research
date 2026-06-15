@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+from enum import IntEnum
 from typing import Callable, Iterable, Literal, TypeVar, cast, overload
 
 from utils.float32 import f32
 
+
 T = TypeVar("T")
+E = TypeVar("E", bound=IntEnum)
 
 
 class Message:
@@ -61,6 +64,13 @@ class Message:
     def get_string_or_none(self, key: str) -> str | None:
         return self._get_single_element(key, str, nullable=True)
 
+    def get_enum(self, key: str, enum_class: type[E]) -> E:
+        return Message._to_enum(self.get_string(key), enum_class)
+
+    def get_enum_or_none(self, key: str, enum_class: type[E]) -> E | None:
+        id = self.get_string_or_none(key)
+        return None if id is None else Message._to_enum(id, enum_class)
+
     def get_int(self, key: str) -> int:
         return int(self.get_string(key))
 
@@ -100,6 +110,12 @@ class Message:
 
     def get_string_list(self, key: str) -> tuple[str, ...]:
         return tuple(self._get_many_elements(key, str))
+
+    def get_enum_list(self, key: str, enum_class: type[E]) -> tuple[E, ...]:
+        return tuple(map(
+            lambda id: Message._to_enum(id, enum_class),
+            self._get_many_elements(key, str)
+        ))
 
     def get_int_list(self, key: str) -> tuple[int, ...]:
         return tuple(map(int, self._get_many_elements(key, str)))
@@ -157,3 +173,10 @@ class Message:
                 )
 
         return cast(list[T], values)
+
+    @staticmethod
+    def _to_enum(id: str, enum_class: type[E]) -> E:
+        try: # Try by name first
+            return enum_class[id]
+        except KeyError: # Otherwise try by numeric id
+            return enum_class(int(id))
