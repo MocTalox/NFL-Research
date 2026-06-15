@@ -55,7 +55,7 @@ def evolution_size(
     evo_weight = evo_avg_weight + weight_index * evo_pokemon_settings.weight_std_dev
 
     if evo_weight <= 0:
-        evo_weight = evo_avg_weight
+        evo_weight = evo_pokemon_settings.pokedex_weight_kg
 
     size_class = SizeClass.from_height(
         evo_height,
