@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from core.gm_holoholo import HoloTempEvoId
 from proto.msg.pokemon_settings import PokemonSettings
 from proto.msg.pokemon_extended_settings import PokemonExtendedSettings, SizeSettings
-from service.logic.temp_evo import temp_evo_pokemon_settings, temp_evo_size_settings, TempEvolutions
+from service.logic.temp_evo import temp_evo_pokemon_settings, temp_evo_size_settings
 from service.model.size_class import SizeClass
 
 
@@ -110,13 +111,13 @@ def evolution_size_range(
         (size_min, size_max),
     )
 
-def temp_evolution_size(pokemon: Pokemon, temp_evo_id: str | TempEvolutions):
+def temp_evolution_size(pokemon: Pokemon, temp_evo_id: HoloTempEvoId):
     evo_pokemon_settings = temp_evo_pokemon_settings(pokemon.pokemon_settings, temp_evo_id)
     evo_size_settings = temp_evo_size_settings(pokemon.pokemon_extended_settings, temp_evo_id)
 
     return evolution_size(pokemon, evo_pokemon_settings, evo_size_settings, True)
 
-def temp_evolution_size_range(pokemon: Pokemon, temp_evo_id: str | TempEvolutions):
+def temp_evolution_size_range(pokemon: Pokemon, temp_evo_id: HoloTempEvoId):
     evo_pokemon_settings = temp_evo_pokemon_settings(pokemon.pokemon_settings, temp_evo_id)
     evo_size_settings = temp_evo_size_settings(pokemon.pokemon_extended_settings, temp_evo_id)
 

@@ -1,53 +1,53 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from core.gm_holoholo import HoloPokemonType
+from core.gm_holoholo import HoloPokemonType, HoloPokemonClass, HoloTempEvoId, HoloPokemonId, HoloPokemonFamilyId, HoloPokemonForm, HoloPokemonMove
 from proto.message import Message
 
 
 @dataclass(frozen=True)
 class PokemonSettings:
-    pokemon_id: str
+    pokemon_id: HoloPokemonId
     type: HoloPokemonType
-    type_2: HoloPokemonType | None
+    type_2: HoloPokemonType
     stats: Stats
-    quick_moves: tuple[str, ...]
-    cinematic_moves: tuple[str, ...]
+    quick_moves: tuple[HoloPokemonMove, ...]
+    cinematic_moves: tuple[HoloPokemonMove, ...]
     pokedex_height_m: float
     pokedex_weight_kg: float
     height_std_dev: float
     weight_std_dev: float
-    family_id: str
+    family_id: HoloPokemonFamilyId
     evolution_branch: tuple[EvolutionBranch, ...]
     shadow: Shadow | None
-    form: str | None
-    elite_cinematic_move: tuple[str, ...]
+    form: HoloPokemonForm
+    elite_cinematic_move: tuple[HoloPokemonMove, ...]
     temp_evo_overrides: tuple[TempEvoOverrides, ...]
-    elite_quick_move: tuple[str, ...]
-    pokemon_class: str | None
-    non_tm_cinematic_moves: tuple[str, ...]
+    elite_quick_move: tuple[HoloPokemonMove, ...]
+    pokemon_class: HoloPokemonClass
+    non_tm_cinematic_moves: tuple[HoloPokemonMove, ...]
 
     @classmethod
     def from_message(cls, msg: Message) -> PokemonSettings:
         return cls(
-            pokemon_id=msg.get_string("pokemonId"),
+            pokemon_id=msg.get_enum("pokemonId", HoloPokemonId),
             type=msg.get_enum("type", HoloPokemonType),
             type_2=msg.get_enum_or_none("type2", HoloPokemonType),
             stats=msg.get_object("stats", Stats.from_message),
-            quick_moves=msg.get_string_list("quickMoves"),
-            cinematic_moves=msg.get_string_list("cinematicMoves"),
+            quick_moves=msg.get_enum_list("quickMoves", HoloPokemonMove),
+            cinematic_moves=msg.get_enum_list("cinematicMoves", HoloPokemonMove),
             pokedex_height_m=msg.get_float("pokedexHeightM"),
             pokedex_weight_kg=msg.get_float("pokedexWeightKg"),
             height_std_dev=msg.get_float("heightStdDev"),
             weight_std_dev=msg.get_float("weightStdDev"),
-            family_id=msg.get_string("familyId"),
+            family_id=msg.get_enum("familyId", HoloPokemonFamilyId),
             evolution_branch=msg.get_object_list("evolutionBranch", EvolutionBranch.from_message, "evolution"),
             shadow=msg.get_object_or_none("shadow", Shadow.from_message),
-            form=msg.get_string_or_none("form"),
-            elite_cinematic_move=msg.get_string_list("eliteCinematicMove"),
+            form=msg.get_enum_or_none("form", HoloPokemonForm),
+            elite_cinematic_move=msg.get_enum_list("eliteCinematicMove", HoloPokemonMove),
             temp_evo_overrides=msg.get_object_list("temp_evo_overrides", TempEvoOverrides.from_message, "tempEvoId"),
-            elite_quick_move=msg.get_string_list("eliteQuickMove"),
-            pokemon_class=msg.get_string_or_none("pokemonClass"),
-            non_tm_cinematic_moves=msg.get_string_list("nonTmCinematicMoves"),
+            elite_quick_move=msg.get_enum_list("eliteQuickMove", HoloPokemonMove),
+            pokemon_class=msg.get_enum_or_none("pokemonClass", HoloPokemonClass),
+            non_tm_cinematic_moves=msg.get_enum_list("nonTmCinematicMoves", HoloPokemonMove),
         )
 
 @dataclass(frozen=True)
@@ -66,45 +66,45 @@ class Stats:
 
 @dataclass(frozen=True)
 class EvolutionBranch:
-    evolution: str
-    form: str | None
+    evolution: HoloPokemonId
+    form: HoloPokemonForm
 
     @classmethod
     def from_message(cls, msg: Message) -> EvolutionBranch:
         return cls(
-            evolution=msg.get_string("evolution"),
-            form=msg.get_string_or_none("form"),
+            evolution=msg.get_enum("evolution", HoloPokemonId),
+            form=msg.get_enum_or_none("form", HoloPokemonForm),
         )
 
 @dataclass(frozen=True)
 class Shadow:
     purification_stardust_needed: int
     purification_candy_needed: int
-    purified_charge_move: str
-    shadow_charge_move: str
+    purified_charge_move: HoloPokemonMove
+    shadow_charge_move: HoloPokemonMove
 
     @classmethod
     def from_message(cls, msg: Message) -> Shadow:
         return cls(
             purification_stardust_needed=msg.get_int("purificationStardustNeeded"),
             purification_candy_needed=msg.get_int("purificationCandyNeeded"),
-            purified_charge_move=msg.get_string("purifiedChargeMove"),
-            shadow_charge_move=msg.get_string("shadowChargeMove"),
+            purified_charge_move=msg.get_enum("purifiedChargeMove", HoloPokemonMove),
+            shadow_charge_move=msg.get_enum("shadowChargeMove", HoloPokemonMove),
         )
 
 @dataclass(frozen=True)
 class TempEvoOverrides:
-    temp_evo_id: str
+    temp_evo_id: HoloTempEvoId
     stats: Stats
     average_height_m: float
     average_weight_kg: float
     type_override_1: HoloPokemonType
-    type_override_2: HoloPokemonType | None
+    type_override_2: HoloPokemonType
 
     @classmethod
     def from_message(cls, msg: Message) -> TempEvoOverrides:
         return cls(
-            temp_evo_id=msg.get_string("tempEvoId"),
+            temp_evo_id=msg.get_enum("tempEvoId", HoloTempEvoId),
             stats=msg.get_object("stats", Stats.from_message),
             average_height_m=msg.get_float("averageHeightM"),
             average_weight_kg=msg.get_float("averageWeightKg"),

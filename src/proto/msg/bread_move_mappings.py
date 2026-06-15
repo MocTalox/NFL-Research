@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from core.gm_holoholo import HoloPokemonType
+from core.gm_holoholo import HoloPokemonType, HoloPokemonMove
 from proto.message import Message
 
 
@@ -17,11 +17,11 @@ class BreadMoveMappings:
 @dataclass(frozen=True)
 class Mappings:
     type: HoloPokemonType
-    move: str
+    move: HoloPokemonMove
 
     @classmethod
     def from_message(cls, msg: Message) -> Mappings:
         return cls(
             type=msg.get_enum("type", HoloPokemonType),
-            move=msg.get_string("move"),
+            move=msg.get_enum("move", HoloPokemonMove),
         )

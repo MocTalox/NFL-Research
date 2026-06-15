@@ -67,9 +67,8 @@ class Message:
     def get_enum(self, key: str, enum_class: type[E]) -> E:
         return Message._to_enum(self.get_string(key), enum_class)
 
-    def get_enum_or_none(self, key: str, enum_class: type[E]) -> E | None:
-        id = self.get_string_or_none(key)
-        return None if id is None else Message._to_enum(id, enum_class)
+    def get_enum_or_none(self, key: str, enum_class: type[E]) -> E:
+        return Message._to_enum(self.get_string_or_none(key), enum_class)
 
     def get_int(self, key: str) -> int:
         return int(self.get_string(key))
@@ -175,7 +174,9 @@ class Message:
         return cast(list[T], values)
 
     @staticmethod
-    def _to_enum(id: str, enum_class: type[E]) -> E:
+    def _to_enum(id: str | None, enum_class: type[E]) -> E:
+        if not id: # Default enum value if None
+            return enum_class(0)
         try: # Try by name first
             return enum_class[id]
         except KeyError: # Otherwise try by numeric id

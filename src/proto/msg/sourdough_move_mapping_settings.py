@@ -1,5 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
+from core.gm_holoholo import HoloPokemonId, HoloPokemonForm, HoloPokemonMove
 from proto.message import Message
 
 
@@ -15,14 +16,14 @@ class SourdoughMoveMappingSettings:
 
 @dataclass(frozen=True)
 class Mappings:
-    pokemon_id: str
-    form: str | None
-    move: str
+    pokemon_id: HoloPokemonId
+    form: HoloPokemonForm
+    move: HoloPokemonMove
 
     @classmethod
     def from_message(cls, msg: Message) -> Mappings:
         return cls(
-            pokemon_id=msg.get_string("pokemonId"),
-            form=msg.get_string_or_none("form"),
-            move=msg.get_string("move"),
+            pokemon_id=msg.get_enum("pokemonId", HoloPokemonId),
+            form=msg.get_enum_or_none("form", HoloPokemonForm),
+            move=msg.get_enum("move", HoloPokemonMove),
         )

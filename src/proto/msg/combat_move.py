@@ -1,12 +1,12 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from core.gm_holoholo import HoloPokemonType
+from core.gm_holoholo import HoloPokemonType, HoloPokemonMove
 from proto.message import Message
 
 
 @dataclass(frozen=True)
 class CombatMove:
-    unique_id: str
+    unique_id: HoloPokemonMove
     type: HoloPokemonType
     power: float
     energy_delta: int
@@ -16,7 +16,7 @@ class CombatMove:
     @classmethod
     def from_message(cls, msg: Message) -> CombatMove:
         return cls(
-            unique_id=msg.get_string("uniqueId"),
+            unique_id=msg.get_enum("uniqueId", HoloPokemonMove),
             type=msg.get_enum("type", HoloPokemonType),
             power=msg.get_float_or_zero("power"),
             energy_delta=msg.get_int_or_zero("energyDelta"),

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from functools import reduce
 
-from core.gm_holoholo import HoloPokemonType
+from core.gm_holoholo import HoloPokemonType, HoloWeatherCondition
 from core.gm_templates import BATTLE_SETTINGS, FRIENDSHIP_MILESTONE_SETTINGS, RAID_SETTINGS, TYPE_EFFECTIVE, WEATHER_AFFINITIES
 from proto.msg.move_settings import MoveSettings
 from proto.msg.pokemon_settings import PokemonSettings
@@ -40,7 +40,7 @@ class Pokemon:
 @dataclass
 class BattleState:
     mega_boosted_types: tuple[HoloPokemonType] | None = None
-    weather_id: str | None = None
+    weather_id: HoloWeatherCondition = HoloWeatherCondition(0)
     friendship_level: int = 0
     blade_ae: bool = False
     bash_ae: bool = False
@@ -58,7 +58,7 @@ def get_shadow_attack_bonus(shadow_attacker: bool, shadow_target: bool) -> float
     shadow_defense_bonus = shadow_pokemon_defense_bonus_multiplier if shadow_target else 1.0
     return f32(shadow_attack_bonus / shadow_defense_bonus)
 
-def get_weather_boost(move_type: HoloPokemonType, weather_id: str | None) -> float:
+def get_weather_boost(move_type: HoloPokemonType, weather_id: HoloWeatherCondition) -> float:
     if not weather_id:
         return 1.0
     return weather_attack_bonus_multiplier if move_type in weather[weather_id].pokemon_type else 1.0

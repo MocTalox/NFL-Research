@@ -1,5 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
+from core.gm_holoholo import HoloBreadMode, HoloPokemonId, HoloPokemonForm
 from proto.message import Message
 
 
@@ -15,34 +16,34 @@ class BreadPokemonScalingSettings:
 
 @dataclass(frozen=True)
 class VisualSettings:
-    pokemon_id: str
+    pokemon_id: HoloPokemonId
     pokemon_form_data: PokemonFormData
 
     @classmethod
     def from_message(cls, msg: Message) -> VisualSettings:
         return cls(
-            pokemon_id=msg.get_string("pokemonId"),
+            pokemon_id=msg.get_enum("pokemonId", HoloPokemonId),
             pokemon_form_data=msg.get_object("pokemonFormData", PokemonFormData.from_message),
         )
 
 @dataclass(frozen=True)
 class PokemonFormData:
-    pokemon_form: str | None
+    pokemon_form: HoloPokemonForm
     visual_data: tuple[VisualData, ...]
 
     @classmethod
     def from_message(cls, msg: Message) -> PokemonFormData:
         return cls(
-            pokemon_form=msg.get_string_or_none("pokemonForm"),
+            pokemon_form=msg.get_enum_or_none("pokemonForm", HoloPokemonForm),
             visual_data=msg.get_object_list("visualData", VisualData.from_message),
         )
 
 @dataclass(frozen=True)
 class VisualData:
-    bread_mode: str
+    bread_mode: HoloBreadMode
 
     @classmethod
     def from_message(cls, msg: Message) -> VisualData:
         return cls(
-            bread_mode=msg.get_string("breadMode"),
+            bread_mode=msg.get_enum("breadMode", HoloBreadMode),
         )

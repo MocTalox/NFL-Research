@@ -1,33 +1,34 @@
 from __future__ import annotations
 from dataclasses import dataclass
+from core.gm_holoholo import HoloPokemonId, HoloPokemonForm, HoloTempEvoId
 from proto.message import Message
 
 
 @dataclass(frozen=True)
 class PokemonExtendedSettings:
-    unique_id: str
+    unique_id: HoloPokemonId
     size_settings: SizeSettings
-    form: str | None
+    form: HoloPokemonForm
     temp_evo_overrides: tuple[TempEvoOverrides, ...]
 
     @classmethod
     def from_message(cls, msg: Message) -> PokemonExtendedSettings:
         return cls(
-            unique_id=msg.get_string("uniqueId"),
+            unique_id=msg.get_enum("uniqueId", HoloPokemonId),
             size_settings=msg.get_object("sizeSettings", SizeSettings.from_message),
-            form=msg.get_string_or_none("form"),
+            form=msg.get_enum_or_none("form", HoloPokemonForm),
             temp_evo_overrides=msg.get_object_list("temp_evo_overrides", TempEvoOverrides.from_message),
         )
 
 @dataclass(frozen=True)
 class TempEvoOverrides:
-    temp_evo_id: str
+    temp_evo_id: HoloTempEvoId
     size_settings: SizeSettings
 
     @classmethod
     def from_message(cls, msg: Message) -> TempEvoOverrides:
         return cls(
-            temp_evo_id=msg.get_string("tempEvoId"),
+            temp_evo_id=msg.get_enum("tempEvoId", HoloTempEvoId),
             size_settings=msg.get_object("sizeSettings", SizeSettings.from_message),
         )
 
