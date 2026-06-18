@@ -1,15 +1,13 @@
 from math import floor
 
-from core.gm_templates import PLAYER_LEVEL
 from proto.msg.pokemon_settings import PokemonSettings
+from service.common.data import CPM
 from utils.float32 import f32
 
 
-CPM_LIST = [cpm for cpm in PLAYER_LEVEL.cp_multiplier]
-
 def get_cpm(level: float) -> float:
     if level % 1 == 0:
-        return CPM_LIST[int(level) - 1]
+        return CPM[int(level) - 1]
     cpmPrevd, cpmNextd = get_cpm(level - 0.5), get_cpm(level + 0.5)
     return f32(((cpmPrevd**2 + cpmNextd**2) / 2)**0.5)
 

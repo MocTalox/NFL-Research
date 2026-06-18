@@ -26,11 +26,11 @@ class SizeClass(Enum):
     def __lt__(self, other: SizeClass):
         return self._ordinal < other._ordinal
 
-    def bounds(self, size_settings: SizeSettings):
+    def get_bounds(self, size_settings: SizeSettings):
         return self._bounds(size_settings)
 
     def in_bounds(self, height: float, size_settings: SizeSettings):
-        height_min, height_max = self.bounds(size_settings)
+        height_min, height_max = self.get_bounds(size_settings)
         return (
             (self is SizeClass.XXS or height_min <= height)
             and

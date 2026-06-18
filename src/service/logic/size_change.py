@@ -5,8 +5,8 @@ from dataclasses import dataclass
 from core.gm_holoholo import HoloTempEvoId
 from proto.msg.pokemon_settings import PokemonSettings
 from proto.msg.pokemon_extended_settings import PokemonExtendedSettings, SizeSettings
-from service.logic.temp_evo import temp_evo_pokemon_settings, temp_evo_size_settings
-from service.model.size_class import SizeClass
+from service.common.data import temp_evo_pokemon_settings, temp_evo_size_settings
+from service.common.size_class import SizeClass
 
 
 @dataclass
@@ -18,7 +18,7 @@ class Pokemon:
     size_class: SizeClass
 
     def change_size(self, d_weight: float, d_height: float) -> Pokemon:
-        height_min, height_max = self.size_class.bounds(self.pokemon_extended_settings.size_settings)
+        height_min, height_max = self.size_class.get_bounds(self.pokemon_extended_settings.size_settings)
 
         weight = max(self.weight_kg + d_weight, 0)
         height = max(min(self.height_m + d_height, height_max), height_min)
@@ -42,8 +42,8 @@ def evolution_size(
 
     evo_height = _lerp(
         pokemon.height_m,
-        *pokemon.size_class.bounds(pokemon.pokemon_extended_settings.size_settings),
-        *pokemon.size_class.bounds(evo_size_settings),
+        *pokemon.size_class.get_bounds(pokemon.pokemon_extended_settings.size_settings),
+        *pokemon.size_class.get_bounds(evo_size_settings),
     )
 
     height_variant = pokemon.height_m / pokemon.pokemon_settings.pokedex_height_m
