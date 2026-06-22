@@ -52,58 +52,23 @@ class PokeSpecies:
         return "_".join(parts)
 
     @classmethod
-    def by_name(cls, name: str) -> PokeSpecies:
+    def resolve(
+        cls,
+        name: str,
+        form: str | None = None,
+        temp_evo: str | None = None,
+        shadow: bool = False
+    ) -> PokeSpecies:
+        name = _to_screaming_snake_case(name)
+        form = _to_screaming_snake_case(form) if form else None
+        temp_evo = _to_screaming_snake_case(temp_evo) if temp_evo else None
+        if form and not form.startswith(f"{name}_"):
+            form = f"{name}_{form}"
+        if temp_evo and not temp_evo.startswith("TEMP_EVOLUTION_"):
+            temp_evo = f"TEMP_EVOLUTION_{temp_evo}"
         return cls(
-            name=HoloPokemonId[_to_screaming_snake_case(name)],
-        )
-
-    @classmethod
-    def by_name_form(cls, name: str, form: str) -> PokeSpecies:
-        return cls(
-            name=HoloPokemonId[_to_screaming_snake_case(name)],
-            form=HoloPokemonForm[_to_screaming_snake_case(f"{name}_{form}")],
-        )
-
-    @classmethod
-    def by_full_form(cls, name: str, form: str) -> PokeSpecies:
-        return cls(
-            name=HoloPokemonId[_to_screaming_snake_case(name)],
-            form=HoloPokemonForm[_to_screaming_snake_case(form)],
-        )
-
-    @classmethod
-    def by_name_temp_evo(cls, name: str, temp_evo: str) -> PokeSpecies:
-        return cls(
-            name=HoloPokemonId[_to_screaming_snake_case(name)],
-            temp_evo=HoloTempEvoId[_to_screaming_snake_case(f"TEMP_EVOLUTION_{temp_evo}")],
-        )
-
-    @classmethod
-    def by_full_temp_evo(cls, name: str, temp_evo: str) -> PokeSpecies:
-        return cls(
-            name=HoloPokemonId[_to_screaming_snake_case(name)],
-            temp_evo=HoloTempEvoId[_to_screaming_snake_case(temp_evo)],
-        )
-
-    @classmethod
-    def by_name_shadow(cls, name: str) -> PokeSpecies:
-        return cls(
-            name=HoloPokemonId[_to_screaming_snake_case(name)],
-            shadow=True,
-        )
-
-    @classmethod
-    def by_name_form_shadow(cls, name: str, form: str) -> PokeSpecies:
-        return cls(
-            name=HoloPokemonId[_to_screaming_snake_case(name)],
-            form=HoloPokemonForm[_to_screaming_snake_case(f"{name}_{form}")],
-            shadow=True,
-        )
-
-    @classmethod
-    def by_full_form_shadow(cls, name: str, form: str) -> PokeSpecies:
-        return cls(
-            name=HoloPokemonId[_to_screaming_snake_case(name)],
-            form=HoloPokemonForm[_to_screaming_snake_case(form)],
-            shadow=True,
+            name=HoloPokemonId[name],
+            form=HoloPokemonForm[form] if form else HoloPokemonForm(0),
+            temp_evo=HoloTempEvoId[temp_evo] if temp_evo else HoloTempEvoId(0),
+            shadow=shadow,
         )

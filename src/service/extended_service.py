@@ -70,7 +70,10 @@ def _to_pokemon_data(
 
 def _unfold_settings(pokemon_settings: PokemonSettings) -> list[_PokemonData]:
 
-    poke = PokeSpecies.by_full_form(pokemon_settings.pokemon_id.name, pokemon_settings.form.name)
+    poke = PokeSpecies(
+        name=pokemon_settings.pokemon_id,
+        form=pokemon_settings.form,
+    )
     pokemon_extended_settings = get_pokemon_extended_settings(poke)
 
     if not pokemon_extended_settings:
