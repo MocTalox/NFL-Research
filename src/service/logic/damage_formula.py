@@ -57,16 +57,22 @@ def get_weather_boost(move_type: HoloPokemonType, weather_id: HoloWeatherConditi
         return 1.0
     return weather_attack_bonus_multiplier if move_type in WEATHER[weather_id].pokemon_type else 1.0
 
-def get_stab(move_type: HoloPokemonType, atk_type_1: HoloPokemonType, atk_type_2: HoloPokemonType | None) -> float:
+def get_stab(move_type: HoloPokemonType, atk_type_1: HoloPokemonType, atk_type_2: HoloPokemonType) -> float:
     return same_type_attack_bonus_multiplier if move_type == atk_type_1 or move_type == atk_type_2 else 1.0
 
 def get_fiendship_boost(friend_level: int) -> float:
     return FRIENDSHIP[friend_level] if friend_level >= 0 else 1.0
 
-def get_effect(move_type: HoloPokemonType, def_type_1: HoloPokemonType, def_type_2: HoloPokemonType | None = None) -> float:
-    if def_type_2:
-        return get_effect(move_type, def_type_1) * get_effect(move_type, def_type_2)
-    return TYPES[move_type].attack_scalar[def_type_1 - 1]
+def get_effect(
+    move_type: HoloPokemonType,
+    def_type_1: HoloPokemonType,
+    def_type_2: HoloPokemonType = HoloPokemonType(0)
+) -> float:
+    if not move_type:
+        return 1.0
+    if not def_type_2:
+        return TYPES[move_type].attack_scalar[def_type_1 - 1] if def_type_1 else 1.0
+    return get_effect(move_type, def_type_1) * get_effect(move_type, def_type_2)
 
 def get_dodge_boost(dodged: bool) -> float:
     return f32(1.0 - dodge_damage_reduction_percent) if dodged else 1.0

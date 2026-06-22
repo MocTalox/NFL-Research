@@ -1,7 +1,7 @@
 from dataclasses import replace
 
 from core.gm_holoholo import HoloPokemonMove, HoloWeatherCondition, HoloTempEvoId
-from core.gm_templates import FRIENDSHIP_MILESTONE_SETTINGS, TYPE_EFFECTIVE, WEATHER_AFFINITIES, PLAYER_LEVEL, POKEMON_SETTINGS, MOVE_SETTINGS, POKEMON_EXTENDED_SETTINGS
+from core.gm_templates import FRIENDSHIP_MILESTONE_SETTINGS, TYPE_EFFECTIVE, WEATHER_AFFINITIES, PLAYER_LEVEL, POKEMON_SETTINGS, MOVE_SETTINGS, COMBAT_MOVE, POKEMON_EXTENDED_SETTINGS
 from proto.msg.pokemon_settings import PokemonSettings
 from proto.msg.pokemon_extended_settings import PokemonExtendedSettings, SizeSettings
 from utils.poke_map import to_poke_map, get_poke
@@ -11,7 +11,8 @@ from utils.poke_species import PokeSpecies
 CPM = [cpm for cpm in PLAYER_LEVEL.cp_multiplier]
 POKEMON = to_poke_map(POKEMON_SETTINGS, lambda p: p.pokemon_id, lambda p: p.form)
 EXTENDED = to_poke_map(POKEMON_EXTENDED_SETTINGS, lambda p: p.unique_id, lambda p: p.form)
-MOVES = {move.movement_id: move for move in MOVE_SETTINGS}
+PVE_MOVES = {move.movement_id: move for move in MOVE_SETTINGS}
+PVP_MOVES = {move.unique_id: move for move in COMBAT_MOVE}
 TYPES = {te.attack_type: te for te in TYPE_EFFECTIVE}
 WEATHER = {wa.weather_condition: wa for wa in WEATHER_AFFINITIES}
 TYPES_WEATHER = {pt: wa.weather_condition for wa in WEATHER_AFFINITIES for pt in wa.pokemon_type}
@@ -28,7 +29,7 @@ def get_pokemon_extended_settings(poke: PokeSpecies) -> PokemonExtendedSettings 
     return get_poke(EXTENDED, poke.name, poke.form)
 
 def get_move_boosting_weather(move: HoloPokemonMove) -> HoloWeatherCondition:
-    return TYPES_WEATHER[MOVES[move].pokemon_type]
+    return TYPES_WEATHER[PVE_MOVES[move].pokemon_type]
 
 def get_temp_evo_pokemon_settings(
     pokemon_settings: PokemonSettings,

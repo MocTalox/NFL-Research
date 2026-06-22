@@ -38,6 +38,9 @@ def evolution_size(
     evo_size_settings: SizeSettings,
     temp_evo_xxl_glitch: bool = False,
 ):
+    if not pokemon.size_class.in_bounds(pokemon.height_m, pokemon.pokemon_extended_settings.size_settings):
+        raise ValueError()
+
     hei_wei_rel = 1 if pokemon.size_class == SizeClass.XXL and not temp_evo_xxl_glitch else 2
 
     evo_height = _lerp(
