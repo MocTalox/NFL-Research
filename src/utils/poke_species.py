@@ -8,7 +8,7 @@ from core.gm_holoholo import HoloPokemonId, HoloPokemonForm, HoloTempEvoId
 
 def _to_screaming_snake_case(text: str) -> str:
     # Convert camelCase/PascalCase boundaries to underscores
-    text = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", text)
+    text = re.sub(r"([a-z])([A-Z])", r"\1_\2", text)
 
     # Replace non-alphanumeric sequences with underscores
     text = re.sub(r"[^A-Za-z0-9]+", "_", text)
@@ -19,7 +19,7 @@ def _to_screaming_snake_case(text: str) -> str:
     # Remove leading/trailing underscores and turn upper case
     return text.strip("_").upper()
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, order=True, kw_only=True)
 class PokeSpecies:
     name: HoloPokemonId
     form: HoloPokemonForm = HoloPokemonForm(0)
@@ -27,7 +27,18 @@ class PokeSpecies:
     shadow: bool = False
 
     @property
-    def naming(self) -> str:
+    def identity(self) -> PokeSpecies:
+        return PokeSpecies(
+            name=self.name,
+            form=self.form,
+            temp_evo=self.temp_evo,
+            shadow=self.shadow,
+        )
+
+    def is_the_same(self, other: PokeSpecies) -> bool:
+        return type(self) is type(other) and self == other
+
+    def __str__(self):
         parts: list[str] = []
 
         if self.shadow:
