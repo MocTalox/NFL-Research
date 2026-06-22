@@ -1,7 +1,8 @@
 from enum import IntEnum, unique
 from functools import cache
 
-from core.gm_reader import read_game_master
+from core.gm_reader import read_game_master, read_overrides
+from proto.override import Override, RemTemplate, Action
 from proto.template import Template
 
 
@@ -12,9 +13,34 @@ class _HoloEnum(IntEnum):
 @cache
 def game_master() -> dict[str, dict[str, Template]]:
     data: dict[str, dict[str, Template]] = {}
+    mapper: dict[str, str] = {}
 
     for template in read_game_master().get_object_list("template", Template):
         data.setdefault(template.key, {})[template.template_id] = template
+        mapper[template.template_id] = template.key
+
+    for override in read_overrides().get_object_list("override", Override.from_message):
+        if len(override.target) < 2:
+            raise ValueError()
+        key, *path, target = override.target
+        for template_id in override.template_id:
+            template_key = mapper[template_id]
+            template = data[template_key][template_id]
+            if key != template.key:
+                raise ValueError()
+            value = template.value
+            for step in path:
+                value = value.get_message(step)
+            if override.action_type is Action.DEL or override.action_type is Action.SET:
+                value.delete(target)
+            if override.action_type is Action.ADD or override.action_type is Action.SET:
+                for val in override.value:
+                    value.add(target, val)
+
+    for rem_template in read_overrides().get_object_list("rem_template", RemTemplate.from_message):
+        for template_id in rem_template.template_id:
+            template_key = mapper.pop(template_id)
+            del data[template_key][template_id]
 
     return data
 

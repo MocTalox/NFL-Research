@@ -25,6 +25,8 @@ class PokemonSettings:
     elite_quick_move: tuple[HoloPokemonMove, ...]
     pokemon_class: HoloPokemonClass
     non_tm_cinematic_moves: tuple[HoloPokemonMove, ...]
+    legacy_quick_moves: tuple[HoloPokemonMove, ...]
+    legacy_cinematic_moves: tuple[HoloPokemonMove, ...]
 
     @classmethod
     def from_message(cls, msg: Message) -> PokemonSettings:
@@ -48,6 +50,8 @@ class PokemonSettings:
             elite_quick_move=msg.get_enum_list("eliteQuickMove", HoloPokemonMove),
             pokemon_class=msg.get_enum_or_none("pokemonClass", HoloPokemonClass),
             non_tm_cinematic_moves=msg.get_enum_list("nonTmCinematicMoves", HoloPokemonMove),
+            legacy_quick_moves=msg.get_enum_list("legacyQuickMoves", HoloPokemonMove),
+            legacy_cinematic_moves=msg.get_enum_list("legacyCinematicMoves", HoloPokemonMove),
         )
 
 @dataclass(frozen=True)

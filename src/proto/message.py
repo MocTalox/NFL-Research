@@ -21,7 +21,7 @@ class Message:
         next_indent = indent + "  "
         lines = ["{"]
 
-        for key, values in self._data.items():
+        for key, values in self.items():
             for value in values:
                 value_str = (
                     value.format_message(next_indent)
@@ -35,6 +35,12 @@ class Message:
 
     def add(self, key: str, value: str | Message) -> None:
         self._data.setdefault(key, []).append(value)
+
+    def delete(self, key: str) -> None:
+        del self._data[key]
+
+    def get(self, key: str) -> list[str | Message]:
+        return self._data[key]
 
     def has(self, key: str) -> bool:
         return key in self._data

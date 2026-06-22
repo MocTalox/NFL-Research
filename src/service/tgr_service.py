@@ -86,11 +86,13 @@ def _to_pokemon_data(
     quick_moves = [
         *pokemon_settings.quick_moves,
         *pokemon_settings.elite_quick_move,
+        *pokemon_settings.legacy_quick_moves,
     ]
     charged_moves = [
         *pokemon_settings.cinematic_moves,
         *pokemon_settings.elite_cinematic_move,
         *pokemon_settings.non_tm_cinematic_moves,
+        *pokemon_settings.legacy_cinematic_moves,
     ]
 
     if pokemon_settings.shadow is not None:

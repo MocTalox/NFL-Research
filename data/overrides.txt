@@ -1,0 +1,131 @@
+override {
+  action_type: ADD
+  template_id: "V0646_POKEMON_KYUREM_BLACK"
+  target: "pokemonSettings.nonTmCinematicMoves"
+  value: FREEZE_SHOCK
+}
+override {
+  action_type: ADD
+  template_id: "V0646_POKEMON_KYUREM_WHITE"
+  target: "pokemonSettings.nonTmCinematicMoves"
+  value: ICE_BURN
+}
+override {
+  action_type: ADD
+  template_id: "V0647_POKEMON_KELDEO_RESOLUTE"
+  target: "pokemonSettings.nonTmCinematicMoves"
+  value: SECRET_SWORD
+}
+override {
+  action_type: ADD
+  template_id: "V0800_POKEMON_NECROZMA_DUSK_MANE"
+  target: "pokemonSettings.nonTmCinematicMoves"
+  value: SUNSTEEL_STRIKE
+}
+override {
+  action_type: ADD
+  template_id: "V0800_POKEMON_NECROZMA_DAWN_WINGS"
+  target: "pokemonSettings.nonTmCinematicMoves"
+  value: MOONGEIST_BEAM
+}
+override {
+  action_type: ADD
+  template_id: "V0888_POKEMON_ZACIAN_CROWNED_SWORD"
+  target: "pokemonSettings.nonTmCinematicMoves"
+  value: BEHEMOTH_BLADE
+}
+override {
+  action_type: ADD
+  template_id: "V0889_POKEMON_ZAMAZENTA_CROWNED_SHIELD"
+  target: "pokemonSettings.nonTmCinematicMoves"
+  value: BEHEMOTH_BASH
+}
+override {
+  action_type: ADD
+  template_id: "V0025_POKEMON_PIKACHU_GOFEST_2022"
+  target: "pokemonSettings.legacyCinematicMoves"
+  value: GRASS_KNOT
+}
+override {
+  action_type: ADD
+  template_id: "V0088_POKEMON_GRIMER"
+  template_id: "V0088_POKEMON_GRIMER_NORMAL"
+  template_id: "V0089_POKEMON_MUK"
+  template_id: "V0089_POKEMON_MUK_NORMAL"
+  template_id: "V0109_POKEMON_KOFFING"
+  template_id: "V0109_POKEMON_KOFFING_NORMAL"
+  template_id: "V0110_POKEMON_WEEZING"
+  template_id: "V0110_POKEMON_WEEZING_NORMAL"
+  target: "pokemonSettings.legacyQuickMoves"
+  value: ACID_FAST
+}
+override {
+  action_type: ADD
+  template_id: "V0113_POKEMON_CHANSEY"
+  template_id: "V0113_POKEMON_CHANSEY_NORMAL"
+  target: "pokemonSettings.legacyCinematicMoves"
+  value: PSYBEAM
+}
+override {
+  action_type: ADD
+  template_id: "V0120_POKEMON_STARYU"
+  template_id: "V0120_POKEMON_STARYU_NORMAL"
+  template_id: "V0121_POKEMON_STARMIE"
+  template_id: "V0121_POKEMON_STARMIE_NORMAL"
+  template_id: "V0137_POKEMON_PORYGON"
+  template_id: "V0137_POKEMON_PORYGON_NORMAL"
+  template_id: "V0172_POKEMON_PICHU"
+  template_id: "V0172_POKEMON_PICHU_NORMAL"
+  target: "pokemonSettings.legacyQuickMoves"
+  value: QUICK_ATTACK_FAST
+}
+override {
+  action_type: ADD
+  template_id: "V0292_POKEMON_SHEDINJA"
+  template_id: "V0292_POKEMON_SHEDINJA_NORMAL"
+  target: "pokemonSettings.legacyQuickMoves"
+  value: BITE_FAST
+}
+override {
+  action_type: ADD
+  template_id: "V0374_POKEMON_BELDUM"
+  template_id: "V0374_POKEMON_BELDUM_NORMAL"
+  target: "pokemonSettings.legacyCinematicMoves"
+  value: STRUGGLE
+}
+override {
+  action_type: ADD
+  template_id: "V0483_POKEMON_DIALGA_ORIGIN"
+  target: "pokemonSettings.legacyCinematicMoves"
+  value: ROAR_OF_TIME
+}
+override {
+  action_type: ADD
+  template_id: "V0484_POKEMON_PALKIA_ORIGIN"
+  target: "pokemonSettings.legacyCinematicMoves"
+  value: SPACIAL_REND
+}
+override {
+  action_type: ADD
+  template_id: "V0641_POKEMON_TORNADUS"
+  template_id: "V0641_POKEMON_TORNADUS_INCARNATE"
+  target: "pokemonSettings.legacyCinematicMoves"
+  value: BLEAKWIND_STORM
+}
+override {
+  action_type: ADD
+  template_id: "V0642_POKEMON_THUNDURUS"
+  template_id: "V0642_POKEMON_THUNDURUS_INCARNATE"
+  target: "pokemonSettings.legacyCinematicMoves"
+  value: WILDBOLT_STORM
+}
+override {
+  action_type: ADD
+  template_id: "V0645_POKEMON_LANDORUS"
+  template_id: "V0645_POKEMON_LANDORUS_INCARNATE"
+  target: "pokemonSettings.legacyCinematicMoves"
+  value: SANDSEAR_STORM
+}
+rem_template {
+  template_id: "EXTENDED_V999_POKEMON_GIMMIGHOUL"
+}
