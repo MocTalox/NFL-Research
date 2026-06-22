@@ -9,7 +9,7 @@ from utils.poke_species import PokeSpecies
 
 
 CPM = [cpm for cpm in PLAYER_LEVEL.cp_multiplier]
-POKEMONS = to_poke_map(POKEMON_SETTINGS, lambda p: p.pokemon_id, lambda p: p.form)
+POKEMON = to_poke_map(POKEMON_SETTINGS, lambda p: p.pokemon_id, lambda p: p.form)
 EXTENDED = to_poke_map(POKEMON_EXTENDED_SETTINGS, lambda p: p.unique_id, lambda p: p.form)
 MOVES = {move.movement_id: move for move in MOVE_SETTINGS}
 TYPES = {te.attack_type: te for te in TYPE_EFFECTIVE}
@@ -21,16 +21,16 @@ FRIENDSHIP = [fms.attack_bonus_percentage for fms in sorted(
 )]
 
 
-def pokemon_settings(poke: PokeSpecies) -> PokemonSettings | None:
-    return get_poke(POKEMONS, poke.name, poke.form)
+def get_pokemon_settings(poke: PokeSpecies) -> PokemonSettings | None:
+    return get_poke(POKEMON, poke.name, poke.form)
 
-def pokemon_extended_settings(poke: PokeSpecies) -> PokemonExtendedSettings | None:
+def get_pokemon_extended_settings(poke: PokeSpecies) -> PokemonExtendedSettings | None:
     return get_poke(EXTENDED, poke.name, poke.form)
 
-def move_boosting_weather(move: HoloPokemonMove) -> HoloWeatherCondition:
+def get_move_boosting_weather(move: HoloPokemonMove) -> HoloWeatherCondition:
     return TYPES_WEATHER[MOVES[move].pokemon_type]
 
-def temp_evo_pokemon_settings(
+def get_temp_evo_pokemon_settings(
     pokemon_settings: PokemonSettings,
     temp_evo_id: HoloTempEvoId,
 ):
@@ -55,7 +55,7 @@ def temp_evo_pokemon_settings(
         pokedex_weight_kg=temp_evo_overrides.average_weight_kg,
     )
 
-def temp_evo_size_settings(
+def get_temp_evo_size_settings(
     pokemon_extended_settings: PokemonExtendedSettings,
     temp_evo_id: HoloTempEvoId,
     glitched: bool = True,
