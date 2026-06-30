@@ -21,17 +21,17 @@ def zorua_size(
     if not wild_zorua_size_class.in_bounds(wild_zorua_height_m, ZORUA_SIZE_SETTINGS):
         raise ValueError()
 
-    hei_wei_rel = 1 if wild_zorua_size_class == SizeClass.XXL else 2
+    power = 1 if wild_zorua_size_class == SizeClass.XXL else 2
 
     wild_buddy_height_variant = wild_zorua_height_m / buddy_pokemon_settings.pokedex_height_m
-    avg_weight = wild_buddy_height_variant**hei_wei_rel * buddy_pokemon_settings.pokedex_weight_kg
+    avg_weight = wild_buddy_height_variant**power * buddy_pokemon_settings.pokedex_weight_kg
     weight_index = (wild_zorua_weight_kg - avg_weight) / buddy_pokemon_settings.weight_std_dev
 
     buddy_size_class = SizeClass.from_height(wild_zorua_height_m, buddy_size_settings)
-    hei_wei_rel = 1 if buddy_size_class == SizeClass.XXL else 2
+    power = 1 if buddy_size_class == SizeClass.XXL else 2
 
     zorua_height_variant = min(max(wild_buddy_height_variant, 0.49), 1.75)
-    zorua_avg_weight = zorua_height_variant**hei_wei_rel * ZORUA_POKEMON_SETTINGS.pokedex_weight_kg
+    zorua_avg_weight = zorua_height_variant**power * ZORUA_POKEMON_SETTINGS.pokedex_weight_kg
 
     zorua_weight = zorua_avg_weight + weight_index * ZORUA_POKEMON_SETTINGS.weight_std_dev
     zorua_height = zorua_height_variant * ZORUA_POKEMON_SETTINGS.pokedex_height_m

@@ -58,3 +58,8 @@ def f32_str(value: float | str) -> str:
 
 def f64(value: float | str) -> float:
     return float(f32_str(value))
+
+def has_decimals(value: float, decimals: int) -> bool:
+    # from math import isclose
+    # return isclose(round(height_m, 2), height_m)
+    return round(value, decimals) == value

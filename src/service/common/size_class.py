@@ -34,7 +34,7 @@ class SizeClass(Enum):
         return (
             (self is SizeClass.XXS or height_min <= height)
             and
-            (self is SizeClass.XXL or height < height_max)
+            (self is SizeClass.XXL or height <= height_max)
         )
 
     @classmethod
