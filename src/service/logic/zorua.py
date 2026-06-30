@@ -19,7 +19,11 @@ def zorua_size(
     buddy_size_settings: SizeSettings,
 ):
     if not wild_zorua_size_class.in_bounds(wild_zorua_height_m, ZORUA_SIZE_SETTINGS):
-        raise ValueError()
+        lower, upper = wild_zorua_size_class.get_bounds(ZORUA_SIZE_SETTINGS)
+        raise ValueError(
+            f"Size class mismatch: Zorua with height {wild_zorua_height_m}m "
+            f"cannot be {wild_zorua_size_class} ([{lower}, {upper}])"
+        )
 
     power = 1 if wild_zorua_size_class == SizeClass.XXL else 2
 

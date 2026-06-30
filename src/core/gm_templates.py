@@ -65,9 +65,7 @@ def _load_elem(key: str, constructor: Callable[[Message], T]) -> T:
     ]
 
     if len(elements) != 1:
-        raise ValueError(
-            f"Multiple or none templates for key: {key}"
-        )
+        raise ValueError(f"Multiple or none templates for key: {key}")
 
     _save_cache(key, elements[0])
 

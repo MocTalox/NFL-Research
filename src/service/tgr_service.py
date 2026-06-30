@@ -151,8 +151,8 @@ def _gen_pokemon_instances(poke: _PokemonData, include_charged: bool = False) ->
 def tgr_best_pokemon_moveset(poke_species: PokeSpecies) -> list[MoveSetRanking]:
 
     pokemon = _POKEMON_DATA.get(poke_species)
-    if not pokemon:
-        raise ValueError()
+    if pokemon is None:
+        raise ValueError(f"No Pokémon data found for species: {poke_species}")
 
     defender = _EnemyData(HoloPokemonType(0), HoloPokemonType(0), 150, True)
 

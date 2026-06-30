@@ -45,7 +45,10 @@ def get_temp_evo_pokemon_settings(
     )
 
     if not temp_evo_overrides:
-        raise ValueError()
+        raise ValueError(
+            f"Missing temporary evolution overrides for {pokemon_settings.pokemon_id} "
+            f"({pokemon_settings.form}): {temp_evo_id}"
+        )
 
     return replace(
         pokemon_settings,
@@ -71,7 +74,10 @@ def get_temp_evo_size_settings(
     )
 
     if not temp_evo_overrides:
-        raise ValueError()
+        raise ValueError(
+            f"Missing temporary evolution overrides for {pokemon_extended_settings.unique_id} "
+            f"({pokemon_extended_settings.form}): {temp_evo_id}"
+        )
 
     return (
         SizeSettings(

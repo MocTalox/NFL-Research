@@ -24,7 +24,7 @@ class PokeData(Generic[P]):
         result = cls()
         for pokemon in pokemons:
             if pokemon.identity in result._data:
-                raise ValueError()
+                raise ValueError(f"Duplicate entry for identity: {pokemon.identity}")
             result._data[pokemon.identity] = pokemon
         return result
 

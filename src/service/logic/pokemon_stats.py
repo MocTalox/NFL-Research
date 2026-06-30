@@ -6,6 +6,12 @@ from utils.float32 import f32
 
 
 def get_cpm(level: float) -> float:
+    if level % 0.5 != 0:
+        raise ValueError(
+            f"Invalid level {level}: "
+            f"must be a multiple of 0.5 "
+            f"(e.g. 1.0, 1.5, 2.0)."
+        )
     if level % 1 == 0:
         return CPM[int(level) - 1]
     cpmPrevd, cpmNextd = get_cpm(level - 0.5), get_cpm(level + 0.5)

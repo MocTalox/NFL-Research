@@ -9,6 +9,8 @@ from proto.template import Template
 class _HoloEnum(IntEnum):
     def __str__(self):
         return self.name
+    def __repr__(self):
+        return self.name
 
 @cache
 def game_master() -> dict[str, dict[str, Template]]:
@@ -21,13 +23,24 @@ def game_master() -> dict[str, dict[str, Template]]:
 
     for override in read_overrides().get_object_list("override", Override.from_message):
         if len(override.target) < 2:
-            raise ValueError()
+            raise ValueError(
+                f"Invalid override target {override.target}: "
+                f"must contain at least a root key and a target. "
+                f"Expected format: [key, ...path, target]. "
+                f"Note: the root key is not a valid target, use `<undefined>` instead."
+                #TODO Implement <undefined>
+            )
         key, *path, target = override.target
         for template_id in override.template_id:
+            if template_id not in mapper:
+                raise ValueError(f"Unknown template_id in override: {template_id}")
             template_key = mapper[template_id]
             template = data[template_key][template_id]
             if key != template.key:
-                raise ValueError()
+                raise ValueError(
+                    f"Template key mismatch for template_id={template_id}: "
+                    f"override targets key={key}, but template has key={template.key}"
+                )
             value = template.value
             for step in path:
                 value = value.get_message(step)
