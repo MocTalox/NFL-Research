@@ -13,15 +13,20 @@ from proto.msg.combat_stat_stage_settings import CombatStatStageSettings
 from proto.msg.contest_settings import ContestSettings
 from proto.msg.form_settings import FormSettings
 from proto.msg.friendship_milestone_settings import FriendshipMilestoneSettings
+from proto.msg.mega_evo_settings import MegaEvoSettings
 from proto.msg.move_settings import MoveSettings
+from proto.msg.non_combat_move_settings import NonCombatMoveSettings
 from proto.msg.player_level import PlayerLevel
 from proto.msg.pokemon_extended_settings import PokemonExtendedSettings
 from proto.msg.pokemon_family import PokemonFamily
 from proto.msg.pokemon_settings import PokemonSettings
 from proto.msg.raid_settings import RaidSettings
+from proto.msg.rocket_settings import RocketSettings
 from proto.msg.sourdough_move_mapping_settings import SourdoughMoveMappingSettings
+from proto.msg.stationed_pokemon_table_settings import StationedPokemonTableSettings
 from proto.msg.type_effective import TypeEffective
 from proto.msg.weather_affinities import WeatherAffinities
+from proto.msg.weather_bonus_settings import WeatherBonusSettings
 
 
 T = TypeVar("T")
@@ -117,9 +122,19 @@ FRIENDSHIP_MILESTONE_SETTINGS = _load_set(
     FriendshipMilestoneSettings.from_message,
 )
 
+MEGA_EVO_SETTINGS = _load_elem(
+    "mega_evo_settings",
+    MegaEvoSettings.from_message,
+)
+
 MOVE_SETTINGS = _load_set(
     "moveSettings",
     MoveSettings.from_message,
+)
+
+NON_COMBAT_MOVE_SETTINGS = _load_set(
+    "nonCombatMoveSettings",
+    NonCombatMoveSettings.from_message,
 )
 
 PLAYER_LEVEL = _load_elem(
@@ -147,9 +162,19 @@ RAID_SETTINGS = _load_elem(
     RaidSettings.from_message,
 )
 
+ROCKET_SETTINGS = _load_elem(
+    "rocket_settings",
+    RocketSettings.from_message,
+)
+
 SOURDOUGH_MOVE_MAPPING_SETTINGS = _load_elem(
     "sourdoughMoveMappingSettings",
     SourdoughMoveMappingSettings.from_message,
+)
+
+STATIONED_POKEMON_TABLE_SETTINGS = _load_elem(
+    "stationedPokemonTableSettings",
+    StationedPokemonTableSettings.from_message,
 )
 
 TYPE_EFFECTIVE = _load_set(
@@ -160,4 +185,9 @@ TYPE_EFFECTIVE = _load_set(
 WEATHER_AFFINITIES = _load_set(
     "weather_affinities",
     WeatherAffinities.from_message,
+)
+
+WEATHER_BONUS_SETTINGS = _load_elem(
+    "weather_bonus_settings",
+    WeatherBonusSettings.from_message,
 )

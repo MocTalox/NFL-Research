@@ -2,7 +2,8 @@ from enum import IntEnum, unique
 from functools import cache
 
 from core.gm_reader import read_game_master, read_overrides
-from proto.override import Override, RemTemplate, Action
+from proto.message import Message
+from proto.override import Override, RemTemplate, AddTemplate, Action
 from proto.template import Template
 
 
@@ -54,6 +55,19 @@ def game_master() -> dict[str, dict[str, Template]]:
         for template_id in rem_template.template_id:
             template_key = mapper.pop(template_id)
             del data[template_key][template_id]
+
+    for add_template in read_overrides().get_object_list("add_template", AddTemplate.from_message):
+        template_id, key = add_template.template_id, add_template.key
+        message_core = Message()
+        message_data = Message()
+        message_core.add("template_id", template_id)
+        message_core.add("data", message_data)
+        message_data.add("template_id", template_id)
+        for value in add_template.value:
+            message_data.add(key, value)
+        template = Template(message_core)
+        data.setdefault(template.key, {})[template.template_id] = template
+        mapper[template.template_id] = template.key
 
     return data
 
@@ -3614,3 +3628,40 @@ class HoloPokemonMove(_HoloEnum):
     PYROBALL = 493
     GIGATON_HAMMER = 494
     PLASMA_FISTS = 497
+
+@unique
+class HoloCharacterCategory(_HoloEnum):
+    UNSET = 0
+    TEAM_LEADER = 1
+    GRUNT = 2
+    ARLO = 3
+    CLIFF = 4
+    SIERRA = 5
+    GIOVANNI = 6
+    GRUNTBF = 7
+    GRUNTBM = 8
+    EVENT_NPC = 9
+    PLAYER_TEAM_LEADER = 10
+
+@unique
+class HoloCombatType(_HoloEnum):
+    COMBAT_TYPE_UNSET = 0
+    SOLO = 1
+    QR_CODE = 2
+    FRIENDS = 3
+    NEARBY = 4
+    SOLO_INVASION = 5
+    VS_SEEKER = 6
+    COMBAT_TYPE_RAID = 7
+    COMBAT_TYPE_DMAX = 8
+    COMBAT_TYPE_GMAX = 9
+
+@unique
+class HoloFriendshipLevel(_HoloEnum):
+    FRIENDSHIP_LEVEL_UNSET = 0
+    FRIENDSHIP_LEVEL_0 = 1
+    FRIENDSHIP_LEVEL_1 = 2
+    FRIENDSHIP_LEVEL_2 = 3
+    FRIENDSHIP_LEVEL_3 = 4
+    FRIENDSHIP_LEVEL_4 = 5
+    FRIENDSHIP_LEVEL_5 = 6

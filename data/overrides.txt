@@ -129,3 +129,145 @@ override {
 rem_template {
   template_id: "EXTENDED_V999_POKEMON_GIMMIGHOUL"
 }
+add_template {
+  template_id: "ROCKET_SETTINGS"
+  key: "rocket_settings"
+  value {
+    cpMultiplier: 0.0
+    cpMultiplier: 0.0
+    cpMultiplier: 0.0
+    cpMultiplier: 0.0
+    cpMultiplier: 0.0
+    cpMultiplier: 0.0
+    cpMultiplier: 0.0
+    cpMultiplier: 0.299
+    cpMultiplier: 0.352
+    cpMultiplier: 0.400
+    cpMultiplier: 0.444
+    cpMultiplier: 0.487
+    cpMultiplier: 0.529
+    cpMultiplier: 0.569
+    cpMultiplier: 0.608
+    cpMultiplier: 0.646
+    cpMultiplier: 0.683
+    cpMultiplier: 0.712
+    cpMultiplier: 0.755
+    cpMultiplier: 0.796
+    cpMultiplier: 0.808
+    cpMultiplier: 0.820
+    cpMultiplier: 0.832
+    cpMultiplier: 0.844
+    cpMultiplier: 0.855
+    cpMultiplier: 0.867
+    cpMultiplier: 0.878
+    cpMultiplier: 0.890
+    cpMultiplier: 0.901
+    cpMultiplier: 0.912
+    cpMultiplier: 0.923
+    cpMultiplier: 0.934
+    cpMultiplier: 0.945
+    cpMultiplier: 0.955
+    cpMultiplier: 0.965
+    cpMultiplier: 0.976
+    cpMultiplier: 0.986
+    cpMultiplier: 0.997
+    cpMultiplier: 1.007
+    cpMultiplier: 1.016
+    cpMultiplier: 1.026
+    cpMultiplier: 1.036
+    cpMultiplier: 1.046
+    cpMultiplier: 1.056
+    cpMultiplier: 1.065
+    cpMultiplier: 1.075
+    cpMultiplier: 1.084
+    cpMultiplier: 1.093
+    cpMultiplier: 1.102
+    cpMultiplier: 1.111
+    cpMultiplier: 1.120
+    cpMultiplier: 1.128
+    cpMultiplier: 1.137
+    cpMultiplier: 1.145
+    cpMultiplier: 1.153
+    cpMultiplier: 1.161
+    cpMultiplier: 1.168
+    cpMultiplier: 1.176
+    cpMultiplier: 1.184
+    cpMultiplier: 1.191
+    cpMultiplier: 1.199
+    cpMultiplier: 1.206
+    cpMultiplier: 1.214
+    cpMultiplier: 1.221
+    cpMultiplier: 1.229
+    cpMultiplier: 1.236
+    cpMultiplier: 1.243
+    cpMultiplier: 1.251
+    cpMultiplier: 1.258
+    cpMultiplier: 1.265
+    cpMultiplier: 1.270
+    cpMultiplier: 1.275
+    cpMultiplier: 1.280
+    cpMultiplier: 1.285
+    cpMultiplier: 1.290
+    cpMultiplier: 1.295
+    cpMultiplier: 1.300
+    cpMultiplier: 1.305
+    cpMultiplier: 1.310
+    cpMultiplier: 1.315
+    rank {
+      character_category: GRUNT
+      rank_multiplier: 1.0
+    }
+    rank {
+      character_category: ARLO
+      rank_multiplier: 1.05
+    }
+    rank {
+      character_category: CLIFF
+      rank_multiplier: 1.05
+    }
+    rank {
+      character_category: SIERRA
+      rank_multiplier: 1.05
+    }
+    rank {
+      character_category: GIOVANNI
+      rank_multiplier: 1.15
+    }
+  }
+}
+override {
+  action_type: ADD
+  template_id: "FRIENDSHIP_LEVEL_0"
+  target: "friendshipMilestoneSettings.friendship_level"
+  value: FRIENDSHIP_LEVEL_0
+}
+override {
+  action_type: ADD
+  template_id: "FRIENDSHIP_LEVEL_1"
+  target: "friendshipMilestoneSettings.friendship_level"
+  value: FRIENDSHIP_LEVEL_1
+}
+override {
+  action_type: ADD
+  template_id: "FRIENDSHIP_LEVEL_2"
+  target: "friendshipMilestoneSettings.friendship_level"
+  value: FRIENDSHIP_LEVEL_2
+}
+override {
+  action_type: ADD
+  template_id: "FRIENDSHIP_LEVEL_3"
+  target: "friendshipMilestoneSettings.friendship_level"
+  value: FRIENDSHIP_LEVEL_3
+}
+override {
+  action_type: ADD
+  template_id: "FRIENDSHIP_LEVEL_4"
+  target: "friendshipMilestoneSettings.friendship_level"
+  value: FRIENDSHIP_LEVEL_4
+}
+override {
+  action_type: ADD
+  template_id: "FRIENDSHIP_LEVEL_5"
+  target: "friendshipMilestoneSettings.friendship_level"
+  value: FRIENDSHIP_LEVEL_5
+}

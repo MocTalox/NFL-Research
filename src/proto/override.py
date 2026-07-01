@@ -36,3 +36,17 @@ class RemTemplate:
         return cls(
             template_id=msg.get_string_list("template_id"),
         )
+
+@dataclass(frozen=True)
+class AddTemplate:
+    template_id: str
+    key: str
+    value: list[str | Message]
+
+    @classmethod
+    def from_message(cls, msg: Message) -> AddTemplate:
+        return cls(
+            template_id=msg.get_string("template_id"),
+            key=msg.get_string("key").strip('"'),
+            value=msg.get("value"),
+        )

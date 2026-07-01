@@ -1,5 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
+from core.gm_holoholo import HoloFriendshipLevel
 from proto.message import Message
 
 
@@ -8,6 +9,7 @@ class FriendshipMilestoneSettings:
     min_points_to_reach: int
     attack_bonus_percentage: float
     relative_points_to_reach: int
+    friendship_level: HoloFriendshipLevel
 
     @classmethod
     def from_message(cls, msg: Message) -> FriendshipMilestoneSettings:
@@ -15,4 +17,5 @@ class FriendshipMilestoneSettings:
             min_points_to_reach=msg.get_int_or_zero("minPointsToReach"),
             attack_bonus_percentage=msg.get_float("attackBonusPercentage"),
             relative_points_to_reach=msg.get_int_or_zero("relativePointsToReach"),
+            friendship_level=msg.get_enum("friendship_level", HoloFriendshipLevel),
         )
