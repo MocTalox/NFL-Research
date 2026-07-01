@@ -3,7 +3,7 @@ from itertools import product
 from typing import Iterator, Protocol
 import math
 
-from core.gm_holoholo import HoloPokemonType, HoloPokemonMove, HoloTempEvoId
+from core.gm_holoholo import HoloPokemonType, HoloPokemonMove, HoloTempEvoId, HoloCombatType
 from proto.msg.combat_move import CombatMove
 from proto.msg.pokemon_settings import PokemonSettings
 from service.common.data import PVP_MOVES, POKEMON, get_temp_evo_pokemon_settings
@@ -133,6 +133,8 @@ _POKEMON_DATA: PokeData[_PokemonData] = gen_pokemon_data(POKEMON, _unfold_settin
 def get_all_pokemon() -> list[PokeSpecies]:
     return sorted(_POKEMON_DATA.get_all_species())
 
+_COMBAT_TYPE = HoloCombatType.VS_SEEKER
+
 
 # =========================
 # DATA GENERATION
@@ -225,9 +227,9 @@ def _tgr_calc_charged_rate(attacker: _PokemonMoveSet, defender: _EnemyData) -> f
 def _tgr_calc_total_bulk(attacker: _PokemonMoveSet, defender: _EnemyData) -> float:
     #TODO As for now works as defender has just type_1
     # Consider adding a "move_type" to _EnemyData maybe
-    stab = get_stab(defender.type_1, defender.type_1, defender.type_2)
+    stab = get_stab(_COMBAT_TYPE, defender.type_1, defender.type_1, defender.type_2)
     effect = get_effect(defender.type_1, attacker.pokemon.type_1, attacker.pokemon.type_2)
-    shadow = get_shadow_attack_bonus(defender.shadow, attacker.pokemon.shadow)
+    shadow = get_shadow_attack_bonus(_COMBAT_TYPE, defender.shadow, attacker.pokemon.shadow)
     mults = stab * effect * shadow
     return (attacker.pokemon.defense + 15) * (attacker.pokemon.stamina + 15) / mults
 
@@ -296,7 +298,7 @@ def _calculate_stat(
 ) -> float:
 
     base_multiplier = (
-        get_shadow_attack_bonus(attacker.pokemon.shadow, defender.shadow)
+        get_shadow_attack_bonus(_COMBAT_TYPE, attacker.pokemon.shadow, defender.shadow)
         * (attacker.pokemon.attack + 15)
         / (defender.defense + 15)
     )
@@ -327,6 +329,6 @@ def _move_params(
 ) -> float:
 
     return (
-        get_stab(move.type, attacker.type_1, attacker.type_2)
+        get_stab(_COMBAT_TYPE, move.type, attacker.type_1, attacker.type_2)
         * get_effect(move.type, defender.type_1, defender.type_2)
     )
