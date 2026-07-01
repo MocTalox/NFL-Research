@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import reduce
 
 from core.gm_holoholo import HoloPokemonType, HoloWeatherCondition, HoloCharacterCategory, HoloCombatType, HoloFriendshipLevel
@@ -39,7 +39,7 @@ class DamageMultipliers:
     same_type_attack: float = 1.0
     dodge_damage_reduction: float = 1.0
     weather_attack: float = 1.0
-    friendship_attack: dict[HoloFriendshipLevel, float] = {}
+    friendship_attack: dict[HoloFriendshipLevel, float] = field(default_factory=dict)
     shadow_pokemon_attack: float = 1.0
     shadow_pokemon_defense: float = 1.0
     purified_pokemon_attack: float = 1.0 # vs shadow only (unused in-game)

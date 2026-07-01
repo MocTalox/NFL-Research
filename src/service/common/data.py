@@ -8,6 +8,11 @@ from utils.poke_map import to_poke_map, get_poke
 from utils.poke_species import PokeSpecies
 
 
+def _get_non_combat_move_attack_defense_bonus(move: HoloPokemonMove):
+    move_ae = NON_COMBAT_MOVES[move].bonus_effect
+    assert move_ae.attack_defense_bonus
+    return move_ae.attack_defense_bonus.attributes
+
 CPM = [cpm for cpm in PLAYER_LEVEL.cp_multiplier]
 RCPM = [cpm for cpm in ROCKET_SETTINGS.cp_multiplier]
 RANKS = {rank.character_category: rank for rank in ROCKET_SETTINGS.rank}
@@ -22,22 +27,18 @@ TYPES_WEATHER = {pt: wa.weather_condition for wa in WEATHER_AFFINITIES for pt in
 FRIENDSHIP_DMG_BONUS = {fms.friendship_level: fms.attack_bonus_percentage for fms in FRIENDSHIP_MILESTONE_SETTINGS}
 BEHEMOTH_BLADE_AE = {
     combat_type: attributes.attack_multiplier
-    for attributes
-    in NON_COMBAT_MOVES[HoloPokemonMove.BEHEMOTH_BLADE].bonus_effect.attack_defense_bonus.attributes
-    for combat_type
-    in attributes.combat_types
+    for attributes in _get_non_combat_move_attack_defense_bonus(HoloPokemonMove.BEHEMOTH_BLADE)
+    for combat_type in attributes.combat_types
 }
 BEHEMOTH_BASH_AE = {
     combat_type: attributes.defense_multiplier
-    for attributes
-    in NON_COMBAT_MOVES[HoloPokemonMove.BEHEMOTH_BASH].bonus_effect.attack_defense_bonus.attributes
-    for combat_type
-    in attributes.combat_types
+    for attributes in _get_non_combat_move_attack_defense_bonus(HoloPokemonMove.BEHEMOTH_BASH)
+    for combat_type in attributes.combat_types
 }
 
 def get_tgr_rank_mult(character_category: HoloCharacterCategory) -> float:
     if character_category not in RANKS:
-        raise ValueError(f"{character_category}") #TODO err msg
+        raise ValueError(f"No rank multiplier configured for {character_category}")
     return RANKS[character_category].rank_multiplier
 
 def get_pokemon_settings(poke: PokeSpecies) -> PokemonSettings | None:
