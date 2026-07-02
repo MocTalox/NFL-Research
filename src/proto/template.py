@@ -31,12 +31,12 @@ class Template:
             self.value = data_msg.get_message(self.key)
 
     def __str__(self) -> str:
-        data = f"    {self.key}: {self.value.format_message('    ')}\n" if self.key else ""
+        data = f"    {self.key} {self.value.format_message('    ')}\n" if self.key else ""
 
         return (
             f"{{\n"
             f"  template_id: \"{self.template_id}\"\n"
-            f"  data: {{\n"
+            f"  data {{\n"
             f"    template_id: \"{self.template_id}\"\n"
             f"{data}"
             f"  }}\n"

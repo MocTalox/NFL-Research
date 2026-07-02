@@ -25,11 +25,11 @@ class Message:
         for key, values in self.items():
             for value in values:
                 value_str = (
-                    value.format_message(next_indent)
+                    f" {value.format_message(next_indent)}"
                     if isinstance(value, Message)
-                    else str(value)
+                    else f": {value}"
                 )
-                lines.append(f"{next_indent}{key}: {value_str}")
+                lines.append(f"{next_indent}{key}{value_str}")
 
         lines.append(indent + "}")
         return "\n".join(lines)
