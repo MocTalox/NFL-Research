@@ -24,6 +24,7 @@ from proto.msg.raid_settings import RaidSettings
 from proto.msg.rocket_settings import RocketSettings
 from proto.msg.sourdough_move_mapping_settings import SourdoughMoveMappingSettings
 from proto.msg.stationed_pokemon_table_settings import StationedPokemonTableSettings
+from proto.msg.temporary_evolution_settings import TemporaryEvolutionSettings
 from proto.msg.type_effective import TypeEffective
 from proto.msg.weather_affinities import WeatherAffinities
 from proto.msg.weather_bonus_settings import WeatherBonusSettings
@@ -175,6 +176,11 @@ SOURDOUGH_MOVE_MAPPING_SETTINGS = _load_elem(
 STATIONED_POKEMON_TABLE_SETTINGS = _load_elem(
     "stationedPokemonTableSettings",
     StationedPokemonTableSettings.from_message,
+)
+
+TEMPORARY_EVOLUTION_SETTINGS = _load_set(
+    "temporaryEvolutionSettings",
+    TemporaryEvolutionSettings.from_message,
 )
 
 TYPE_EFFECTIVE = _load_set(
