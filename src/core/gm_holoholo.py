@@ -3202,6 +3202,7 @@ class HoloPokemonForm(_HoloEnum):
     PIKACHU_GOFEST_2026_CAP_YELLOW = 3345
     CATERPIE_GOFEST_2026 = 3346
     PIKACHU_ANNIVERSARY_2026 = 3348
+    GIMMIGHOUL_COIN_A2_2026 = 3351
 
 @unique
 class HoloPokemonMove(_HoloEnum):
@@ -3639,6 +3640,8 @@ class HoloPokemonMove(_HoloEnum):
     PYROBALL = 493
     GIGATON_HAMMER = 494
     PLASMA_FISTS = 497
+    GLAIVE_RUSH = 590
+    SNIPE_SHOT = 592
 
 @unique
 class HoloCharacterCategory(_HoloEnum):
