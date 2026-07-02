@@ -4,11 +4,12 @@ from functools import cache
 
 from core.gm_constants import GAMEMASTER_LOCAL, OVERRIDES_LOCAL
 from proto.message import Message
+from utils.raw_value import RawValue
 
 
-_OPEN_PATTERN = re.compile(r"([a-zA-Z0-9_]*) \{")
-_ELEM_PATTERN = re.compile(r"([a-zA-Z0-9_]*): (.*)")
-_CLOSE_PATTERN = re.compile(r"\}")
+_OPENING_PATTERN = re.compile(r'([a-zA-Z0-9_]*) \{')
+_ELEMENT_PATTERN = re.compile(r'([a-zA-Z0-9_]*): (?:"([^"]*)"|(.*))')
+_CLOSING_PATTERN = re.compile(r'\}')
 
 
 def _read_proto_file(filename: str) -> Message:
@@ -24,41 +25,34 @@ def _read_proto_file(filename: str) -> Message:
         if token is None:
             continue
 
-        kind = token[0]
-
-        if kind == "open":
-            key = token[1]
-
-            child = Message()
-
-            current = stack[-1]
-            current.add(key, child)
-
-            stack.append(child)
-
-        elif kind == "elem":
-            key, value = token[1], token[2]
-
-            current = stack[-1]
-            current.add(key, value)
-
-        elif kind == "close":
-            stack.pop()
+        match token:
+            case ("opening", key):
+                child = Message()
+                current = stack[-1]
+                current.add(key, child)
+                stack.append(child)
+            case ("element", key, value):
+                current = stack[-1]
+                current.add(key, value)
+            case ("closing",):
+                stack.pop()
 
     if len(stack) != 1:
         raise ValueError("Corrupted GM file")
 
     return root
 
-def _parse_line(line: str) -> tuple[str, ...] | None:
-    if match := _OPEN_PATTERN.fullmatch(line):
-        return ("open", match.group(1))
+def _parse_line(line: str):
+    if match := _OPENING_PATTERN.fullmatch(line):
+        return ("opening", match.group(1))
 
-    if match := _ELEM_PATTERN.fullmatch(line):
-        return ("elem", match.group(1), match.group(2))
+    if match := _ELEMENT_PATTERN.fullmatch(line):
+        if match.group(2) is not None:
+            return ("element", match.group(1), match.group(2))
+        return ("element", match.group(1), RawValue(match.group(3)))
 
-    if _CLOSE_PATTERN.fullmatch(line):
-        return ("close",)
+    if _CLOSING_PATTERN.fullmatch(line):
+        return ("closing",)
 
     return None
 

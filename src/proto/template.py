@@ -35,9 +35,9 @@ class Template:
 
         return (
             f"{{\n"
-            f"  template_id: {self.template_id}\n"
+            f"  template_id: \"{self.template_id}\"\n"
             f"  data: {{\n"
-            f"    template_id: {self.template_id}\n"
+            f"    template_id: \"{self.template_id}\"\n"
             f"{data}"
             f"  }}\n"
             f"}}"

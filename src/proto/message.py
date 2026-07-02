@@ -4,6 +4,7 @@ from enum import IntEnum
 from typing import Callable, Iterable, Literal, TypeVar, cast, overload
 
 from utils.float32 import f32
+from utils.raw_value import RawValue
 
 
 T = TypeVar("T")
@@ -12,7 +13,7 @@ E = TypeVar("E", bound=IntEnum)
 
 class Message:
     def __init__(self) -> None:
-        self._data: dict[str, list[str | Message]] = {}
+        self._data: dict[str, list[str | RawValue | Message]] = {}
 
     def __str__(self) -> str:
         return self.format_message()
@@ -33,13 +34,13 @@ class Message:
         lines.append(indent + "}")
         return "\n".join(lines)
 
-    def add(self, key: str, value: str | Message) -> None:
+    def add(self, key: str, value: str | RawValue | Message) -> None:
         self._data.setdefault(key, []).append(value)
 
     def delete(self, key: str) -> None:
         del self._data[key]
 
-    def get(self, key: str) -> list[str | Message]:
+    def get(self, key: str) -> list[str | RawValue | Message]:
         return self._data[key]
 
     def has(self, key: str) -> bool:
@@ -48,7 +49,7 @@ class Message:
     def keys(self) -> Iterable[str]:
         return self._data.keys()
 
-    def items(self) -> Iterable[tuple[str, list[str | Message]]]:
+    def items(self) -> Iterable[tuple[str, list[str | RawValue | Message]]]:
         return self._data.items()
 
     def get_message(self, key: str) -> Message:
@@ -71,31 +72,31 @@ class Message:
         return self._get_single_element(key, str, nullable=True)
 
     def get_enum(self, key: str, enum_class: type[E]) -> E:
-        return Message._to_enum(self.get_string(key), enum_class)
+        return Message._to_enum(self._get_single_element(key, RawValue), enum_class)
 
     def get_enum_or_none(self, key: str, enum_class: type[E]) -> E:
-        return Message._to_enum(self.get_string_or_none(key), enum_class)
+        return Message._to_enum(self._get_single_element(key, RawValue, nullable=True), enum_class)
 
     def get_int(self, key: str) -> int:
-        return int(self.get_string(key))
+        return int(self._get_single_element(key, RawValue).str_value)
 
     def get_int_or_zero(self, key: str) -> int:
-        value = self.get_string_or_none(key)
-        return 0 if value is None else int(value)
+        value = self._get_single_element(key, RawValue, nullable=True)
+        return 0 if value is None else int(value.str_value)
 
     def get_float(self, key: str) -> float:
-        return f32(self.get_string(key))
+        return f32(self._get_single_element(key, RawValue).str_value)
 
     def get_float_or_zero(self, key: str) -> float:
-        value = self.get_string_or_none(key)
-        return 0.0 if value is None else f32(value)
+        value = self._get_single_element(key, RawValue, nullable=True)
+        return 0.0 if value is None else f32(value.str_value)
 
     def get_bool(self, key: str) -> bool:
-        return self.get_string(key).lower() == "true"
+        return self._get_single_element(key, RawValue).str_value.lower() == "true"
 
     def get_bool_or_false(self, key: str) -> bool:
-        value = self.get_string_or_none(key)
-        return value is not None and value.lower() == "true"
+        value = self._get_single_element(key, RawValue, nullable=True)
+        return value is not None and value.str_value.lower() == "true"
 
     def get_message_list(self, key: str) -> tuple[Message, ...]:
         return tuple(self._get_many_elements(key, Message))
@@ -111,22 +112,19 @@ class Message:
         if isinstance(cond, str):
             filter_key = cond
             cond = lambda m: m.has(filter_key)
-        return tuple(map(mapper, filter(cond, self._get_many_elements(key, Message))))
+        return tuple(mapper(msg) for msg in self._get_many_elements(key, Message) if cond(msg))
 
     def get_string_list(self, key: str) -> tuple[str, ...]:
         return tuple(self._get_many_elements(key, str))
 
     def get_enum_list(self, key: str, enum_class: type[E]) -> tuple[E, ...]:
-        return tuple(map(
-            lambda id: Message._to_enum(id, enum_class),
-            self._get_many_elements(key, str)
-        ))
+        return tuple(Message._to_enum(id, enum_class) for id in self._get_many_elements(key, RawValue))
 
     def get_int_list(self, key: str) -> tuple[int, ...]:
-        return tuple(map(int, self._get_many_elements(key, str)))
+        return tuple(int(v.str_value) for v in self._get_many_elements(key, RawValue))
 
     def get_float_list(self, key: str) -> tuple[float, ...]:
-        return tuple(map(f32, self._get_many_elements(key, str)))
+        return tuple(f32(v.str_value) for v in self._get_many_elements(key, RawValue))
 
     @overload
     def _get_single_element(self, key: str, expected_type: type[T]) -> T: ...
@@ -180,10 +178,10 @@ class Message:
         return cast(list[T], values)
 
     @staticmethod
-    def _to_enum(id: str | None, enum_class: type[E]) -> E:
+    def _to_enum(id: RawValue | None, enum_class: type[E]) -> E:
         if not id: # Default enum value if None
             return enum_class(0)
         try: # Try by name first
-            return enum_class[id]
+            return enum_class[id.str_value]
         except KeyError: # Otherwise try by numeric id
-            return enum_class(int(id))
+            return enum_class(int(id.str_value))

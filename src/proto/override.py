@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from enum import IntEnum
 
 from proto.message import Message
+from utils.raw_value import RawValue
 
 
 class Action(IntEnum):
@@ -16,14 +17,14 @@ class Override:
     action_type: Action
     template_id: tuple[str, ...]
     target: list[str]
-    value: list[str | Message]
+    value: list[str | RawValue | Message]
 
     @classmethod
     def from_message(cls, msg: Message) -> Override:
         return cls(
             action_type=msg.get_enum("action_type", Action),
             template_id=msg.get_string_list("template_id"),
-            target=msg.get_string("target").strip('"').split('.'),
+            target=msg.get_string("target").split('.'),
             value=msg.get("value"),
         )
 
@@ -41,12 +42,12 @@ class RemTemplate:
 class AddTemplate:
     template_id: str
     key: str
-    value: list[str | Message]
+    value: list[str | RawValue | Message]
 
     @classmethod
     def from_message(cls, msg: Message) -> AddTemplate:
         return cls(
             template_id=msg.get_string("template_id"),
-            key=msg.get_string("key").strip('"'),
+            key=msg.get_string("key"),
             value=msg.get("value"),
         )

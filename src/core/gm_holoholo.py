@@ -30,8 +30,9 @@ def game_master() -> dict[str, dict[str, Template]]:
 
     for override in read_overrides().get_object_list("override", Override.from_message):
         if len(override.target) < 2:
+            target = '.'.join(override.target)
             raise ValueError(
-                f"Invalid override target {override.target}: "
+                f"Invalid override target \"{target}\": "
                 f"must contain at least a root key and a target. "
                 f"Expected format: [key, ...path, target]. "
                 f"Note: the root key is not a valid target, use `<undefined>` instead."
