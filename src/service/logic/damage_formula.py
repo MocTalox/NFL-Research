@@ -6,7 +6,7 @@ from core.gm_templates import BATTLE_SETTINGS, RAID_SETTINGS, COMBAT_SETTINGS, W
 from proto.msg.combat_move import CombatMove
 from proto.msg.move_settings import MoveSettings
 from proto.msg.pokemon_settings import PokemonSettings
-from service.common.data import WEATHER, TYPES, FRIENDSHIP_DMG_BONUS, BEHEMOTH_BLADE_AE, BEHEMOTH_BASH_AE
+from service.common.data import WEATHER, TYPES, FRIENDSHIP_DMG_BONUS, HELPERS_DMG_BONUS, BEHEMOTH_BLADE_AE, BEHEMOTH_BASH_AE
 from service.logic.pokemon_stats import get_stats, get_tgr_stats
 from utils.float32 import f32
 
@@ -29,6 +29,7 @@ class BattleState:
     weather_id: HoloWeatherCondition = HoloWeatherCondition(0)
     friendship_level: HoloFriendshipLevel = HoloFriendshipLevel(0)
     remote_raid: bool = False
+    num_helpers: int = 0
     blade_ae: bool = False
     bash_ae: bool = False
 
@@ -46,6 +47,7 @@ class DamageMultipliers:
     same_type_mega_attack: float = 1.0
     different_type_mega_attack: float = 1.0
     remote_attack: float = 1.0
+    helpers_attack: dict[int, int] = field(default_factory=dict)
     blade_ae_attack: float = 1.0
     bash_ae_defense: float = 1.0
 
@@ -94,6 +96,7 @@ _DAMAGE_MULTIPLIERS = {
         remote_attack=RAID_SETTINGS.remote_damage_modifier,
         same_type_mega_attack=MEGA_EVO_SETTINGS.attack_boost_from_mega_same_type,
         different_type_mega_attack=MEGA_EVO_SETTINGS.attack_boost_from_mega_different_type,
+        helpers_attack=HELPERS_DMG_BONUS,
         blade_ae_attack=BEHEMOTH_BLADE_AE[HoloCombatType.COMBAT_TYPE_DMAX],
         bash_ae_defense=BEHEMOTH_BASH_AE[HoloCombatType.COMBAT_TYPE_DMAX],
     ),
@@ -108,6 +111,7 @@ _DAMAGE_MULTIPLIERS = {
         remote_attack=RAID_SETTINGS.remote_damage_modifier,
         same_type_mega_attack=MEGA_EVO_SETTINGS.attack_boost_from_mega_same_type,
         different_type_mega_attack=MEGA_EVO_SETTINGS.attack_boost_from_mega_different_type,
+        helpers_attack=HELPERS_DMG_BONUS,
         blade_ae_attack=BEHEMOTH_BLADE_AE[HoloCombatType.COMBAT_TYPE_GMAX],
         bash_ae_defense=BEHEMOTH_BASH_AE[HoloCombatType.COMBAT_TYPE_GMAX],
     )
@@ -167,6 +171,16 @@ def get_fiendship_boost(
 ) -> float:
     mults = _DAMAGE_MULTIPLIERS[combat_type]
     return mults.friendship_attack[friend_level] if mults.friendship_attack and friend_level else 1.0
+
+def get_helpers_boost(
+    combat_type: HoloCombatType,
+    num_helpers: int,
+) -> float:
+    mults = _DAMAGE_MULTIPLIERS[combat_type]
+    return (
+        1 + mults.helpers_attack[min(20, num_helpers)] / 10000
+        if mults.helpers_attack and num_helpers else 1.0
+    )
 
 def get_effect(
     move_type: HoloPokemonType,
@@ -291,6 +305,7 @@ def damage_formula_raw(
         get_charge_boost(state.combat_type, move_pos > 0),
         get_dodge_boost(state.combat_type, dodged),
         get_remote_boost(state.combat_type, state.remote_raid),
+        get_helpers_boost(state.combat_type, state.num_helpers),
         get_blade_bash_boost(state.combat_type, state.blade_ae, state.bash_ae),
         attack_ratio,
         0.5,

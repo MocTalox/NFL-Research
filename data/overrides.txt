@@ -271,3 +271,123 @@ override {
   target: "friendshipMilestoneSettings.friendship_level"
   value: FRIENDSHIP_LEVEL_5
 }
+override {
+  action_type: ADD
+  template_id: "STATIONED_POKEMON_POWER_BOOST_TABLE_SETTINGS"
+  target: "stationedPokemonTableSettings.tierBoosts[0].hundredths_of_percent"
+  value: 1000
+}
+override {
+  action_type: ADD
+  template_id: "STATIONED_POKEMON_POWER_BOOST_TABLE_SETTINGS"
+  target: "stationedPokemonTableSettings.tierBoosts[1].hundredths_of_percent"
+  value: 1500
+}
+override {
+  action_type: ADD
+  template_id: "STATIONED_POKEMON_POWER_BOOST_TABLE_SETTINGS"
+  target: "stationedPokemonTableSettings.tierBoosts[2].hundredths_of_percent"
+  value: 1700
+}
+override {
+  action_type: ADD
+  template_id: "STATIONED_POKEMON_POWER_BOOST_TABLE_SETTINGS"
+  target: "stationedPokemonTableSettings.tierBoosts[3].hundredths_of_percent"
+  value: 1800
+}
+override {
+  action_type: ADD
+  template_id: "STATIONED_POKEMON_POWER_BOOST_TABLE_SETTINGS"
+  target: "stationedPokemonTableSettings.tierBoosts[4].hundredths_of_percent"
+  value: 1870
+}
+override {
+  action_type: ADD
+  template_id: "STATIONED_POKEMON_POWER_BOOST_TABLE_SETTINGS"
+  target: "stationedPokemonTableSettings.tierBoosts[5].hundredths_of_percent"
+  value: 1910
+}
+override {
+  action_type: ADD
+  template_id: "STATIONED_POKEMON_POWER_BOOST_TABLE_SETTINGS"
+  target: "stationedPokemonTableSettings.tierBoosts[6].hundredths_of_percent"
+  value: 1920
+}
+override {
+  action_type: ADD
+  template_id: "STATIONED_POKEMON_POWER_BOOST_TABLE_SETTINGS"
+  target: "stationedPokemonTableSettings.tierBoosts[7].hundredths_of_percent"
+  value: 1930
+}
+override {
+  action_type: ADD
+  template_id: "STATIONED_POKEMON_POWER_BOOST_TABLE_SETTINGS"
+  target: "stationedPokemonTableSettings.tierBoosts[8].hundredths_of_percent"
+  value: 1940
+}
+override {
+  action_type: ADD
+  template_id: "STATIONED_POKEMON_POWER_BOOST_TABLE_SETTINGS"
+  target: "stationedPokemonTableSettings.tierBoosts[9].hundredths_of_percent"
+  value: 1950
+}
+override {
+  action_type: ADD
+  template_id: "STATIONED_POKEMON_POWER_BOOST_TABLE_SETTINGS"
+  target: "stationedPokemonTableSettings.tierBoosts[10].hundredths_of_percent"
+  value: 1960
+}
+override {
+  action_type: ADD
+  template_id: "STATIONED_POKEMON_POWER_BOOST_TABLE_SETTINGS"
+  target: "stationedPokemonTableSettings.tierBoosts[11].hundredths_of_percent"
+  value: 1970
+}
+override {
+  action_type: ADD
+  template_id: "STATIONED_POKEMON_POWER_BOOST_TABLE_SETTINGS"
+  target: "stationedPokemonTableSettings.tierBoosts[12].hundredths_of_percent"
+  value: 1980
+}
+override {
+  action_type: ADD
+  template_id: "STATIONED_POKEMON_POWER_BOOST_TABLE_SETTINGS"
+  target: "stationedPokemonTableSettings.tierBoosts[13].hundredths_of_percent"
+  value: 1990
+}
+override {
+  action_type: ADD
+  template_id: "STATIONED_POKEMON_POWER_BOOST_TABLE_SETTINGS"
+  target: "stationedPokemonTableSettings.tierBoosts[14].hundredths_of_percent"
+  value: 2000
+}
+override {
+  action_type: ADD
+  template_id: "STATIONED_POKEMON_POWER_BOOST_TABLE_SETTINGS"
+  target: "stationedPokemonTableSettings.tierBoosts[15].hundredths_of_percent"
+  value: 2000
+}
+override {
+  action_type: ADD
+  template_id: "STATIONED_POKEMON_POWER_BOOST_TABLE_SETTINGS"
+  target: "stationedPokemonTableSettings.tierBoosts[16].hundredths_of_percent"
+  value: 2000
+}
+override {
+  action_type: ADD
+  template_id: "STATIONED_POKEMON_POWER_BOOST_TABLE_SETTINGS"
+  target: "stationedPokemonTableSettings.tierBoosts[17].hundredths_of_percent"
+  value: 2000
+}
+override {
+  action_type: ADD
+  template_id: "STATIONED_POKEMON_POWER_BOOST_TABLE_SETTINGS"
+  target: "stationedPokemonTableSettings.tierBoosts[18].hundredths_of_percent"
+  value: 2000
+}
+override {
+  action_type: ADD
+  template_id: "STATIONED_POKEMON_POWER_BOOST_TABLE_SETTINGS"
+  target: "stationedPokemonTableSettings.tierBoosts[19].hundredths_of_percent"
+  value: 2000
+}

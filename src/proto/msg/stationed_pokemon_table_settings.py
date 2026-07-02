@@ -24,6 +24,5 @@ class TierBoosts:
         return cls(
             num_stationed=msg.get_int("numStationed"),
             num_boost_icons=msg.get_int("numBoostIcons"),
-            hundredths_of_percent=msg.get_int_or_zero("hundredthsOfPercent"),
-            #TODO `msg.get_int("hundredthsOfPercent")` once its fixed on overrides
+            hundredths_of_percent=msg.get_int("hundredths_of_percent"),
         )

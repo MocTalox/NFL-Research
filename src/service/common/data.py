@@ -1,7 +1,7 @@
 from dataclasses import replace
 
 from core.gm_holoholo import HoloPokemonMove, HoloWeatherCondition, HoloTempEvoId, HoloCharacterCategory
-from core.gm_templates import FRIENDSHIP_MILESTONE_SETTINGS, TYPE_EFFECTIVE, WEATHER_AFFINITIES, PLAYER_LEVEL, POKEMON_SETTINGS, MOVE_SETTINGS, COMBAT_MOVE, POKEMON_EXTENDED_SETTINGS, ROCKET_SETTINGS, NON_COMBAT_MOVE_SETTINGS
+from core.gm_templates import FRIENDSHIP_MILESTONE_SETTINGS, TYPE_EFFECTIVE, WEATHER_AFFINITIES, PLAYER_LEVEL, POKEMON_SETTINGS, MOVE_SETTINGS, COMBAT_MOVE, POKEMON_EXTENDED_SETTINGS, ROCKET_SETTINGS, NON_COMBAT_MOVE_SETTINGS, STATIONED_POKEMON_TABLE_SETTINGS
 from proto.msg.pokemon_settings import PokemonSettings
 from proto.msg.pokemon_extended_settings import PokemonExtendedSettings, SizeSettings
 from utils.poke_map import to_poke_map, get_poke
@@ -24,7 +24,10 @@ NON_COMBAT_MOVES = {move.unique_id: move for move in NON_COMBAT_MOVE_SETTINGS}
 TYPES = {te.attack_type: te for te in TYPE_EFFECTIVE}
 WEATHER = {wa.weather_condition: wa for wa in WEATHER_AFFINITIES}
 TYPES_WEATHER = {pt: wa.weather_condition for wa in WEATHER_AFFINITIES for pt in wa.pokemon_type}
-FRIENDSHIP_DMG_BONUS = {fms.friendship_level: fms.attack_bonus_percentage for fms in FRIENDSHIP_MILESTONE_SETTINGS}
+FRIENDSHIP = {fms.friendship_level: fms for fms in FRIENDSHIP_MILESTONE_SETTINGS}
+FRIENDSHIP_DMG_BONUS = {fs: FRIENDSHIP[fs].attack_bonus_percentage for fs in FRIENDSHIP}
+HELPERS = {tb.num_stationed: tb for tb in STATIONED_POKEMON_TABLE_SETTINGS.tier_boosts}
+HELPERS_DMG_BONUS = {tb: HELPERS[tb].hundredths_of_percent for tb in HELPERS}
 BEHEMOTH_BLADE_AE = {
     combat_type: attributes.attack_multiplier
     for attributes in _get_non_combat_move_attack_defense_bonus(HoloPokemonMove.BEHEMOTH_BLADE)

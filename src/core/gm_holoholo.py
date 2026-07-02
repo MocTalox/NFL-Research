@@ -1,5 +1,6 @@
 from enum import IntEnum, unique
 from functools import cache
+import re
 
 from core.gm_reader import read_game_master, read_overrides
 from proto.message import Message
@@ -15,6 +16,11 @@ class _HoloEnum(IntEnum):
 
 @cache
 def game_master() -> dict[str, dict[str, Template]]:
+    def unfold_step(key: str) -> tuple[str, int | None]:
+        if m := re.match(r"(\w+)\[(\d+)\]", key):
+            return (m.group(1), int(m.group(2)))
+        return (key, None)
+
     data: dict[str, dict[str, Template]] = {}
     mapper: dict[str, str] = {}
 
@@ -44,7 +50,11 @@ def game_master() -> dict[str, dict[str, Template]]:
                 )
             value = template.value
             for step in path:
-                value = value.get_message(step)
+                step_key, step_index = unfold_step(step)
+                if step_index is None:
+                    value = value.get_message(step_key)
+                else:
+                    value = value.get_message_list(step_key)[step_index]
             if override.action_type is Action.DEL or override.action_type is Action.SET:
                 value.delete(target)
             if override.action_type is Action.ADD or override.action_type is Action.SET:
