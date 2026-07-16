@@ -1,7 +1,7 @@
 from dataclasses import replace
 
 from core.gm_holoholo import HoloPokemonMove, HoloWeatherCondition, HoloTempEvoId, HoloCharacterCategory
-from core.gm_templates import FRIENDSHIP_MILESTONE_SETTINGS, TYPE_EFFECTIVE, WEATHER_AFFINITIES, PLAYER_LEVEL, POKEMON_SETTINGS, MOVE_SETTINGS, COMBAT_MOVE, POKEMON_EXTENDED_SETTINGS, ROCKET_SETTINGS, NON_COMBAT_MOVE_SETTINGS, STATIONED_POKEMON_TABLE_SETTINGS
+from core.gm_templates import FRIENDSHIP_MILESTONE_SETTINGS, TYPE_EFFECTIVE, WEATHER_AFFINITIES, PLAYER_LEVEL, POKEMON_SETTINGS, MOVE_SETTINGS, COMBAT_MOVE, POKEMON_EXTENDED_SETTINGS, ROCKET_SETTINGS, NON_COMBAT_MOVE_SETTINGS, STATIONED_POKEMON_TABLE_SETTINGS, FORM_SETTINGS
 from proto.msg.pokemon_settings import PokemonSettings
 from proto.msg.pokemon_extended_settings import PokemonExtendedSettings, SizeSettings
 from utils.poke_map import to_poke_map, get_poke
@@ -18,6 +18,8 @@ RCPM = [cpm for cpm in ROCKET_SETTINGS.cp_multiplier]
 RANKS = {rank.character_category: rank for rank in ROCKET_SETTINGS.rank}
 POKEMON = to_poke_map(POKEMON_SETTINGS, lambda p: p.pokemon_id, lambda p: p.form)
 EXTENDED = to_poke_map(POKEMON_EXTENDED_SETTINGS, lambda p: p.unique_id, lambda p: p.form)
+FORMS = {fs.pokemon: [form.form for form in fs.forms] for fs in FORM_SETTINGS}
+FORM_POKEMON = {form.form: fs.pokemon for fs in FORM_SETTINGS for form in fs.forms}
 PVE_MOVES = {move.movement_id: move for move in MOVE_SETTINGS}
 PVP_MOVES = {move.unique_id: move for move in COMBAT_MOVE}
 NON_COMBAT_MOVES = {move.unique_id: move for move in NON_COMBAT_MOVE_SETTINGS}
