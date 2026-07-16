@@ -6,19 +6,6 @@ import re
 from core.gm_holoholo import HoloPokemonId, HoloPokemonForm, HoloTempEvoId
 
 
-def _to_screaming_snake_case(text: str) -> str:
-    # Convert camelCase/PascalCase boundaries to underscores
-    text = re.sub(r"([a-z])([A-Z])", r"\1_\2", text)
-
-    # Replace non-alphanumeric sequences with underscores
-    text = re.sub(r"[^A-Za-z0-9]+", "_", text)
-
-    # Collapse multiple underscores
-    text = re.sub(r"_+", "_", text)
-
-    # Remove leading/trailing underscores and turn upper case
-    return text.strip("_").upper()
-
 @dataclass(frozen=True, order=True, kw_only=True)
 class PokeSpecies:
     name: HoloPokemonId
@@ -59,10 +46,10 @@ class PokeSpecies:
         temp_evo: str | None = None,
         shadow: bool = False
     ) -> PokeSpecies:
-        name = _to_screaming_snake_case(name)
-        form = _to_screaming_snake_case(form) if form else None
-        temp_evo = _to_screaming_snake_case(temp_evo) if temp_evo else None
-        if form and not form.startswith(f"{name}_"):
+        name = PokeSpecies.resolve_id(name)
+        form = PokeSpecies.resolve_id(form) if form else None
+        temp_evo = PokeSpecies.resolve_id(temp_evo) if temp_evo else None
+        if form and not form == HoloPokemonForm(0).name and not form.startswith(f"{name}_"):
             form = f"{name}_{form}"
         if temp_evo and not temp_evo.startswith("TEMP_EVOLUTION_"):
             temp_evo = f"TEMP_EVOLUTION_{temp_evo}"
@@ -72,3 +59,17 @@ class PokeSpecies:
             temp_evo=HoloTempEvoId[temp_evo] if temp_evo else HoloTempEvoId(0),
             shadow=shadow,
         )
+
+    @staticmethod
+    def resolve_id(id: str) -> str:
+        # Convert camelCase/PascalCase boundaries to underscores
+        id = re.sub(r"([a-z])([A-Z])", r"\1_\2", id)
+
+        # Replace non-alphanumeric sequences with underscores
+        id = re.sub(r"[^A-Za-z0-9]+", "_", id)
+
+        # Collapse multiple underscores
+        id = re.sub(r"_+", "_", id)
+
+        # Remove leading/trailing underscores and turn upper case
+        return id.strip("_").upper()
