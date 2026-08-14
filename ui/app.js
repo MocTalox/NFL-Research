@@ -17,7 +17,8 @@ const controls = {
     trainerLevel: null,
     calculateButton: null,
     message: null,
-    resultsSection: null,
+    emptyState: null,
+    resultsContent: null,
     enemyCard: null,
     breakpointsTable: null,
 };
@@ -183,32 +184,32 @@ function displayResults(result) {
 
     controls.enemyCard.innerHTML = `
         <div class="card">
-            <div class="card-header">
+            <div class="card-header fw-bold">
                 Enemy Stats
             </div>
 
             <div class="card-body">
 
-                <div class="row text-center">
+                <div class="row text-center g-4">
 
                     <div class="col">
-                        <h5>Attack</h5>
-                        <p>${enemy.atk.toFixed(2)}</p>
+                        <h6 class="text-muted mb-1">Attack</h6>
+                        <p class="fs-4 fw-bold mb-0">${enemy.atk.toFixed(2)}</p>
                     </div>
 
                     <div class="col">
-                        <h5>Defense</h5>
-                        <p>${enemy.def.toFixed(2)}</p>
+                        <h6 class="text-muted mb-1">Defense</h6>
+                        <p class="fs-4 fw-bold mb-0">${enemy.def.toFixed(2)}</p>
                     </div>
 
                     <div class="col">
-                        <h5>HP</h5>
-                        <p>${enemy.hp}</p>
+                        <h6 class="text-muted mb-1">HP</h6>
+                        <p class="fs-4 fw-bold mb-0">${enemy.hp}</p>
                     </div>
 
                     <div class="col">
-                        <h5>CP</h5>
-                        <p>${enemy.cp}</p>
+                        <h6 class="text-muted mb-1">CP</h6>
+                        <p class="fs-4 fw-bold mb-0">${enemy.cp}</p>
                     </div>
 
                 </div>
@@ -231,7 +232,7 @@ function displayResults(result) {
 
         rows += `<tr>`;
 
-        rows += `<th class="text-center">${Number(result.breakpoints[0].damages[i].level).toFixed(1)}</th>`;
+        rows += `<th class="text-center table-secondary">${Number(result.breakpoints[0].damages[i].level).toFixed(1)}</th>`;
 
         for (const bp of result.breakpoints) {
             rows += `
@@ -248,7 +249,7 @@ function displayResults(result) {
 
     controls.breakpointsTable.innerHTML = `
         <div class="card mt-4">
-            <div class="card-header">
+            <div class="card-header fw-bold">
                 Damage Breakpoints
             </div>
 
@@ -256,7 +257,7 @@ function displayResults(result) {
                 <div class="table-responsive breakpoint-table">
                     <table class="table table-bordered table-hover align-middle mb-0">
 
-                        <thead class="table-dark sticky-top">
+                        <thead class="table-dark sticky-top fs-6">
                             ${header}
                         </thead>
 
@@ -290,11 +291,10 @@ window.addEventListener("pywebviewready", async () => {
     controls.trainerLevel = document.getElementById("trainerLevel");
     controls.calculateButton = document.getElementById("calculateButton");
     controls.message = document.getElementById("message");
-    controls.resultsSection = document.getElementById("resultsSection");
+    controls.emptyState = document.getElementById("emptyState");
+    controls.resultsContent = document.getElementById("resultsContent");
     controls.enemyCard = document.getElementById("enemyCard");
     controls.breakpointsTable = document.getElementById("breakpointsTable");
-
-    controls.resultsSection.classList.add("d-none");
 
     fillSelect(
         controls.minAtk,
@@ -406,12 +406,6 @@ window.addEventListener("pywebviewready", async () => {
     controls.calculateButton.onclick = async function () {
 
         clearMessage();
-        clearMessage();
-
-        controls.enemyCard.innerHTML = "";
-        controls.breakpointsTable.innerHTML = "";
-
-        controls.resultsSection.classList.add("d-none");
 
         const request = buildRequest();
 
@@ -429,7 +423,8 @@ window.addEventListener("pywebviewready", async () => {
 
             displayResults(result);
 
-            controls.resultsSection.classList.remove("d-none");
+            controls.emptyState.classList.add("d-none");
+            controls.resultsContent.classList.remove("d-none");
 
         }
         catch (error) {

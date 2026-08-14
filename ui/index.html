@@ -20,7 +20,7 @@
     <!-- Your Pokémon -->
     <div class="card mb-4">
 
-        <div class="card-header">
+        <div class="card-header fw-bold">
             Your Pokémon
         </div>
 
@@ -87,7 +87,7 @@
 
     <div class="card mb-4">
 
-        <div class="card-header">
+        <div class="card-header fw-bold">
             Enemy
         </div>
 
@@ -128,11 +128,27 @@
 
     </div>
 
-    <div id="resultsSection" class="d-none mt-5">
+    <div class="mt-5">
 
-        <div id="enemyCard"></div>
+        <div id="emptyState">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <h4 class="mb-3">No calculation yet</h4>
+                    <p class="text-muted mb-0">
+                        Fill the parameters above and click
+                        <strong>Calculate Damage</strong>.
+                    </p>
+                </div>
+            </div>
+        </div>
     
-        <div id="breakpointsTable" class="mt-4"></div>
+        <div id="resultsContent" class="d-none">
+    
+            <div id="enemyCard"></div>
+    
+            <div id="breakpointsTable"></div>
+    
+        </div>
     
     </div>
 
