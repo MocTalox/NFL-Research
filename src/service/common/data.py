@@ -86,7 +86,7 @@ def get_temp_evo_pokemon_settings(
 def get_temp_evo_size_settings(
     pokemon_extended_settings: PokemonExtendedSettings,
     temp_evo_id: HoloTempEvoId,
-    glitched: bool = True,
+    glitched: bool = False,
 ):
     temp_evo_overrides = next(
         (
@@ -104,7 +104,9 @@ def get_temp_evo_size_settings(
         )
 
     return (
-        SizeSettings(
+        temp_evo_overrides.size_settings
+        if not glitched
+        else SizeSettings(
             pokemon_extended_settings.size_settings.xxs_lower_bound,
             pokemon_extended_settings.size_settings.xs_lower_bound,
             pokemon_extended_settings.size_settings.m_lower_bound,
@@ -112,6 +114,4 @@ def get_temp_evo_size_settings(
             temp_evo_overrides.size_settings.xl_upper_bound,
             temp_evo_overrides.size_settings.xxl_upper_bound,
         )
-        if glitched
-        else temp_evo_overrides.size_settings
     )
