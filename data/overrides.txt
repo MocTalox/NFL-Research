@@ -142,7 +142,7 @@ add_template {
     cpMultiplier: 0.0
     cpMultiplier: 0.299
     cpMultiplier: 0.352
-    cpMultiplier: 0.400
+    cpMultiplier: 0.4
     cpMultiplier: 0.444
     cpMultiplier: 0.487
     cpMultiplier: 0.529
@@ -150,17 +150,17 @@ add_template {
     cpMultiplier: 0.608
     cpMultiplier: 0.646
     cpMultiplier: 0.683
-    cpMultiplier: 0.712
+    cpMultiplier: 0.72
     cpMultiplier: 0.755
     cpMultiplier: 0.796
     cpMultiplier: 0.808
-    cpMultiplier: 0.820
+    cpMultiplier: 0.82
     cpMultiplier: 0.832
     cpMultiplier: 0.844
     cpMultiplier: 0.855
     cpMultiplier: 0.867
     cpMultiplier: 0.878
-    cpMultiplier: 0.890
+    cpMultiplier: 0.89
     cpMultiplier: 0.901
     cpMultiplier: 0.912
     cpMultiplier: 0.923
@@ -183,7 +183,7 @@ add_template {
     cpMultiplier: 1.093
     cpMultiplier: 1.102
     cpMultiplier: 1.111
-    cpMultiplier: 1.120
+    cpMultiplier: 1.12
     cpMultiplier: 1.128
     cpMultiplier: 1.137
     cpMultiplier: 1.145
@@ -203,15 +203,15 @@ add_template {
     cpMultiplier: 1.251
     cpMultiplier: 1.258
     cpMultiplier: 1.265
-    cpMultiplier: 1.270
+    cpMultiplier: 1.27
     cpMultiplier: 1.275
-    cpMultiplier: 1.280
+    cpMultiplier: 1.28
     cpMultiplier: 1.285
-    cpMultiplier: 1.290
+    cpMultiplier: 1.29
     cpMultiplier: 1.295
-    cpMultiplier: 1.300
+    cpMultiplier: 1.3
     cpMultiplier: 1.305
-    cpMultiplier: 1.310
+    cpMultiplier: 1.31
     cpMultiplier: 1.315
     rank {
       character_category: GRUNT
