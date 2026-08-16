@@ -2,9 +2,9 @@ import re
 
 from functools import cache
 
-from core.gm_constants import GAMEMASTER_LOCAL, OVERRIDES_LOCAL
-from proto.message import Message
-from utils.raw_value import RawValue
+from nfl.core.gm_constants import GAMEMASTER_LOCAL, OVERRIDES_LOCAL
+from nfl.proto.message import Message
+from nfl.utils.raw_value import RawValue
 
 
 _OPENING_PATTERN = re.compile(r'([a-zA-Z0-9_]*) \{')

@@ -5,7 +5,7 @@ from enum import Enum
 from functools import total_ordering
 from operator import attrgetter
 
-from proto.msg.pokemon_extended_settings import SizeSettings
+from nfl.proto.msg.pokemon_extended_settings import SizeSettings
 
 
 @total_ordering

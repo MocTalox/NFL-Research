@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from core.gm_holoholo import HoloPokemonType, HoloWeatherCondition
-from proto.message import Message
+from nfl.core.gm_holoholo import HoloPokemonType, HoloWeatherCondition
+from nfl.proto.message import Message
 
 
 @dataclass(frozen=True)

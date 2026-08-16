@@ -2,10 +2,10 @@ from enum import IntEnum, unique
 from functools import cache
 import re
 
-from core.gm_reader import read_game_master, read_overrides
-from proto.message import Message
-from proto.override import Override, RemTemplate, AddTemplate, Action
-from proto.template import Template
+from nfl.core.gm_reader import read_game_master, read_overrides
+from nfl.proto.message import Message
+from nfl.proto.override import Override, RemTemplate, AddTemplate, Action
+from nfl.proto.template import Template
 
 
 class _HoloEnum(IntEnum):

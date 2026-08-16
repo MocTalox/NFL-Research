@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from core.gm_holoholo import HoloTempEvoId
-from proto.msg.pokemon_settings import PokemonSettings
-from proto.msg.pokemon_extended_settings import SizeSettings
-from service.common.data import get_pokemon_settings, get_pokemon_extended_settings, get_temp_evo_pokemon_settings, get_temp_evo_size_settings
-from service.common.size_class import SizeClass
-from utils.poke_species import PokeSpecies
-from utils.float32 import has_decimals
+from nfl.core.gm_holoholo import HoloTempEvoId
+from nfl.proto.msg.pokemon_settings import PokemonSettings
+from nfl.proto.msg.pokemon_extended_settings import SizeSettings
+from nfl.service.common.data import get_pokemon_settings, get_pokemon_extended_settings, get_temp_evo_pokemon_settings, get_temp_evo_size_settings
+from nfl.service.common.size_class import SizeClass
+from nfl.utils.poke_species import PokeSpecies
+from nfl.utils.float32 import has_decimals
 
 
 @dataclass(frozen=True)

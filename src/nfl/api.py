@@ -3,10 +3,10 @@ from enum import Enum
 from typing import Any
 import json
 
-from core.gm_holoholo import HoloPokemonId, HoloPokemonForm, HoloPokemonMove, HoloPokemonType, HoloWeatherCondition, HoloCharacterCategory
-from utils.poke_species import PokeSpecies
-import service.common.data as data
-import service.logic.pokemon_stats as stats
+from nfl.core.gm_holoholo import HoloPokemonId, HoloPokemonForm, HoloPokemonMove, HoloPokemonType, HoloWeatherCondition, HoloCharacterCategory
+from nfl.utils.poke_species import PokeSpecies
+from nfl.service.common import data
+from nfl.service.logic import pokemon_stats as stats
 
 
 class EnumEncoder(json.JSONEncoder):
@@ -76,11 +76,11 @@ def get_enemy_names():
     ]}
 
 def calculate_damage(pokemon: PokeInput, move: str, min_atk: int, max_atk: int, min_level: int, max_level: int, enemy: str, enemy_pokemon: PokeInput, trainer_level: int) -> dict[str, Any]:
-    from core.gm_holoholo import HoloPokemonMove, HoloCharacterCategory, HoloCombatType
-    from service.common.data import get_pokemon_settings, PVP_MOVES
-    from service.logic.damage_formula import damage_formula_raw, Pokemon, BattleState
-    from service.logic.pokemon_stats import get_tgr_stats, get_tgr_hp, get_tgr_cp, get_cpm, get_rcpm
-    from utils.poke_species import PokeSpecies
+    from nfl.core.gm_holoholo import HoloPokemonMove, HoloCharacterCategory, HoloCombatType
+    from nfl.service.common.data import get_pokemon_settings, PVP_MOVES
+    from nfl.service.logic.damage_formula import damage_formula_raw, Pokemon, BattleState
+    from nfl.service.logic.pokemon_stats import get_tgr_stats, get_tgr_hp, get_tgr_cp, get_cpm, get_rcpm
+    from nfl.utils.poke_species import PokeSpecies
 
     pokemon_species = PokeSpecies.resolve(name=pokemon.name, form=pokemon.form, temp_evo=pokemon.temp_evo)
     enemy_pokemon_species = PokeSpecies.resolve(name=enemy_pokemon.name, form=enemy_pokemon.form, temp_evo=enemy_pokemon.temp_evo)

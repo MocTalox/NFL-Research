@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from core.gm_holoholo import HoloPokemonId, HoloPokemonForm
-from proto.msg.pokemon_settings import PokemonSettings
-from proto.msg.pokemon_extended_settings import SizeSettings
-from service.common.data import POKEMON, EXTENDED
-from service.common.size_class import SizeClass
+from nfl.core.gm_holoholo import HoloPokemonId, HoloPokemonForm
+from nfl.proto.msg.pokemon_settings import PokemonSettings
+from nfl.proto.msg.pokemon_extended_settings import SizeSettings
+from nfl.service.common.data import POKEMON, EXTENDED
+from nfl.service.common.size_class import SizeClass
 
 
 ZORUA_POKEMON_SETTINGS = POKEMON[HoloPokemonId.ZORUA][HoloPokemonForm(0)]

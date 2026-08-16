@@ -1,5 +1,5 @@
 from math import ceil, floor
-from utils.float32 import f32
+from nfl.utils.float32 import f32
 
 
 def percent_raw(value: int, max_value: int) -> float:

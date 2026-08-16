@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 
-from core.gm_templates import CONTEST_SETTINGS
-from proto.msg.pokemon_settings import PokemonSettings
-from proto.msg.pokemon_extended_settings import SizeSettings
-from service.common.size_class import SizeClass
+from nfl.core.gm_templates import CONTEST_SETTINGS
+from nfl.proto.msg.pokemon_settings import PokemonSettings
+from nfl.proto.msg.pokemon_extended_settings import SizeSettings
+from nfl.service.common.size_class import SizeClass
 
 
 height_coefficient = CONTEST_SETTINGS.contest_score_coefficient.pokemon_size.height_coefficient

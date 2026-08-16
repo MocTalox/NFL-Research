@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import re
 
-from core.gm_holoholo import HoloPokemonId, HoloPokemonForm, HoloTempEvoId
+from nfl.core.gm_holoholo import HoloPokemonId, HoloPokemonForm, HoloTempEvoId
 
 
 @dataclass(frozen=True, order=True, kw_only=True)

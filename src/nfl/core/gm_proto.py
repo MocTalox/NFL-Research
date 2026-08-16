@@ -3,8 +3,8 @@ from __future__ import annotations
 from collections import defaultdict
 from typing import Iterable
 
-from proto.message import Message
-from core.gm_holoholo import game_master
+from nfl.proto.message import Message
+from nfl.core.gm_holoholo import game_master
 
 
 class GMProto:

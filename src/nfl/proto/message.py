@@ -3,8 +3,8 @@ from __future__ import annotations
 from enum import IntEnum
 from typing import Callable, Iterable, Literal, TypeVar, cast, overload
 
-from utils.float32 import f32
-from utils.raw_value import RawValue
+from nfl.utils.float32 import f32
+from nfl.utils.raw_value import RawValue
 
 
 T = TypeVar("T")

@@ -2,32 +2,32 @@ from typing import Callable, TypeVar, Any
 from pathlib import Path
 import pickle
 
-from core.gm_holoholo import game_master
-from proto.message import Message
-from proto.msg.battle_settings import BattleSettings
-from proto.msg.bread_move_mappings import BreadMoveMappings
-from proto.msg.bread_pokemon_scaling_settings import BreadPokemonScalingSettings
-from proto.msg.combat_move import CombatMove
-from proto.msg.combat_settings import CombatSettings
-from proto.msg.combat_stat_stage_settings import CombatStatStageSettings
-from proto.msg.contest_settings import ContestSettings
-from proto.msg.form_settings import FormSettings
-from proto.msg.friendship_milestone_settings import FriendshipMilestoneSettings
-from proto.msg.mega_evo_settings import MegaEvoSettings
-from proto.msg.move_settings import MoveSettings
-from proto.msg.non_combat_move_settings import NonCombatMoveSettings
-from proto.msg.player_level import PlayerLevel
-from proto.msg.pokemon_extended_settings import PokemonExtendedSettings
-from proto.msg.pokemon_family import PokemonFamily
-from proto.msg.pokemon_settings import PokemonSettings
-from proto.msg.raid_settings import RaidSettings
-from proto.msg.rocket_settings import RocketSettings
-from proto.msg.sourdough_move_mapping_settings import SourdoughMoveMappingSettings
-from proto.msg.stationed_pokemon_table_settings import StationedPokemonTableSettings
-from proto.msg.temporary_evolution_settings import TemporaryEvolutionSettings
-from proto.msg.type_effective import TypeEffective
-from proto.msg.weather_affinities import WeatherAffinities
-from proto.msg.weather_bonus_settings import WeatherBonusSettings
+from nfl.core.gm_holoholo import game_master
+from nfl.proto.message import Message
+from nfl.proto.msg.battle_settings import BattleSettings
+from nfl.proto.msg.bread_move_mappings import BreadMoveMappings
+from nfl.proto.msg.bread_pokemon_scaling_settings import BreadPokemonScalingSettings
+from nfl.proto.msg.combat_move import CombatMove
+from nfl.proto.msg.combat_settings import CombatSettings
+from nfl.proto.msg.combat_stat_stage_settings import CombatStatStageSettings
+from nfl.proto.msg.contest_settings import ContestSettings
+from nfl.proto.msg.form_settings import FormSettings
+from nfl.proto.msg.friendship_milestone_settings import FriendshipMilestoneSettings
+from nfl.proto.msg.mega_evo_settings import MegaEvoSettings
+from nfl.proto.msg.move_settings import MoveSettings
+from nfl.proto.msg.non_combat_move_settings import NonCombatMoveSettings
+from nfl.proto.msg.player_level import PlayerLevel
+from nfl.proto.msg.pokemon_extended_settings import PokemonExtendedSettings
+from nfl.proto.msg.pokemon_family import PokemonFamily
+from nfl.proto.msg.pokemon_settings import PokemonSettings
+from nfl.proto.msg.raid_settings import RaidSettings
+from nfl.proto.msg.rocket_settings import RocketSettings
+from nfl.proto.msg.sourdough_move_mapping_settings import SourdoughMoveMappingSettings
+from nfl.proto.msg.stationed_pokemon_table_settings import StationedPokemonTableSettings
+from nfl.proto.msg.temporary_evolution_settings import TemporaryEvolutionSettings
+from nfl.proto.msg.type_effective import TypeEffective
+from nfl.proto.msg.weather_affinities import WeatherAffinities
+from nfl.proto.msg.weather_bonus_settings import WeatherBonusSettings
 
 
 T = TypeVar("T")

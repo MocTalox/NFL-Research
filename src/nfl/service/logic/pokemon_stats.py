@@ -1,9 +1,9 @@
 from math import floor
 
-from core.gm_holoholo import HoloCharacterCategory
-from proto.msg.pokemon_settings import PokemonSettings
-from service.common.data import CPM, RCPM, get_tgr_rank_mult
-from utils.float32 import f32
+from nfl.core.gm_holoholo import HoloCharacterCategory
+from nfl.proto.msg.pokemon_settings import PokemonSettings
+from nfl.service.common.data import CPM, RCPM, get_tgr_rank_mult
+from nfl.utils.float32 import f32
 
 
 def get_cpm(level: float) -> float:

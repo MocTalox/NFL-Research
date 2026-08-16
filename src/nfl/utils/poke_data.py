@@ -5,9 +5,9 @@ from collections.abc import Callable, Iterable, Iterator
 from dataclasses import dataclass
 from typing import Generic, TypeVar, NamedTuple
 
-from core.gm_holoholo import HoloPokemonId, HoloTempEvoId
-from utils.poke_species import PokeSpecies
-from utils.poke_map import PokeMap
+from nfl.core.gm_holoholo import HoloPokemonId, HoloTempEvoId
+from nfl.utils.poke_species import PokeSpecies
+from nfl.utils.poke_map import PokeMap
 
 
 P = TypeVar("P", bound=PokeSpecies)
