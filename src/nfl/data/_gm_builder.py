@@ -1,15 +1,17 @@
 import re
 
 from nfl.proto.message import Message
-from nfl.proto.override import Override, RemTemplate, AddTemplate, Action
+from nfl.proto.override import Action, AddTemplate, Override, RemTemplate
 from nfl.proto.template import Template
 
 from ._gm_parser import parse_proto_file
 
 
-def build_game_master(raw_game_master: str, raw_overrides: str = "") -> dict[str, dict[str, Template]]:
+def build_game_master(
+    raw_game_master: str, raw_overrides: str | None
+) -> dict[str, dict[str, Template]]:
     parsed_game_master = parse_proto_file(raw_game_master)
-    parsed_overrides = parse_proto_file(raw_overrides)
+    parsed_overrides = parse_proto_file(raw_overrides or "")
 
     def unfold_step(key: str) -> tuple[str, int | None]:
         if m := re.match(r"(\w+)\[(\d+)\]", key):
@@ -25,13 +27,13 @@ def build_game_master(raw_game_master: str, raw_overrides: str = "") -> dict[str
 
     for override in parsed_overrides.get_object_list("override", Override.from_message):
         if len(override.target) < 2:
-            target = '.'.join(override.target)
+            target = ".".join(override.target)
             raise ValueError(
-                f"Invalid override target \"{target}\": "
+                f'Invalid override target "{target}": '
                 f"must contain at least a root key and a target. "
                 f"Expected format: [key, ...path, target]. "
                 f"Note: the root key is not a valid target, use `<undefined>` instead."
-                #TODO Implement <undefined>
+                # TODO Implement <undefined>
             )
         key, *path, target = override.target
         for template_id in override.template_id:
@@ -57,12 +59,16 @@ def build_game_master(raw_game_master: str, raw_overrides: str = "") -> dict[str
                 for val in override.value:
                     value.add(target, val)
 
-    for rem_template in parsed_overrides.get_object_list("rem_template", RemTemplate.from_message):
+    for rem_template in parsed_overrides.get_object_list(
+        "rem_template", RemTemplate.from_message
+    ):
         for template_id in rem_template.template_id:
             template_key = mapper.pop(template_id)
             del data[template_key][template_id]
 
-    for add_template in parsed_overrides.get_object_list("add_template", AddTemplate.from_message):
+    for add_template in parsed_overrides.get_object_list(
+        "add_template", AddTemplate.from_message
+    ):
         template_id, key = add_template.template_id, add_template.key
         message_core = Message()
         message_data = Message()

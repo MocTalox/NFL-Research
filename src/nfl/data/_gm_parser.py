@@ -3,10 +3,9 @@ import re
 from nfl.proto.message import Message
 from nfl.utils.raw_value import RawValue
 
-
-_OPENING_PATTERN = re.compile(r'([a-zA-Z0-9_]*) \{')
+_OPENING_PATTERN = re.compile(r"([a-zA-Z0-9_]*) \{")
 _ELEMENT_PATTERN = re.compile(r'([a-zA-Z0-9_]*): (?:"([^"]*)"|(.*))')
-_CLOSING_PATTERN = re.compile(r'\}')
+_CLOSING_PATTERN = re.compile(r"\}")
 
 
 def parse_proto_file(text: str) -> Message:
@@ -37,6 +36,7 @@ def parse_proto_file(text: str) -> Message:
         raise ValueError("Corrupted GM file")
 
     return root
+
 
 def _parse_line(line: str):
     if match := _OPENING_PATTERN.fullmatch(line):
