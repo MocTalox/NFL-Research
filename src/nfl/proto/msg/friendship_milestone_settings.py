@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
+
 from nfl.proto.holoholo import HoloFriendshipLevel
 from nfl.proto.message import Message
 

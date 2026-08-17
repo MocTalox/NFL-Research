@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
+
 from nfl.proto.message import Message
 
 
@@ -10,8 +12,11 @@ class ContestSettings:
     @classmethod
     def from_message(cls, msg: Message) -> ContestSettings:
         return cls(
-            contest_score_coefficient=msg.get_object("contestScoreCoefficient", ContestScoreCoefficient.from_message),
+            contest_score_coefficient=msg.get_object(
+                "contestScoreCoefficient", ContestScoreCoefficient.from_message
+            ),
         )
+
 
 @dataclass(frozen=True)
 class ContestScoreCoefficient:
@@ -22,6 +27,7 @@ class ContestScoreCoefficient:
         return cls(
             pokemon_size=msg.get_object("pokemonSize", PokemonSize.from_message),
         )
+
 
 @dataclass(frozen=True)
 class PokemonSize:

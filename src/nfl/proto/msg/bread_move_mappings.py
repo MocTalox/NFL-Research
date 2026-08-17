@@ -1,26 +1,29 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
-from nfl.proto.holoholo import HoloPokemonType, HoloPokemonMove
+
+from nfl.proto.holoholo import HoloPokemonMove, HoloPokemonType
 from nfl.proto.message import Message
 
 
 @dataclass(frozen=True)
 class BreadMoveMappings:
-    mappings: tuple[Mappings, ...]
+    mappings: tuple[Mappings_BMM, ...]
 
     @classmethod
     def from_message(cls, msg: Message) -> BreadMoveMappings:
         return cls(
-            mappings=msg.get_object_list("mappings", Mappings.from_message),
+            mappings=msg.get_object_list("mappings", Mappings_BMM.from_message),
         )
 
+
 @dataclass(frozen=True)
-class Mappings:
+class Mappings_BMM:
     type: HoloPokemonType
     move: HoloPokemonMove
 
     @classmethod
-    def from_message(cls, msg: Message) -> Mappings:
+    def from_message(cls, msg: Message) -> Mappings_BMM:
         return cls(
             type=msg.get_enum("type", HoloPokemonType),
             move=msg.get_enum("move", HoloPokemonMove),

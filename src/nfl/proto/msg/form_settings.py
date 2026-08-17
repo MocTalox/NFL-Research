@@ -1,6 +1,8 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
-from nfl.proto.holoholo import HoloPokemonId, HoloPokemonForm
+
+from nfl.proto.holoholo import HoloPokemonForm, HoloPokemonId
 from nfl.proto.message import Message
 
 
@@ -17,6 +19,7 @@ class FormSettings:
             forms=msg.get_object_list("forms", Form.from_message),
             ignore=msg.get_bool_or_false("moc_ignore"),
         )
+
 
 @dataclass(frozen=True)
 class Form:

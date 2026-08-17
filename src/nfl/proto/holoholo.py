@@ -4,6 +4,7 @@ from enum import IntEnum, unique
 class _HoloEnum(IntEnum):
     def __str__(self):
         return self.name
+
     def __repr__(self):
         return self.name
 
@@ -30,12 +31,14 @@ class HoloPokemonType(_HoloEnum):
     POKEMON_TYPE_DARK = 17
     POKEMON_TYPE_FAIRY = 18
 
+
 @unique
 class HoloPokemonClass(_HoloEnum):
     POKEMON_CLASS_NORMAL = 0
     POKEMON_CLASS_LEGENDARY = 1
     POKEMON_CLASS_MYTHIC = 2
     POKEMON_CLASS_ULTRA_BEAST = 3
+
 
 @unique
 class HoloTempEvoId(_HoloEnum):
@@ -45,6 +48,7 @@ class HoloTempEvoId(_HoloEnum):
     TEMP_EVOLUTION_MEGA_Y = 3
     TEMP_EVOLUTION_PRIMAL = 4
 
+
 @unique
 # Original name: `BreadModeEnum.Types.Modifier`
 class HoloBreadMode(_HoloEnum):
@@ -53,6 +57,7 @@ class HoloBreadMode(_HoloEnum):
     BREAD_DOUGH_MODE = 2
     BREAD_DOUGH_MODE_2 = 3
     BREAD_SPECIAL_MODE = 4
+
 
 @unique
 class HoloWeatherCondition(_HoloEnum):
@@ -64,6 +69,7 @@ class HoloWeatherCondition(_HoloEnum):
     WINDY = 5
     SNOW = 6
     FOG = 7
+
 
 @unique
 class HoloPokemonId(_HoloEnum):
@@ -1094,6 +1100,7 @@ class HoloPokemonId(_HoloEnum):
     TERAPAGOS = 1024
     PECHARUNT = 1025
 
+
 @unique
 class HoloPokemonFamilyId(_HoloEnum):
     FAMILY_UNSET = 0
@@ -1645,6 +1652,7 @@ class HoloPokemonFamilyId(_HoloEnum):
     FAMILY_IRONCROWN = 1023
     FAMILY_TERAPAGOS = 1024
     FAMILY_PECHARUNT = 1025
+
 
 @unique
 # Original name: `PokemonDisplayProto.Form`
@@ -3130,6 +3138,7 @@ class HoloPokemonForm(_HoloEnum):
     PIKACHU_ANNIVERSARY_2026 = 3348
     GIMMIGHOUL_COIN_A2_2026 = 3351
 
+
 @unique
 class HoloPokemonMove(_HoloEnum):
     MOVE_UNSET = 0
@@ -3569,6 +3578,7 @@ class HoloPokemonMove(_HoloEnum):
     GLAIVE_RUSH = 590
     SNIPE_SHOT = 592
 
+
 @unique
 class HoloCharacterCategory(_HoloEnum):
     UNSET = 0
@@ -3583,6 +3593,7 @@ class HoloCharacterCategory(_HoloEnum):
     EVENT_NPC = 9
     PLAYER_TEAM_LEADER = 10
 
+
 @unique
 class HoloCombatType(_HoloEnum):
     COMBAT_TYPE_UNSET = 0
@@ -3596,6 +3607,7 @@ class HoloCombatType(_HoloEnum):
     COMBAT_TYPE_DMAX = 8
     COMBAT_TYPE_GMAX = 9
 
+
 @unique
 class HoloFriendshipLevel(_HoloEnum):
     FRIENDSHIP_LEVEL_UNSET = 0
@@ -3605,3 +3617,19 @@ class HoloFriendshipLevel(_HoloEnum):
     FRIENDSHIP_LEVEL_3 = 4
     FRIENDSHIP_LEVEL_4 = 5
     FRIENDSHIP_LEVEL_5 = 6
+
+
+__all__ = [
+    "HoloBreadMode",
+    "HoloCharacterCategory",
+    "HoloCombatType",
+    "HoloFriendshipLevel",
+    "HoloPokemonClass",
+    "HoloPokemonFamilyId",
+    "HoloPokemonForm",
+    "HoloPokemonId",
+    "HoloPokemonMove",
+    "HoloPokemonType",
+    "HoloTempEvoId",
+    "HoloWeatherCondition",
+]

@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
+
 from nfl.proto.holoholo import HoloCharacterCategory
 from nfl.proto.message import Message
 
@@ -16,6 +18,7 @@ class RocketSettings:
             rank=msg.get_object_list("rank", Rank.from_message),
         )
 
+
 @dataclass(frozen=True)
 class Rank:
     character_category: HoloCharacterCategory
@@ -24,6 +27,8 @@ class Rank:
     @classmethod
     def from_message(cls, msg: Message) -> Rank:
         return cls(
-            character_category=msg.get_enum("character_category", HoloCharacterCategory),
+            character_category=msg.get_enum(
+                "character_category", HoloCharacterCategory
+            ),
             rank_multiplier=msg.get_float("rank_multiplier"),
         )

@@ -15,12 +15,11 @@ class Template:
                 f"{self.template_id} and {data_template_id}"
             )
 
-        keys = [k for k in data_msg.keys() if k != "template_id"]
+        keys = [k for k in data_msg.keys() if k != "template_id"]  # noqa: SIM118 — TODO turn Message into Mapping?
 
         if len(keys) > 1:
             raise ValueError(
-                f"Multiple keys in template data "
-                f"for template_id = {data_template_id}"
+                f"Multiple keys in template data for template_id = {data_template_id}"
             )
 
         if not keys:
@@ -31,13 +30,15 @@ class Template:
             self.value = data_msg.get_message(self.key)
 
     def __str__(self) -> str:
-        data = f"    {self.key} {self.value.format_message('    ')}\n" if self.key else ""
+        data = (
+            f"    {self.key} {self.value.format_message('    ')}\n" if self.key else ""
+        )
 
         return (
             f"{{\n"
-            f"  template_id: \"{self.template_id}\"\n"
+            f'  template_id: "{self.template_id}"\n'
             f"  data {{\n"
-            f"    template_id: \"{self.template_id}\"\n"
+            f'    template_id: "{self.template_id}"\n'
             f"{data}"
             f"  }}\n"
             f"}}"

@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
+
 from nfl.proto.holoholo import HoloPokemonId, HoloTempEvoId
 from nfl.proto.message import Message
 
@@ -13,8 +15,11 @@ class TemporaryEvolutionSettings:
     def from_message(cls, msg: Message) -> TemporaryEvolutionSettings:
         return cls(
             pokemon_id=msg.get_enum("pokemonId", HoloPokemonId),
-            temporary_evolutions=msg.get_object_list("temporary_evolutions", TemporaryEvolutions.from_message),
+            temporary_evolutions=msg.get_object_list(
+                "temporary_evolutions", TemporaryEvolutions.from_message
+            ),
         )
+
 
 @dataclass(frozen=True)
 class TemporaryEvolutions:

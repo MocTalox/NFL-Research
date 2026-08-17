@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
+
 from nfl.proto.message import Message
 
 
@@ -11,6 +13,10 @@ class MegaEvoSettings:
     @classmethod
     def from_message(cls, msg: Message) -> MegaEvoSettings:
         return cls(
-            attack_boost_from_mega_different_type=msg.get_float("attackBoostFromMegaDifferentType"),
-            attack_boost_from_mega_same_type=msg.get_float("attackBoostFromMegaSameType"),
+            attack_boost_from_mega_different_type=msg.get_float(
+                "attackBoostFromMegaDifferentType"
+            ),
+            attack_boost_from_mega_same_type=msg.get_float(
+                "attackBoostFromMegaSameType"
+            ),
         )

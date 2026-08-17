@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
+
 from nfl.proto.holoholo import HoloPokemonFamilyId
 from nfl.proto.message import Message
 
@@ -7,7 +9,7 @@ from nfl.proto.message import Message
 @dataclass(frozen=True)
 class PokemonFamily:
     family_id: HoloPokemonFamilyId
-    
+
     @classmethod
     def from_message(cls, msg: Message) -> PokemonFamily:
         return cls(

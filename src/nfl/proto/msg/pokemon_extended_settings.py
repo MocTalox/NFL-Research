@@ -1,6 +1,8 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
-from nfl.proto.holoholo import HoloPokemonId, HoloPokemonForm, HoloTempEvoId
+
+from nfl.proto.holoholo import HoloPokemonForm, HoloPokemonId, HoloTempEvoId
 from nfl.proto.message import Message
 
 
@@ -9,7 +11,7 @@ class PokemonExtendedSettings:
     unique_id: HoloPokemonId
     size_settings: SizeSettings
     form: HoloPokemonForm
-    temp_evo_overrides: tuple[TempEvoOverrides, ...]
+    temp_evo_overrides: tuple[TempEvoOverrides_PES, ...]
 
     @classmethod
     def from_message(cls, msg: Message) -> PokemonExtendedSettings:
@@ -17,20 +19,24 @@ class PokemonExtendedSettings:
             unique_id=msg.get_enum("uniqueId", HoloPokemonId),
             size_settings=msg.get_object("sizeSettings", SizeSettings.from_message),
             form=msg.get_enum_or_none("form", HoloPokemonForm),
-            temp_evo_overrides=msg.get_object_list("temp_evo_overrides", TempEvoOverrides.from_message),
+            temp_evo_overrides=msg.get_object_list(
+                "temp_evo_overrides", TempEvoOverrides_PES.from_message
+            ),
         )
 
+
 @dataclass(frozen=True)
-class TempEvoOverrides:
+class TempEvoOverrides_PES:
     temp_evo_id: HoloTempEvoId
     size_settings: SizeSettings
 
     @classmethod
-    def from_message(cls, msg: Message) -> TempEvoOverrides:
+    def from_message(cls, msg: Message) -> TempEvoOverrides_PES:
         return cls(
             temp_evo_id=msg.get_enum("tempEvoId", HoloTempEvoId),
             size_settings=msg.get_object("sizeSettings", SizeSettings.from_message),
         )
+
 
 @dataclass(frozen=True)
 class SizeSettings:

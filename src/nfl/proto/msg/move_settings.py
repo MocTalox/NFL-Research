@@ -1,6 +1,8 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
-from nfl.proto.holoholo import HoloPokemonType, HoloPokemonMove
+
+from nfl.proto.holoholo import HoloPokemonMove, HoloPokemonType
 from nfl.proto.message import Message
 
 

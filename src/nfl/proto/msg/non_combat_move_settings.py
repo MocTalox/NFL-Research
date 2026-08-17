@@ -1,6 +1,8 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
-from nfl.proto.holoholo import HoloPokemonMove, HoloCombatType
+
+from nfl.proto.holoholo import HoloCombatType, HoloPokemonMove
 from nfl.proto.message import Message
 
 
@@ -16,6 +18,7 @@ class NonCombatMoveSettings:
             bonus_effect=msg.get_object("bonusEffect", BonusEffect.from_message),
         )
 
+
 @dataclass(frozen=True)
 class BonusEffect:
     attack_defense_bonus: AttackDefenseBonus | None
@@ -23,8 +26,11 @@ class BonusEffect:
     @classmethod
     def from_message(cls, msg: Message) -> BonusEffect:
         return cls(
-            attack_defense_bonus=msg.get_object_or_none("attackDefenseBonus", AttackDefenseBonus.from_message),
+            attack_defense_bonus=msg.get_object_or_none(
+                "attackDefenseBonus", AttackDefenseBonus.from_message
+            ),
         )
+
 
 @dataclass(frozen=True)
 class AttackDefenseBonus:
@@ -35,6 +41,7 @@ class AttackDefenseBonus:
         return cls(
             attributes=msg.get_object_list("attributes", Attributes.from_message),
         )
+
 
 @dataclass(frozen=True)
 class Attributes:

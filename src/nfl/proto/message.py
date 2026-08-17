@@ -1,11 +1,11 @@
 from __future__ import annotations
 
+from collections.abc import Callable, Iterable
 from enum import IntEnum
-from typing import Callable, Iterable, Literal, TypeVar, cast, overload
+from typing import Literal, TypeVar, cast, overload
 
 from nfl.utils.float32 import f32
 from nfl.utils.raw_value import RawValue
-
 
 T = TypeVar("T")
 E = TypeVar("E", bound=IntEnum)
@@ -75,7 +75,9 @@ class Message:
         return Message._to_enum(self._get_single_element(key, RawValue), enum_class)
 
     def get_enum_or_none(self, key: str, enum_class: type[E]) -> E:
-        return Message._to_enum(self._get_single_element(key, RawValue, nullable=True), enum_class)
+        return Message._to_enum(
+            self._get_single_element(key, RawValue, nullable=True), enum_class
+        )
 
     def get_int(self, key: str) -> int:
         return int(self._get_single_element(key, RawValue).str_value)
@@ -112,13 +114,18 @@ class Message:
         if isinstance(cond, str):
             filter_key = cond
             cond = lambda m: m.has(filter_key)
-        return tuple(mapper(msg) for msg in self._get_many_elements(key, Message) if cond(msg))
+        return tuple(
+            mapper(msg) for msg in self._get_many_elements(key, Message) if cond(msg)
+        )
 
     def get_string_list(self, key: str) -> tuple[str, ...]:
         return tuple(self._get_many_elements(key, str))
 
     def get_enum_list(self, key: str, enum_class: type[E]) -> tuple[E, ...]:
-        return tuple(Message._to_enum(id, enum_class) for id in self._get_many_elements(key, RawValue))
+        return tuple(
+            Message._to_enum(id, enum_class)
+            for id in self._get_many_elements(key, RawValue)
+        )
 
     def get_int_list(self, key: str) -> tuple[int, ...]:
         return tuple(int(v.str_value) for v in self._get_many_elements(key, RawValue))
@@ -130,10 +137,14 @@ class Message:
     def _get_single_element(self, key: str, expected_type: type[T]) -> T: ...
 
     @overload
-    def _get_single_element(self, key: str, expected_type: type[T], nullable: Literal[False]) -> T: ...
+    def _get_single_element(
+        self, key: str, expected_type: type[T], nullable: Literal[False]
+    ) -> T: ...
 
     @overload
-    def _get_single_element(self, key: str, expected_type: type[T], nullable: Literal[True]) -> T | None: ...
+    def _get_single_element(
+        self, key: str, expected_type: type[T], nullable: Literal[True]
+    ) -> T | None: ...
 
     def _get_single_element(
         self,
@@ -179,9 +190,9 @@ class Message:
 
     @staticmethod
     def _to_enum(id: RawValue | None, enum_class: type[E]) -> E:
-        if not id: # Default enum value if None
+        if not id:  # Default enum value if None
             return enum_class(0)
-        try: # Try by name first
+        try:  # Try by name first
             return enum_class[id.str_value]
-        except KeyError: # Otherwise try by numeric id
+        except KeyError:  # Otherwise try by numeric id
             return enum_class(int(id.str_value))

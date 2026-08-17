@@ -1,6 +1,16 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
-from nfl.proto.holoholo import HoloPokemonType, HoloPokemonClass, HoloTempEvoId, HoloPokemonId, HoloPokemonFamilyId, HoloPokemonForm, HoloPokemonMove
+
+from nfl.proto.holoholo import (
+    HoloPokemonClass,
+    HoloPokemonFamilyId,
+    HoloPokemonForm,
+    HoloPokemonId,
+    HoloPokemonMove,
+    HoloPokemonType,
+    HoloTempEvoId,
+)
 from nfl.proto.message import Message
 
 
@@ -21,7 +31,7 @@ class PokemonSettings:
     shadow: Shadow | None
     form: HoloPokemonForm
     elite_cinematic_move: tuple[HoloPokemonMove, ...]
-    temp_evo_overrides: tuple[TempEvoOverrides, ...]
+    temp_evo_overrides: tuple[TempEvoOverrides_PS, ...]
     elite_quick_move: tuple[HoloPokemonMove, ...]
     pokemon_class: HoloPokemonClass
     non_tm_cinematic_moves: tuple[HoloPokemonMove, ...]
@@ -42,17 +52,28 @@ class PokemonSettings:
             height_std_dev=msg.get_float("heightStdDev"),
             weight_std_dev=msg.get_float("weightStdDev"),
             family_id=msg.get_enum("familyId", HoloPokemonFamilyId),
-            evolution_branch=msg.get_object_list("evolutionBranch", EvolutionBranch.from_message, "evolution"),
+            evolution_branch=msg.get_object_list(
+                "evolutionBranch", EvolutionBranch.from_message, "evolution"
+            ),
             shadow=msg.get_object_or_none("shadow", Shadow.from_message),
             form=msg.get_enum_or_none("form", HoloPokemonForm),
-            elite_cinematic_move=msg.get_enum_list("eliteCinematicMove", HoloPokemonMove),
-            temp_evo_overrides=msg.get_object_list("temp_evo_overrides", TempEvoOverrides.from_message, "tempEvoId"),
+            elite_cinematic_move=msg.get_enum_list(
+                "eliteCinematicMove", HoloPokemonMove
+            ),
+            temp_evo_overrides=msg.get_object_list(
+                "temp_evo_overrides", TempEvoOverrides_PS.from_message, "tempEvoId"
+            ),
             elite_quick_move=msg.get_enum_list("eliteQuickMove", HoloPokemonMove),
             pokemon_class=msg.get_enum_or_none("pokemonClass", HoloPokemonClass),
-            non_tm_cinematic_moves=msg.get_enum_list("nonTmCinematicMoves", HoloPokemonMove),
+            non_tm_cinematic_moves=msg.get_enum_list(
+                "nonTmCinematicMoves", HoloPokemonMove
+            ),
             legacy_quick_moves=msg.get_enum_list("legacyQuickMoves", HoloPokemonMove),
-            legacy_cinematic_moves=msg.get_enum_list("legacyCinematicMoves", HoloPokemonMove),
+            legacy_cinematic_moves=msg.get_enum_list(
+                "legacyCinematicMoves", HoloPokemonMove
+            ),
         )
+
 
 @dataclass(frozen=True)
 class Stats:
@@ -68,6 +89,7 @@ class Stats:
             base_defense=msg.get_int_or_zero("baseDefense"),
         )
 
+
 @dataclass(frozen=True)
 class EvolutionBranch:
     evolution: HoloPokemonId
@@ -79,6 +101,7 @@ class EvolutionBranch:
             evolution=msg.get_enum("evolution", HoloPokemonId),
             form=msg.get_enum_or_none("form", HoloPokemonForm),
         )
+
 
 @dataclass(frozen=True)
 class Shadow:
@@ -96,8 +119,9 @@ class Shadow:
             shadow_charge_move=msg.get_enum("shadowChargeMove", HoloPokemonMove),
         )
 
+
 @dataclass(frozen=True)
-class TempEvoOverrides:
+class TempEvoOverrides_PS:
     temp_evo_id: HoloTempEvoId
     stats: Stats
     average_height_m: float
@@ -106,7 +130,7 @@ class TempEvoOverrides:
     type_override_2: HoloPokemonType
 
     @classmethod
-    def from_message(cls, msg: Message) -> TempEvoOverrides:
+    def from_message(cls, msg: Message) -> TempEvoOverrides_PS:
         return cls(
             temp_evo_id=msg.get_enum("tempEvoId", HoloTempEvoId),
             stats=msg.get_object("stats", Stats.from_message),

@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
 from enum import IntEnum
 
@@ -24,9 +25,10 @@ class Override:
         return cls(
             action_type=msg.get_enum("action_type", Action),
             template_id=msg.get_string_list("template_id"),
-            target=msg.get_string("target").split('.'),
+            target=msg.get_string("target").split("."),
             value=msg.get("value"),
         )
+
 
 @dataclass(frozen=True)
 class RemTemplate:
@@ -37,6 +39,7 @@ class RemTemplate:
         return cls(
             template_id=msg.get_string_list("template_id"),
         )
+
 
 @dataclass(frozen=True)
 class AddTemplate:

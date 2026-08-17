@@ -1,6 +1,8 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
-from nfl.proto.holoholo import HoloPokemonType, HoloPokemonMove
+
+from nfl.proto.holoholo import HoloPokemonMove, HoloPokemonType
 from nfl.proto.message import Message
 
 
@@ -24,6 +26,7 @@ class CombatMove:
             duration_turns=msg.get_int_or_zero("durationTurns"),
         )
 
+
 @dataclass(frozen=True)
 class Buffs:
     buff_activation_chance: float
@@ -36,8 +39,16 @@ class Buffs:
     def from_message(cls, msg: Message) -> Buffs:
         return cls(
             buff_activation_chance=msg.get_float_or_zero("buffActivationChance"),
-            attacker_attack_stat_stage_change=msg.get_int_or_zero("attackerAttackStatStageChange"),
-            attacker_defense_stat_stage_change=msg.get_int_or_zero("attackerDefenseStatStageChange"),
-            target_attack_stat_stage_change=msg.get_int_or_zero("targetAttackStatStageChange"),
-            target_defense_stat_stage_change=msg.get_int_or_zero("targetDefenseStatStageChange"),
+            attacker_attack_stat_stage_change=msg.get_int_or_zero(
+                "attackerAttackStatStageChange"
+            ),
+            attacker_defense_stat_stage_change=msg.get_int_or_zero(
+                "attackerDefenseStatStageChange"
+            ),
+            target_attack_stat_stage_change=msg.get_int_or_zero(
+                "targetAttackStatStageChange"
+            ),
+            target_defense_stat_stage_change=msg.get_int_or_zero(
+                "targetDefenseStatStageChange"
+            ),
         )

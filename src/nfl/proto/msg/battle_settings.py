@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
+
 from nfl.proto.message import Message
 
 
@@ -29,14 +31,24 @@ class BattleSettings:
             round_duration_seconds=msg.get_int("roundDurationSeconds"),
             bonus_time_per_ally_seconds=msg.get_int("bonusTimePerAllySeconds"),
             maximum_attackers_per_battle=msg.get_int("maximumAttackersPerBattle"),
-            same_type_attack_bonus_multiplier=msg.get_float("sameTypeAttackBonusMultiplier"),
+            same_type_attack_bonus_multiplier=msg.get_float(
+                "sameTypeAttackBonusMultiplier"
+            ),
             maximum_energy=msg.get_int("maximumEnergy"),
             energy_delta_per_health_lost=msg.get_float("energyDeltaPerHealthLost"),
             dodge_duration_ms=msg.get_int("dodgeDurationMs"),
             swap_duration_ms=msg.get_int("swapDurationMs"),
             dodge_damage_reduction_percent=msg.get_float("dodgeDamageReductionPercent"),
-            shadow_pokemon_attack_bonus_multiplier=msg.get_float("shadowPokemonAttackBonusMultiplier"),
-            shadow_pokemon_defense_bonus_multiplier=msg.get_float("shadowPokemonDefenseBonusMultiplier"),
-            purified_pokemon_attack_multiplier_vs_shadow=msg.get_float("purifiedPokemonAttackMultiplierVsShadow"),
-            boss_energy_regeneration_per_health_lost=msg.get_float("bossEnergyRegenerationPerHealthLost"),
+            shadow_pokemon_attack_bonus_multiplier=msg.get_float(
+                "shadowPokemonAttackBonusMultiplier"
+            ),
+            shadow_pokemon_defense_bonus_multiplier=msg.get_float(
+                "shadowPokemonDefenseBonusMultiplier"
+            ),
+            purified_pokemon_attack_multiplier_vs_shadow=msg.get_float(
+                "purifiedPokemonAttackMultiplierVsShadow"
+            ),
+            boss_energy_regeneration_per_health_lost=msg.get_float(
+                "bossEnergyRegenerationPerHealthLost"
+            ),
         )
