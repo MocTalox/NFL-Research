@@ -1,8 +1,9 @@
 import re
 
-from nfl.proto import Action, AddTemplate, Message, Override, RemTemplate, Template
-
 from ._gm_parser import parse_proto_file
+from .message import Message
+from .override import Action, AddTemplate, Override, RemTemplate
+from .template import Template
 
 
 def build_game_master(

@@ -1,5 +1,3 @@
-from nfl.proto import Template
-
 from ._gm_data import (
     CachedGameMasterAccess,
     DefaultGameMasterAccess,
@@ -7,6 +5,9 @@ from ._gm_data import (
     GameMasterAccess,
     RemoteGameMasterAccess,
 )
+from .message import Message
+from .override import Action, AddTemplate, Override, RemTemplate
+from .template import Template
 
 _access: GameMasterAccess = DefaultGameMasterAccess()
 
@@ -25,11 +26,17 @@ def get_templates(key: str) -> dict[str, Template]:
 
 
 __all__ = [
+    "Action",
+    "AddTemplate",
     "CachedGameMasterAccess",
     "DefaultGameMasterAccess",
     "FileGameMasterAccess",
     "GameMasterAccess",
+    "Message",
+    "Override",
+    "RemTemplate",
     "RemoteGameMasterAccess",
+    "Template",
     "configure_game_master_access",
     "get_game_master",
     "get_templates",

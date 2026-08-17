@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from nfl.proto import HoloCharacterCategory, Message
+from nfl.data import Message
+from nfl.proto import HoloCharacterCategory
 
 
 @dataclass(frozen=True)

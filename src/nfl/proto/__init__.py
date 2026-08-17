@@ -1,19 +1,177 @@
-from . import holoholo, msg, templates
-from .holoholo import *
-from .message import Message
-from .msg import *
-from .override import Action, AddTemplate, Override, RemTemplate
-from .template import Template
-from .templates import *
+from .holo.holoholo import (
+    HoloBreadMode,
+    HoloCharacterCategory,
+    HoloCombatType,
+    HoloFriendshipLevel,
+    HoloPokemonClass,
+    HoloPokemonFamilyId,
+    HoloPokemonForm,
+    HoloPokemonId,
+    HoloPokemonMove,
+    HoloPokemonType,
+    HoloTempEvoId,
+    HoloWeatherCondition,
+)
+from .msg.battle_settings import BattleSettings
+from .msg.bread_move_mappings import BreadMoveMappings, Mappings_BMM
+from .msg.bread_pokemon_scaling_settings import (
+    BreadPokemonScalingSettings,
+    PokemonFormData,
+    VisualData,
+    VisualSettings,
+)
+from .msg.combat_move import Buffs, CombatMove
+from .msg.combat_settings import CombatSettings
+from .msg.combat_stat_stage_settings import CombatStatStageSettings
+from .msg.contest_settings import ContestScoreCoefficient, ContestSettings, PokemonSize
+from .msg.form_settings import Form, FormSettings
+from .msg.friendship_milestone_settings import FriendshipMilestoneSettings
+from .msg.mega_evo_settings import MegaEvoSettings
+from .msg.move_settings import MoveSettings
+from .msg.non_combat_move_settings import (
+    AttackDefenseBonus,
+    Attributes,
+    BonusEffect,
+    NonCombatMoveSettings,
+)
+from .msg.player_level import PlayerLevel
+from .msg.pokemon_extended_settings import (
+    PokemonExtendedSettings,
+    SizeSettings,
+    TempEvoOverrides_PES,
+)
+from .msg.pokemon_family import PokemonFamily
+from .msg.pokemon_settings import (
+    EvolutionBranch,
+    PokemonSettings,
+    Shadow,
+    Stats,
+    TempEvoOverrides_PS,
+)
+from .msg.raid_settings import RaidSettings
+from .msg.rocket_settings import Rank, RocketSettings
+from .msg.sourdough_move_mapping_settings import (
+    Mappings_SMMS,
+    SourdoughMoveMappingSettings,
+)
+from .msg.stationed_pokemon_table_settings import (
+    StationedPokemonTableSettings,
+    TierBoosts,
+)
+from .msg.temporary_evolution_settings import (
+    TemporaryEvolutions,
+    TemporaryEvolutionSettings,
+)
+from .msg.type_effective import TypeEffective
+from .msg.weather_affinities import WeatherAffinities
+from .msg.weather_bonus_settings import WeatherBonusSettings
+from .templates import (
+    BATTLE_SETTINGS,
+    BREAD_MOVE_MAPPINGS,
+    BREAD_POKEMON_SCALING_SETTINGS,
+    COMBAT_MOVE,
+    COMBAT_SETTINGS,
+    COMBAT_STAT_STAGE_SETTINGS,
+    CONTEST_SETTINGS,
+    FORM_SETTINGS,
+    FRIENDSHIP_MILESTONE_SETTINGS,
+    MEGA_EVO_SETTINGS,
+    MOVE_SETTINGS,
+    NON_COMBAT_MOVE_SETTINGS,
+    PLAYER_LEVEL,
+    POKEMON_EXTENDED_SETTINGS,
+    POKEMON_FAMILY,
+    POKEMON_SETTINGS,
+    RAID_SETTINGS,
+    ROCKET_SETTINGS,
+    SOURDOUGH_MOVE_MAPPING_SETTINGS,
+    STATIONED_POKEMON_TABLE_SETTINGS,
+    TEMPORARY_EVOLUTION_SETTINGS,
+    TYPE_EFFECTIVE,
+    WEATHER_AFFINITIES,
+    WEATHER_BONUS_SETTINGS,
+)
 
-__all__ = [  # pyright: ignore[reportUnsupportedDunderAll]  # noqa: PLE0604
-    *templates.__all__,
-    *holoholo.__all__,
-    *msg.__all__,
-    "Action",
-    "AddTemplate",
-    "Message",
-    "Override",
-    "RemTemplate",
-    "Template",
+__all__ = [
+    "BATTLE_SETTINGS",
+    "BREAD_MOVE_MAPPINGS",
+    "BREAD_POKEMON_SCALING_SETTINGS",
+    "COMBAT_MOVE",
+    "COMBAT_SETTINGS",
+    "COMBAT_STAT_STAGE_SETTINGS",
+    "CONTEST_SETTINGS",
+    "FORM_SETTINGS",
+    "FRIENDSHIP_MILESTONE_SETTINGS",
+    "MEGA_EVO_SETTINGS",
+    "MOVE_SETTINGS",
+    "NON_COMBAT_MOVE_SETTINGS",
+    "PLAYER_LEVEL",
+    "POKEMON_EXTENDED_SETTINGS",
+    "POKEMON_FAMILY",
+    "POKEMON_SETTINGS",
+    "RAID_SETTINGS",
+    "ROCKET_SETTINGS",
+    "SOURDOUGH_MOVE_MAPPING_SETTINGS",
+    "STATIONED_POKEMON_TABLE_SETTINGS",
+    "TEMPORARY_EVOLUTION_SETTINGS",
+    "TYPE_EFFECTIVE",
+    "WEATHER_AFFINITIES",
+    "WEATHER_BONUS_SETTINGS",
+    "AttackDefenseBonus",
+    "Attributes",
+    "BattleSettings",
+    "BonusEffect",
+    "BreadMoveMappings",
+    "BreadPokemonScalingSettings",
+    "Buffs",
+    "CombatMove",
+    "CombatSettings",
+    "CombatStatStageSettings",
+    "ContestScoreCoefficient",
+    "ContestSettings",
+    "EvolutionBranch",
+    "Form",
+    "FormSettings",
+    "FriendshipMilestoneSettings",
+    "HoloBreadMode",
+    "HoloCharacterCategory",
+    "HoloCombatType",
+    "HoloFriendshipLevel",
+    "HoloPokemonClass",
+    "HoloPokemonFamilyId",
+    "HoloPokemonForm",
+    "HoloPokemonId",
+    "HoloPokemonMove",
+    "HoloPokemonType",
+    "HoloTempEvoId",
+    "HoloWeatherCondition",
+    "Mappings_BMM",
+    "Mappings_SMMS",
+    "MegaEvoSettings",
+    "MoveSettings",
+    "NonCombatMoveSettings",
+    "PlayerLevel",
+    "PokemonExtendedSettings",
+    "PokemonFamily",
+    "PokemonFormData",
+    "PokemonSettings",
+    "PokemonSize",
+    "RaidSettings",
+    "Rank",
+    "RocketSettings",
+    "Shadow",
+    "SizeSettings",
+    "SourdoughMoveMappingSettings",
+    "StationedPokemonTableSettings",
+    "Stats",
+    "TempEvoOverrides_PES",
+    "TempEvoOverrides_PS",
+    "TemporaryEvolutionSettings",
+    "TemporaryEvolutions",
+    "TierBoosts",
+    "TypeEffective",
+    "VisualData",
+    "VisualSettings",
+    "WeatherAffinities",
+    "WeatherBonusSettings",
 ]

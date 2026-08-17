@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from nfl.proto import HoloCombatType, HoloPokemonMove, Message
+from nfl.data import Message
+from nfl.proto import HoloCombatType, HoloPokemonMove
 
 
 @dataclass(frozen=True)

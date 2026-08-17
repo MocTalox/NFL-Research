@@ -1,13 +1,32 @@
 from collections.abc import Callable
 from typing import TypeVar
 
-from nfl.data import get_templates
+from nfl.data import Message, get_templates
 
-from .message import Message
-
-# Import the complete messages collection intentionally:
-# this module operates on every public dataclass in msg.
-from .msg import *
+from .msg.battle_settings import BattleSettings
+from .msg.bread_move_mappings import BreadMoveMappings
+from .msg.bread_pokemon_scaling_settings import BreadPokemonScalingSettings
+from .msg.combat_move import CombatMove
+from .msg.combat_settings import CombatSettings
+from .msg.combat_stat_stage_settings import CombatStatStageSettings
+from .msg.contest_settings import ContestSettings
+from .msg.form_settings import FormSettings
+from .msg.friendship_milestone_settings import FriendshipMilestoneSettings
+from .msg.mega_evo_settings import MegaEvoSettings
+from .msg.move_settings import MoveSettings
+from .msg.non_combat_move_settings import NonCombatMoveSettings
+from .msg.player_level import PlayerLevel
+from .msg.pokemon_extended_settings import PokemonExtendedSettings
+from .msg.pokemon_family import PokemonFamily
+from .msg.pokemon_settings import PokemonSettings
+from .msg.raid_settings import RaidSettings
+from .msg.rocket_settings import RocketSettings
+from .msg.sourdough_move_mapping_settings import SourdoughMoveMappingSettings
+from .msg.stationed_pokemon_table_settings import StationedPokemonTableSettings
+from .msg.temporary_evolution_settings import TemporaryEvolutionSettings
+from .msg.type_effective import TypeEffective
+from .msg.weather_affinities import WeatherAffinities
+from .msg.weather_bonus_settings import WeatherBonusSettings
 
 T = TypeVar("T")
 
@@ -146,31 +165,3 @@ WEATHER_BONUS_SETTINGS = _load_elem(
     "weather_bonus_settings",
     WeatherBonusSettings.from_message,
 )
-
-
-__all__ = [
-    "BATTLE_SETTINGS",
-    "BREAD_MOVE_MAPPINGS",
-    "BREAD_POKEMON_SCALING_SETTINGS",
-    "COMBAT_MOVE",
-    "COMBAT_SETTINGS",
-    "COMBAT_STAT_STAGE_SETTINGS",
-    "CONTEST_SETTINGS",
-    "FORM_SETTINGS",
-    "FRIENDSHIP_MILESTONE_SETTINGS",
-    "MEGA_EVO_SETTINGS",
-    "MOVE_SETTINGS",
-    "NON_COMBAT_MOVE_SETTINGS",
-    "PLAYER_LEVEL",
-    "POKEMON_EXTENDED_SETTINGS",
-    "POKEMON_FAMILY",
-    "POKEMON_SETTINGS",
-    "RAID_SETTINGS",
-    "ROCKET_SETTINGS",
-    "SOURDOUGH_MOVE_MAPPING_SETTINGS",
-    "STATIONED_POKEMON_TABLE_SETTINGS",
-    "TEMPORARY_EVOLUTION_SETTINGS",
-    "TYPE_EFFECTIVE",
-    "WEATHER_AFFINITIES",
-    "WEATHER_BONUS_SETTINGS",
-]
