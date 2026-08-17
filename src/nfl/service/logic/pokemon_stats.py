@@ -3,7 +3,7 @@ from math import floor
 from nfl.proto import HoloCharacterCategory
 from nfl.proto import PokemonSettings
 from nfl.service.common.data import CPM, RCPM, get_tgr_rank_mult
-from nfl.utils.float32 import f32
+from nfl.utils import f32
 
 
 def get_cpm(level: float) -> float:

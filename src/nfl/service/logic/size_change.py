@@ -7,8 +7,8 @@ from nfl.proto import PokemonSettings
 from nfl.proto import SizeSettings
 from nfl.service.common.data import get_pokemon_settings, get_pokemon_extended_settings, get_temp_evo_pokemon_settings, get_temp_evo_size_settings
 from nfl.service.common.size_class import SizeClass
-from nfl.utils.poke_species import PokeSpecies
-from nfl.utils.float32 import has_decimals
+from nfl.utils import PokeSpecies
+from nfl.utils import has_decimals
 
 
 @dataclass(frozen=True)

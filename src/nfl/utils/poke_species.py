@@ -1,16 +1,16 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 import re
+from dataclasses import dataclass
 
-from nfl.proto import HoloPokemonId, HoloPokemonForm, HoloTempEvoId
+from nfl.proto import HoloPokemonForm, HoloPokemonId, HoloTempEvoId
 
 
 @dataclass(frozen=True, order=True, kw_only=True)
 class PokeSpecies:
     name: HoloPokemonId
-    form: HoloPokemonForm = HoloPokemonForm(0)
-    temp_evo: HoloTempEvoId = HoloTempEvoId(0)
+    form: HoloPokemonForm = HoloPokemonForm.FORM_UNSET
+    temp_evo: HoloTempEvoId = HoloTempEvoId.TEMP_EVOLUTION_UNSET
     shadow: bool = False
 
     @property
@@ -44,19 +44,25 @@ class PokeSpecies:
         name: str,
         form: str | None = None,
         temp_evo: str | None = None,
-        shadow: bool = False
+        shadow: bool = False,
     ) -> PokeSpecies:
         name = PokeSpecies.resolve_id(name)
         form = PokeSpecies.resolve_id(form) if form else None
         temp_evo = PokeSpecies.resolve_id(temp_evo) if temp_evo else None
-        if form and not form == HoloPokemonForm(0).name and not form.startswith(f"{name}_"):
+        if (
+            form
+            and form != HoloPokemonForm.FORM_UNSET.name
+            and not form.startswith(f"{name}_")
+        ):
             form = f"{name}_{form}"
         if temp_evo and not temp_evo.startswith("TEMP_EVOLUTION_"):
             temp_evo = f"TEMP_EVOLUTION_{temp_evo}"
         return cls(
             name=HoloPokemonId[name],
-            form=HoloPokemonForm[form] if form else HoloPokemonForm(0),
-            temp_evo=HoloTempEvoId[temp_evo] if temp_evo else HoloTempEvoId(0),
+            form=HoloPokemonForm[form] if form else HoloPokemonForm.FORM_UNSET,
+            temp_evo=HoloTempEvoId[temp_evo]
+            if temp_evo
+            else HoloTempEvoId.TEMP_EVOLUTION_UNSET,
             shadow=shadow,
         )
 

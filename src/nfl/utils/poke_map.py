@@ -1,8 +1,7 @@
+from collections.abc import Callable, Iterable
 from typing import TypeAlias, TypeVar
-from collections.abc import Iterable, Callable
 
-from nfl.proto import HoloPokemonId, HoloPokemonForm
-
+from nfl.proto import HoloPokemonForm, HoloPokemonId
 
 T = TypeVar("T")
 
@@ -20,6 +19,7 @@ def to_poke_map(
         result.setdefault(key1(item), {})[key2(item)] = item
 
     return result
+
 
 def get_poke(data: PokeMap[T], key1: HoloPokemonId, key2: HoloPokemonForm) -> T | None:
     inner = data.get(key1)

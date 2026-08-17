@@ -4,8 +4,8 @@ from nfl.proto import HoloPokemonMove, HoloWeatherCondition, HoloTempEvoId, Holo
 from nfl.proto import FRIENDSHIP_MILESTONE_SETTINGS, TYPE_EFFECTIVE, WEATHER_AFFINITIES, PLAYER_LEVEL, POKEMON_SETTINGS, MOVE_SETTINGS, COMBAT_MOVE, POKEMON_EXTENDED_SETTINGS, ROCKET_SETTINGS, NON_COMBAT_MOVE_SETTINGS, STATIONED_POKEMON_TABLE_SETTINGS, FORM_SETTINGS
 from nfl.proto import PokemonSettings
 from nfl.proto import PokemonExtendedSettings, SizeSettings
-from nfl.utils.poke_map import to_poke_map, get_poke
-from nfl.utils.poke_species import PokeSpecies
+from nfl.utils import to_poke_map, get_poke
+from nfl.utils import PokeSpecies
 
 
 def _get_non_combat_move_attack_defense_bonus(move: HoloPokemonMove):

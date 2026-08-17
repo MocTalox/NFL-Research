@@ -3,19 +3,18 @@ from __future__ import annotations
 from collections import defaultdict
 from collections.abc import Callable, Iterable, Iterator
 from dataclasses import dataclass
-from typing import Generic, TypeVar, NamedTuple
+from typing import Generic, NamedTuple, TypeVar
 
 from nfl.proto import HoloPokemonId, HoloTempEvoId
-from nfl.utils.poke_species import PokeSpecies
-from nfl.utils.poke_map import PokeMap
 
+from .poke_map import PokeMap
+from .poke_species import PokeSpecies
 
 P = TypeVar("P", bound=PokeSpecies)
 F = TypeVar("F")
 
 
 class PokeData(Generic[P]):
-
     def __init__(self):
         self._data: dict[PokeSpecies, P] = {}
 
@@ -38,70 +37,68 @@ class PokeData(Generic[P]):
         return self._data.values()
 
 
-def gen_pokemon_data(
-    source: PokeMap[F],
-    unfold: Callable[[F], list[P]]
-) -> PokeData[P]:
+def gen_pokemon_data(source: PokeMap[F], unfold: Callable[[F], list[P]]) -> PokeData[P]:
 
     iterator_source = (inner.values() for inner in source.values())
 
     return gen_pokemon_data_raw(iterator_source, unfold)
 
+
 def gen_pokemon_data_raw(
-    source: Iterable[Iterable[F]],
-    unfold: Callable[[F], Iterable[P]]
+    source: Iterable[Iterable[F]], unfold: Callable[[F], Iterable[P]]
 ) -> PokeData[P]:
 
     all_pokemons = (
-        (
-            individual
-            for form in pokemon
-            for individual in unfold(form)
-        )
+        (individual for form in pokemon for individual in unfold(form))
         for pokemon in source
     )
 
     unique_pokemons = (
-        pokemon
-        for all_forms in all_pokemons
-        for pokemon in normalize_forms(all_forms)
+        pokemon for all_forms in all_pokemons for pokemon in _normalize_forms(all_forms)
     )
 
     return PokeData[P].generate(unique_pokemons)
 
+
 @dataclass
-class PokeGroup(Generic[P]):
+class _PokeGroup(Generic[P]):
     main: P | None
     forms: list[P]
 
-class GroupKey(NamedTuple):
+
+class _GroupKey(NamedTuple):
     temp_evo: HoloTempEvoId
     shadow: bool
+
 
 _NORMAL = {
     HoloPokemonId.CASTFORM,
     HoloPokemonId.DEOXYS,
     HoloPokemonId.ARCEUS,
     HoloPokemonId.GENESECT,
-    HoloPokemonId.SILVALLY
+    HoloPokemonId.SILVALLY,
 }
 
-def normalize_forms(
+
+def _normalize_forms(
     species_stream: Iterable[P],
 ) -> Iterator[P]:
-    poke_groups: dict[GroupKey, PokeGroup[P]] = defaultdict(lambda: PokeGroup(None, []))
+    poke_groups: dict[_GroupKey, _PokeGroup[P]] = defaultdict(
+        lambda: _PokeGroup(None, [])
+    )
 
     for poke in species_stream:
-        poke_group = poke_groups[GroupKey(poke.temp_evo, poke.shadow)]
+        poke_group = poke_groups[_GroupKey(poke.temp_evo, poke.shadow)]
         poke_group.forms.append(poke)
         if not poke.form:
             assert poke_group.main is None
             poke_group.main = poke
 
     for poke_group in poke_groups.values():
-        yield from collapse_forms(poke_group)
+        yield from _collapse_forms(poke_group)
 
-def collapse_forms(poke_group: PokeGroup[P]) -> Iterator[P]:
+
+def _collapse_forms(poke_group: _PokeGroup[P]) -> Iterator[P]:
     main = poke_group.main
     forms = poke_group.forms
     assert main is not None
@@ -114,7 +111,7 @@ def collapse_forms(poke_group: PokeGroup[P]) -> Iterator[P]:
         yield from forms
         return
 
-    normals = set(p.form for p in forms if p.form.name.endswith("_NORMAL"))
+    normals = {p.form for p in forms if p.form.name.endswith("_NORMAL")}
     if main.name not in _NORMAL and normals:
         yield from (p for p in forms if p.form not in normals)
         return

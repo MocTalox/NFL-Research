@@ -1,4 +1,5 @@
-from typing import Callable, TypeVar, Generic
+from collections.abc import Callable
+from typing import Generic, TypeVar
 
 T = TypeVar("T")
 
@@ -9,10 +10,7 @@ class CsvList(Generic[T]):
         self._rows: list[T | None] = [None]
 
     def __str__(self) -> str:
-        return "\n".join([
-            self._csv_row(row)
-            for row in self._rows
-        ])
+        return "\n".join([self._csv_row(row) for row in self._rows])
 
     def add_row(self, row_object: T) -> None:
         self._rows.append(row_object)
@@ -21,10 +19,7 @@ class CsvList(Generic[T]):
         self._columns.append(lambda row: str(getter(row)) if row else name)
 
     def _csv_row(self, row: T | None) -> str:
-        return ",".join(
-            CsvList._escape(column(row))
-            for column in self._columns
-        )
+        return ",".join(CsvList._escape(column(row)) for column in self._columns)
 
     @staticmethod
     def _escape(value: str) -> str:

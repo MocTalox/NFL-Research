@@ -7,8 +7,8 @@ from nfl.service.common.data import POKEMON, EXTENDED
 from nfl.service.common.size_class import SizeClass
 
 
-ZORUA_POKEMON_SETTINGS = POKEMON[HoloPokemonId.ZORUA][HoloPokemonForm(0)]
-ZORUA_SIZE_SETTINGS = EXTENDED[HoloPokemonId.ZORUA][HoloPokemonForm(0)].size_settings
+ZORUA_POKEMON_SETTINGS = POKEMON[HoloPokemonId.ZORUA][HoloPokemonForm.FORM_UNSET]
+ZORUA_SIZE_SETTINGS = EXTENDED[HoloPokemonId.ZORUA][HoloPokemonForm.FORM_UNSET].size_settings
 
 
 def zorua_size(

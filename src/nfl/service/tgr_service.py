@@ -8,8 +8,8 @@ from nfl.proto import CombatMove
 from nfl.proto import PokemonSettings
 from nfl.service.common.data import PVP_MOVES, POKEMON, get_temp_evo_pokemon_settings
 from nfl.service.logic.damage_formula import get_stab, get_effect, get_shadow_attack_bonus
-from nfl.utils.poke_data import PokeData, gen_pokemon_data
-from nfl.utils.poke_species import PokeSpecies
+from nfl.utils import PokeData, gen_pokemon_data
+from nfl.utils import PokeSpecies
 
 
 @dataclass(frozen=True)
@@ -76,7 +76,7 @@ class _StatCalculator(Protocol):
 
 def _to_pokemon_data(
     pokemon_settings: PokemonSettings,
-    temp_evo_id: HoloTempEvoId = HoloTempEvoId(0),
+    temp_evo_id: HoloTempEvoId = HoloTempEvoId.TEMP_EVOLUTION_UNSET,
     shadow: bool = False
 ):
 
@@ -156,7 +156,7 @@ def tgr_best_pokemon_moveset(poke_species: PokeSpecies) -> list[MoveSetRanking]:
     if pokemon is None:
         raise ValueError(f"No Pokémon data found for species: {poke_species}")
 
-    defender = _EnemyData(HoloPokemonType(0), HoloPokemonType(0), 150, True)
+    defender = _EnemyData(HoloPokemonType.POKEMON_TYPE_NONE, HoloPokemonType.POKEMON_TYPE_NONE, 150, True)
 
     rankings = [
         _create_ranking(p, defender)
@@ -171,12 +171,12 @@ def tgr_best_pokemon_moveset(poke_species: PokeSpecies) -> list[MoveSetRanking]:
 
 def tgr_best_attackers_for_type(type: HoloPokemonType, limit: int) -> list[MoveSetRanking]:
 
-    defender = _EnemyData(HoloPokemonType(0), HoloPokemonType(0), 150, True)
+    defender = _EnemyData(HoloPokemonType.POKEMON_TYPE_NONE, HoloPokemonType.POKEMON_TYPE_NONE, 150, True)
     return _best_attackers(defender, type, limit)
 
 def tgr_best_attackers_against_type(type: HoloPokemonType, limit: int) -> list[MoveSetRanking]:
 
-    defender = _EnemyData(type, HoloPokemonType(0), 150, True)
+    defender = _EnemyData(type, HoloPokemonType.POKEMON_TYPE_NONE, 150, True)
     return _best_attackers(defender, None, limit)
 
 def _best_attackers(

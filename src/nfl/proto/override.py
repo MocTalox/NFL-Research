@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import IntEnum
 
-from nfl.utils.raw_value import RawValue
+from nfl.utils._raw_value import RawValue
 
 from .message import Message
 

@@ -4,8 +4,8 @@ from collections.abc import Callable, Iterable
 from enum import IntEnum
 from typing import Literal, TypeVar, cast, overload
 
-from nfl.utils.float32 import f32
-from nfl.utils.raw_value import RawValue
+from nfl.utils import f32
+from nfl.utils._raw_value import RawValue
 
 T = TypeVar("T")
 E = TypeVar("E", bound=IntEnum)

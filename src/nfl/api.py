@@ -4,7 +4,7 @@ from typing import Any
 import json
 
 from nfl.proto import HoloPokemonId, HoloPokemonForm, HoloPokemonMove, HoloPokemonType, HoloWeatherCondition, HoloCharacterCategory
-from nfl.utils.poke_species import PokeSpecies
+from nfl.utils import PokeSpecies
 from nfl.service.common import data
 from nfl.service.logic import pokemon_stats as stats
 
@@ -80,7 +80,7 @@ def calculate_damage(pokemon: PokeInput, move: str, min_atk: int, max_atk: int, 
     from nfl.service.common.data import get_pokemon_settings, PVP_MOVES
     from nfl.service.logic.damage_formula import damage_formula_raw, Pokemon, BattleState
     from nfl.service.logic.pokemon_stats import get_tgr_stats, get_tgr_hp, get_tgr_cp, get_cpm, get_rcpm
-    from nfl.utils.poke_species import PokeSpecies
+    from nfl.utils import PokeSpecies
 
     pokemon_species = PokeSpecies.resolve(name=pokemon.name, form=pokemon.form, temp_evo=pokemon.temp_evo)
     enemy_pokemon_species = PokeSpecies.resolve(name=enemy_pokemon.name, form=enemy_pokemon.form, temp_evo=enemy_pokemon.temp_evo)

@@ -8,7 +8,7 @@ from nfl.proto import MoveSettings
 from nfl.proto import PokemonSettings
 from nfl.service.common.data import WEATHER, TYPES, FRIENDSHIP_DMG_BONUS, HELPERS_DMG_BONUS, BEHEMOTH_BLADE_AE, BEHEMOTH_BASH_AE
 from nfl.service.logic.pokemon_stats import get_stats, get_tgr_stats
-from nfl.utils.float32 import f32
+from nfl.utils import f32
 
 
 @dataclass
@@ -20,14 +20,14 @@ class Pokemon:
     cpm: float = 0.0
     shadow: bool = False
     purified: bool = False
-    tgr_member: HoloCharacterCategory = HoloCharacterCategory(0)
+    tgr_member: HoloCharacterCategory = HoloCharacterCategory.UNSET
 
 @dataclass
 class BattleState:
     combat_type: HoloCombatType
     mega_boosted_types: tuple[HoloPokemonType] | None = None
-    weather_id: HoloWeatherCondition = HoloWeatherCondition(0)
-    friendship_level: HoloFriendshipLevel = HoloFriendshipLevel(0)
+    weather_id: HoloWeatherCondition = HoloWeatherCondition.NONE
+    friendship_level: HoloFriendshipLevel = HoloFriendshipLevel.FRIENDSHIP_LEVEL_UNSET
     remote_raid: bool = False
     num_helpers: int = 0
     blade_ae: bool = False
@@ -185,7 +185,7 @@ def get_helpers_boost(
 def get_effect(
     move_type: HoloPokemonType,
     def_type_1: HoloPokemonType,
-    def_type_2: HoloPokemonType = HoloPokemonType(0),
+    def_type_2: HoloPokemonType = HoloPokemonType.POKEMON_TYPE_NONE,
 ) -> float:
     if not move_type:
         return 1.0
