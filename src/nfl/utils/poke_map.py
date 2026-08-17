@@ -1,7 +1,7 @@
 from typing import TypeAlias, TypeVar
 from collections.abc import Iterable, Callable
 
-from nfl.core.gm_holoholo import HoloPokemonId, HoloPokemonForm
+from nfl.proto.holoholo import HoloPokemonId, HoloPokemonForm
 
 
 T = TypeVar("T")

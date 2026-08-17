@@ -1,8 +1,5 @@
 import re
 
-from functools import cache
-
-from nfl.core.gm_constants import GAMEMASTER_LOCAL, OVERRIDES_LOCAL
 from nfl.proto.message import Message
 from nfl.utils.raw_value import RawValue
 
@@ -12,9 +9,8 @@ _ELEMENT_PATTERN = re.compile(r'([a-zA-Z0-9_]*): (?:"([^"]*)"|(.*))')
 _CLOSING_PATTERN = re.compile(r'\}')
 
 
-def _read_proto_file(filename: str) -> Message:
-    with open(filename, encoding="utf-8") as f:
-        lines = f.readlines()
+def parse_proto_file(text: str) -> Message:
+    lines = text.splitlines()
 
     root = Message()
     stack = [root]
@@ -55,11 +51,3 @@ def _parse_line(line: str):
         return ("closing",)
 
     return None
-
-@cache
-def read_game_master() -> Message:
-    return _read_proto_file(GAMEMASTER_LOCAL)
-
-@cache
-def read_overrides() -> Message:
-    return _read_proto_file(OVERRIDES_LOCAL)

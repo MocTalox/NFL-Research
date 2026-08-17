@@ -1,79 +1,53 @@
-from typing import Callable, TypeVar, Any
-from pathlib import Path
-import pickle
+from typing import Callable, TypeVar
 
-from nfl.core.gm_holoholo import game_master
-from nfl.proto.message import Message
-from nfl.proto.msg.battle_settings import BattleSettings
-from nfl.proto.msg.bread_move_mappings import BreadMoveMappings
-from nfl.proto.msg.bread_pokemon_scaling_settings import BreadPokemonScalingSettings
-from nfl.proto.msg.combat_move import CombatMove
-from nfl.proto.msg.combat_settings import CombatSettings
-from nfl.proto.msg.combat_stat_stage_settings import CombatStatStageSettings
-from nfl.proto.msg.contest_settings import ContestSettings
-from nfl.proto.msg.form_settings import FormSettings
-from nfl.proto.msg.friendship_milestone_settings import FriendshipMilestoneSettings
-from nfl.proto.msg.mega_evo_settings import MegaEvoSettings
-from nfl.proto.msg.move_settings import MoveSettings
-from nfl.proto.msg.non_combat_move_settings import NonCombatMoveSettings
-from nfl.proto.msg.player_level import PlayerLevel
-from nfl.proto.msg.pokemon_extended_settings import PokemonExtendedSettings
-from nfl.proto.msg.pokemon_family import PokemonFamily
-from nfl.proto.msg.pokemon_settings import PokemonSettings
-from nfl.proto.msg.raid_settings import RaidSettings
-from nfl.proto.msg.rocket_settings import RocketSettings
-from nfl.proto.msg.sourdough_move_mapping_settings import SourdoughMoveMappingSettings
-from nfl.proto.msg.stationed_pokemon_table_settings import StationedPokemonTableSettings
-from nfl.proto.msg.temporary_evolution_settings import TemporaryEvolutionSettings
-from nfl.proto.msg.type_effective import TypeEffective
-from nfl.proto.msg.weather_affinities import WeatherAffinities
-from nfl.proto.msg.weather_bonus_settings import WeatherBonusSettings
+from nfl.data import get_templates
+
+from .message import Message
+from .msg.battle_settings import BattleSettings
+from .msg.bread_move_mappings import BreadMoveMappings
+from .msg.bread_pokemon_scaling_settings import BreadPokemonScalingSettings
+from .msg.combat_move import CombatMove
+from .msg.combat_settings import CombatSettings
+from .msg.combat_stat_stage_settings import CombatStatStageSettings
+from .msg.contest_settings import ContestSettings
+from .msg.form_settings import FormSettings
+from .msg.friendship_milestone_settings import FriendshipMilestoneSettings
+from .msg.mega_evo_settings import MegaEvoSettings
+from .msg.move_settings import MoveSettings
+from .msg.non_combat_move_settings import NonCombatMoveSettings
+from .msg.player_level import PlayerLevel
+from .msg.pokemon_extended_settings import PokemonExtendedSettings
+from .msg.pokemon_family import PokemonFamily
+from .msg.pokemon_settings import PokemonSettings
+from .msg.raid_settings import RaidSettings
+from .msg.rocket_settings import RocketSettings
+from .msg.sourdough_move_mapping_settings import SourdoughMoveMappingSettings
+from .msg.stationed_pokemon_table_settings import StationedPokemonTableSettings
+from .msg.temporary_evolution_settings import TemporaryEvolutionSettings
+from .msg.type_effective import TypeEffective
+from .msg.weather_affinities import WeatherAffinities
+from .msg.weather_bonus_settings import WeatherBonusSettings
 
 
 T = TypeVar("T")
 
 
-def _cache_file(key: str) -> Path:
-    return Path(f"data/cache/{key}.pkl")
-
-def _load_cache(key: str):
-    file = _cache_file(key)
-    if file.exists():
-        with file.open("rb") as f:
-            return pickle.load(f)
-
-def _save_cache(key: str, data: Any):
-    file = _cache_file(key)
-    file.parent.mkdir(parents=True, exist_ok=True)
-    with file.open("wb") as f:
-        pickle.dump(data, f, protocol=pickle.HIGHEST_PROTOCOL)
-
 def _load_set(key: str, constructor: Callable[[Message], T]) -> set[T]:
-    if elements := _load_cache(key):
-        return elements
-
     elements = {
         constructor(template.value)
-        for template in game_master()[key].values()
+        for template in get_templates(key).values()
     }
-
-    _save_cache(key, elements)
 
     return elements
 
 def _load_elem(key: str, constructor: Callable[[Message], T]) -> T:
-    if elements := _load_cache(key):
-        return elements
-
     elements = [
         constructor(template.value)
-        for template in game_master()[key].values()
+        for template in get_templates(key).values()
     ]
 
     if len(elements) != 1:
         raise ValueError(f"Multiple or none templates for key: {key}")
-
-    _save_cache(key, elements[0])
 
     return elements[0]
 

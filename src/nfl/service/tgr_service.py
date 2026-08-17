@@ -3,7 +3,7 @@ from itertools import product
 from typing import Iterator, Protocol
 import math
 
-from nfl.core.gm_holoholo import HoloPokemonType, HoloPokemonMove, HoloTempEvoId, HoloCombatType
+from nfl.proto.holoholo import HoloPokemonType, HoloPokemonMove, HoloTempEvoId, HoloCombatType
 from nfl.proto.msg.combat_move import CombatMove
 from nfl.proto.msg.pokemon_settings import PokemonSettings
 from nfl.service.common.data import PVP_MOVES, POKEMON, get_temp_evo_pokemon_settings

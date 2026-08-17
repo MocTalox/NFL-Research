@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 from functools import reduce
 
-from nfl.core.gm_holoholo import HoloPokemonType, HoloWeatherCondition, HoloCharacterCategory, HoloCombatType, HoloFriendshipLevel
-from nfl.core.gm_templates import BATTLE_SETTINGS, RAID_SETTINGS, COMBAT_SETTINGS, WEATHER_BONUS_SETTINGS, MEGA_EVO_SETTINGS
+from nfl.proto.holoholo import HoloPokemonType, HoloWeatherCondition, HoloCharacterCategory, HoloCombatType, HoloFriendshipLevel
+from nfl.proto.templates import BATTLE_SETTINGS, RAID_SETTINGS, COMBAT_SETTINGS, WEATHER_BONUS_SETTINGS, MEGA_EVO_SETTINGS
 from nfl.proto.msg.combat_move import CombatMove
 from nfl.proto.msg.move_settings import MoveSettings
 from nfl.proto.msg.pokemon_settings import PokemonSettings

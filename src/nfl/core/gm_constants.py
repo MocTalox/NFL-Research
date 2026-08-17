@@ -1,7 +1,0 @@
-TIMESTAMP_REMOTE = "https://github.com/alexelgt/game_masters/blob/master/timestamp.json"
-GAMEMASTER_REMOTE = "https://github.com/alexelgt/game_masters/blob/master/GAME_MASTER.txt"
-GMPROTO_REMOTE = "https://github.com/alexelgt/gmdecode/blob/master/files/protofiles/gamemaster.proto"
-TIMESTAMP_LOCAL = "data/timestamp.json"
-GAMEMASTER_LOCAL = "data/gamemaster.txt"
-GMPROTO_LOCAL = "data/gamemaster.proto"
-OVERRIDES_LOCAL = "data/overrides.txt"
