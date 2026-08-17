@@ -1,4 +1,4 @@
-from nfl.proto.message import Message
+from .message import Message
 
 
 class Template:

@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
-from nfl.proto.templates import CONTEST_SETTINGS
-from nfl.proto.msg.pokemon_settings import PokemonSettings
-from nfl.proto.msg.pokemon_extended_settings import SizeSettings
+from nfl.proto import CONTEST_SETTINGS
+from nfl.proto import PokemonSettings
+from nfl.proto import SizeSettings
 from nfl.service.common.size_class import SizeClass
 
 

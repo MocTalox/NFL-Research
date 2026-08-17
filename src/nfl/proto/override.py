@@ -3,8 +3,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import IntEnum
 
-from nfl.proto.message import Message
 from nfl.utils.raw_value import RawValue
+
+from .message import Message
 
 
 class Action(IntEnum):

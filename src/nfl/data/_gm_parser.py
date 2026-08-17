@@ -1,6 +1,6 @@
 import re
 
-from nfl.proto.message import Message
+from nfl.proto import Message
 from nfl.utils.raw_value import RawValue
 
 _OPENING_PATTERN = re.compile(r"([a-zA-Z0-9_]*) \{")

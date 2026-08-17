@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from nfl.proto.holoholo import HoloTempEvoId
-from nfl.proto.msg.pokemon_settings import PokemonSettings
-from nfl.proto.msg.pokemon_extended_settings import SizeSettings
+from nfl.proto import HoloTempEvoId
+from nfl.proto import PokemonSettings
+from nfl.proto import SizeSettings
 from nfl.service.common.data import get_pokemon_settings, get_pokemon_extended_settings, get_temp_evo_pokemon_settings, get_temp_evo_size_settings
 from nfl.service.common.size_class import SizeClass
 from nfl.utils.poke_species import PokeSpecies

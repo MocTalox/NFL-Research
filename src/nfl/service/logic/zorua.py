@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from nfl.proto.holoholo import HoloPokemonId, HoloPokemonForm
-from nfl.proto.msg.pokemon_settings import PokemonSettings
-from nfl.proto.msg.pokemon_extended_settings import SizeSettings
+from nfl.proto import HoloPokemonId, HoloPokemonForm
+from nfl.proto import PokemonSettings
+from nfl.proto import SizeSettings
 from nfl.service.common.data import POKEMON, EXTENDED
 from nfl.service.common.size_class import SizeClass
 

@@ -3,9 +3,9 @@ from itertools import product
 from typing import Iterator, Protocol
 import math
 
-from nfl.proto.holoholo import HoloPokemonType, HoloPokemonMove, HoloTempEvoId, HoloCombatType
-from nfl.proto.msg.combat_move import CombatMove
-from nfl.proto.msg.pokemon_settings import PokemonSettings
+from nfl.proto import HoloPokemonType, HoloPokemonMove, HoloTempEvoId, HoloCombatType
+from nfl.proto import CombatMove
+from nfl.proto import PokemonSettings
 from nfl.service.common.data import PVP_MOVES, POKEMON, get_temp_evo_pokemon_settings
 from nfl.service.logic.damage_formula import get_stab, get_effect, get_shadow_attack_bonus
 from nfl.utils.poke_data import PokeData, gen_pokemon_data

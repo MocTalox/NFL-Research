@@ -5,7 +5,7 @@ from collections.abc import Callable, Iterable, Iterator
 from dataclasses import dataclass
 from typing import Generic, TypeVar, NamedTuple
 
-from nfl.proto.holoholo import HoloPokemonId, HoloTempEvoId
+from nfl.proto import HoloPokemonId, HoloTempEvoId
 from nfl.utils.poke_species import PokeSpecies
 from nfl.utils.poke_map import PokeMap
 

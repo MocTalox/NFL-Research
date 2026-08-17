@@ -7,8 +7,8 @@ return new float[] { w, h };
 
 from dataclasses import dataclass
 
-from nfl.proto.msg.pokemon_settings import PokemonSettings
-from nfl.proto.msg.pokemon_extended_settings import PokemonExtendedSettings
+from nfl.proto import PokemonSettings
+from nfl.proto import PokemonExtendedSettings
 from nfl.service.common.data import POKEMON, get_pokemon_extended_settings
 from nfl.utils.poke_data import PokeData, gen_pokemon_data
 from nfl.utils.poke_species import PokeSpecies

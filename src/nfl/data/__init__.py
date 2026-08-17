@@ -1,4 +1,4 @@
-from nfl.proto.template import Template
+from nfl.proto import Template
 
 from ._gm_data import (
     CachedGameMasterAccess,

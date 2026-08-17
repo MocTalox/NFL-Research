@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any, Protocol
 from urllib.request import urlopen
 
-from nfl.proto.template import Template
+from nfl.proto import Template
 from nfl.utils._resources import read_data_resource_files
 
 from ._gm_builder import build_game_master

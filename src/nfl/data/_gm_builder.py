@@ -1,8 +1,6 @@
 import re
 
-from nfl.proto.message import Message
-from nfl.proto.override import Action, AddTemplate, Override, RemTemplate
-from nfl.proto.template import Template
+from nfl.proto import Action, AddTemplate, Message, Override, RemTemplate, Template
 
 from ._gm_parser import parse_proto_file
 

@@ -1,11 +1,11 @@
 from dataclasses import dataclass, field
 from functools import reduce
 
-from nfl.proto.holoholo import HoloPokemonType, HoloWeatherCondition, HoloCharacterCategory, HoloCombatType, HoloFriendshipLevel
-from nfl.proto.templates import BATTLE_SETTINGS, RAID_SETTINGS, COMBAT_SETTINGS, WEATHER_BONUS_SETTINGS, MEGA_EVO_SETTINGS
-from nfl.proto.msg.combat_move import CombatMove
-from nfl.proto.msg.move_settings import MoveSettings
-from nfl.proto.msg.pokemon_settings import PokemonSettings
+from nfl.proto import HoloPokemonType, HoloWeatherCondition, HoloCharacterCategory, HoloCombatType, HoloFriendshipLevel
+from nfl.proto import BATTLE_SETTINGS, RAID_SETTINGS, COMBAT_SETTINGS, WEATHER_BONUS_SETTINGS, MEGA_EVO_SETTINGS
+from nfl.proto import CombatMove
+from nfl.proto import MoveSettings
+from nfl.proto import PokemonSettings
 from nfl.service.common.data import WEATHER, TYPES, FRIENDSHIP_DMG_BONUS, HELPERS_DMG_BONUS, BEHEMOTH_BLADE_AE, BEHEMOTH_BASH_AE
 from nfl.service.logic.pokemon_stats import get_stats, get_tgr_stats
 from nfl.utils.float32 import f32

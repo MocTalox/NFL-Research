@@ -1,7 +1,7 @@
 from math import floor
 
-from nfl.proto.holoholo import HoloCharacterCategory
-from nfl.proto.msg.pokemon_settings import PokemonSettings
+from nfl.proto import HoloCharacterCategory
+from nfl.proto import PokemonSettings
 from nfl.service.common.data import CPM, RCPM, get_tgr_rank_mult
 from nfl.utils.float32 import f32
 
