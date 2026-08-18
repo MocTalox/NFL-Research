@@ -1,12 +1,29 @@
 from dataclasses import dataclass, field
 from functools import reduce
 
-from nfl.proto import HoloPokemonType, HoloWeatherCondition, HoloCharacterCategory, HoloCombatType, HoloFriendshipLevel
-from nfl.proto import BATTLE_SETTINGS, RAID_SETTINGS, COMBAT_SETTINGS, WEATHER_BONUS_SETTINGS, MEGA_EVO_SETTINGS
-from nfl.proto import CombatMove
-from nfl.proto import MoveSettings
-from nfl.proto import PokemonSettings
-from nfl.service.common.data import WEATHER, TYPES, FRIENDSHIP_DMG_BONUS, HELPERS_DMG_BONUS, BEHEMOTH_BLADE_AE, BEHEMOTH_BASH_AE
+from nfl.proto import (
+    BATTLE_SETTINGS,
+    COMBAT_SETTINGS,
+    MEGA_EVO_SETTINGS,
+    RAID_SETTINGS,
+    WEATHER_BONUS_SETTINGS,
+    CombatMove,
+    HoloCharacterCategory,
+    HoloCombatType,
+    HoloFriendshipLevel,
+    HoloPokemonType,
+    HoloWeatherCondition,
+    MoveSettings,
+    PokemonSettings,
+)
+from nfl.service.common.data import (
+    BEHEMOTH_BASH_AE,
+    BEHEMOTH_BLADE_AE,
+    FRIENDSHIP_DMG_BONUS,
+    HELPERS_DMG_BONUS,
+    TYPES,
+    WEATHER,
+)
 from nfl.service.logic.pokemon_stats import get_stats, get_tgr_stats
 from nfl.utils import f32
 
@@ -22,6 +39,7 @@ class Pokemon:
     purified: bool = False
     tgr_member: HoloCharacterCategory = HoloCharacterCategory.UNSET
 
+
 @dataclass
 class BattleState:
     combat_type: HoloCombatType
@@ -33,6 +51,7 @@ class BattleState:
     blade_ae: bool = False
     bash_ae: bool = False
 
+
 @dataclass(frozen=True)
 class DamageMultipliers:
     fast_attack: float = 1.0
@@ -43,13 +62,14 @@ class DamageMultipliers:
     friendship_attack: dict[HoloFriendshipLevel, float] = field(default_factory=dict)
     shadow_pokemon_attack: float = 1.0
     shadow_pokemon_defense: float = 1.0
-    purified_pokemon_attack: float = 1.0 # vs shadow only (unused in-game)
+    purified_pokemon_attack: float = 1.0  # vs shadow only (unused in-game)
     same_type_mega_attack: float = 1.0
     different_type_mega_attack: float = 1.0
     remote_attack: float = 1.0
     helpers_attack: dict[int, int] = field(default_factory=dict)
     blade_ae_attack: float = 1.0
     bash_ae_defense: float = 1.0
+
 
 _DAMAGE_MULTIPLIERS = {
     HoloCombatType.VS_SEEKER: DamageMultipliers(
@@ -114,7 +134,7 @@ _DAMAGE_MULTIPLIERS = {
         helpers_attack=HELPERS_DMG_BONUS,
         blade_ae_attack=BEHEMOTH_BLADE_AE[HoloCombatType.COMBAT_TYPE_GMAX],
         bash_ae_defense=BEHEMOTH_BASH_AE[HoloCombatType.COMBAT_TYPE_GMAX],
-    )
+    ),
 }
 
 
@@ -126,7 +146,12 @@ def get_mega_boost(
     mults = _DAMAGE_MULTIPLIERS[combat_type]
     if not mega_boosted_types:
         return 1.0
-    return mults.same_type_mega_attack if move_type in mega_boosted_types else mults.different_type_mega_attack
+    return (
+        mults.same_type_mega_attack
+        if move_type in mega_boosted_types
+        else mults.different_type_mega_attack
+    )
+
 
 def get_purified_attack_bonus(
     combat_type: HoloCombatType,
@@ -135,6 +160,7 @@ def get_purified_attack_bonus(
 ) -> float:
     mults = _DAMAGE_MULTIPLIERS[combat_type]
     return mults.purified_pokemon_attack if purified_attacker and shadow_target else 1.0
+
 
 def get_shadow_attack_bonus(
     combat_type: HoloCombatType,
@@ -146,6 +172,7 @@ def get_shadow_attack_bonus(
     shadow_defense_bonus = mults.shadow_pokemon_defense if shadow_target else 1.0
     return f32(shadow_attack_bonus / shadow_defense_bonus)
 
+
 def get_weather_boost(
     combat_type: HoloCombatType,
     move_type: HoloPokemonType,
@@ -154,7 +181,10 @@ def get_weather_boost(
     if not weather_id:
         return 1.0
     mults = _DAMAGE_MULTIPLIERS[combat_type]
-    return mults.weather_attack if move_type in WEATHER[weather_id].pokemon_type else 1.0
+    return (
+        mults.weather_attack if move_type in WEATHER[weather_id].pokemon_type else 1.0
+    )
+
 
 def get_stab(
     combat_type: HoloCombatType,
@@ -163,14 +193,24 @@ def get_stab(
     atk_type_2: HoloPokemonType,
 ) -> float:
     mults = _DAMAGE_MULTIPLIERS[combat_type]
-    return mults.same_type_attack if move_type == atk_type_1 or move_type == atk_type_2 else 1.0
+    return (
+        mults.same_type_attack
+        if move_type == atk_type_1 or move_type == atk_type_2
+        else 1.0
+    )
+
 
 def get_fiendship_boost(
     combat_type: HoloCombatType,
     friend_level: HoloFriendshipLevel,
 ) -> float:
     mults = _DAMAGE_MULTIPLIERS[combat_type]
-    return mults.friendship_attack[friend_level] if mults.friendship_attack and friend_level else 1.0
+    return (
+        mults.friendship_attack[friend_level]
+        if mults.friendship_attack and friend_level
+        else 1.0
+    )
+
 
 def get_helpers_boost(
     combat_type: HoloCombatType,
@@ -179,8 +219,10 @@ def get_helpers_boost(
     mults = _DAMAGE_MULTIPLIERS[combat_type]
     return (
         1 + mults.helpers_attack[min(20, num_helpers)] / 10000
-        if mults.helpers_attack and num_helpers else 1.0
+        if mults.helpers_attack and num_helpers
+        else 1.0
     )
+
 
 def get_effect(
     move_type: HoloPokemonType,
@@ -193,27 +235,33 @@ def get_effect(
         return TYPES[move_type].attack_scalar[def_type_1 - 1] if def_type_1 else 1.0
     return get_effect(move_type, def_type_1) * get_effect(move_type, def_type_2)
 
+
 def get_fast_boost(combat_type: HoloCombatType, fast: bool) -> float:
     mults = _DAMAGE_MULTIPLIERS[combat_type]
     return mults.fast_attack if fast else 1.0
+
 
 def get_charge_boost(combat_type: HoloCombatType, charge: bool) -> float:
     mults = _DAMAGE_MULTIPLIERS[combat_type]
     return mults.charge_attack if charge else 1.0
 
+
 def get_dodge_boost(combat_type: HoloCombatType, dodged: bool) -> float:
     mults = _DAMAGE_MULTIPLIERS[combat_type]
     return f32(1.0 - mults.dodge_damage_reduction) if dodged else 1.0
 
+
 def get_remote_boost(combat_type: HoloCombatType, remote: bool) -> float:
     mults = _DAMAGE_MULTIPLIERS[combat_type]
     return mults.remote_attack if remote else 1.0
+
 
 def get_blade_bash_boost(combat_type: HoloCombatType, blade: bool, bash: bool) -> float:
     mults = _DAMAGE_MULTIPLIERS[combat_type]
     attack_bonus = mults.blade_ae_attack if blade else 1.0
     defense_bonus = mults.bash_ae_defense if bash else 1.0
     return f32(attack_bonus / defense_bonus)
+
 
 def damage_formula(
     attacker: Pokemon,
@@ -241,6 +289,7 @@ def damage_formula(
     )
 
     return int(f32(base_damage + 1.0))
+
 
 def damage_formula_raw(
     attacker: Pokemon,
@@ -298,9 +347,16 @@ def damage_formula_raw(
         get_purified_attack_bonus(state.combat_type, attacker.purified, target.shadow),
         get_shadow_attack_bonus(state.combat_type, attacker.shadow, target.shadow),
         get_weather_boost(state.combat_type, move_type, state.weather_id),
-        get_stab(state.combat_type, move_type, attacker.pokemon_settings.type, attacker.pokemon_settings.type_2),
+        get_stab(
+            state.combat_type,
+            move_type,
+            attacker.pokemon_settings.type,
+            attacker.pokemon_settings.type_2,
+        ),
         get_fiendship_boost(state.combat_type, state.friendship_level),
-        get_effect(move_type, target.pokemon_settings.type, target.pokemon_settings.type_2),
+        get_effect(
+            move_type, target.pokemon_settings.type, target.pokemon_settings.type_2
+        ),
         get_fast_boost(state.combat_type, move_pos == 0),
         get_charge_boost(state.combat_type, move_pos > 0),
         get_dodge_boost(state.combat_type, dodged),

@@ -7,11 +7,9 @@ return new float[] { w, h };
 
 from dataclasses import dataclass
 
-from nfl.proto import PokemonSettings
-from nfl.proto import PokemonExtendedSettings
+from nfl.helpers import PokeData, PokeSpecies, gen_pokemon_data
+from nfl.proto import PokemonExtendedSettings, PokemonSettings
 from nfl.service.common.data import POKEMON, get_pokemon_extended_settings
-from nfl.utils import PokeData, gen_pokemon_data
-from nfl.utils import PokeSpecies
 
 
 @dataclass(frozen=True)
@@ -48,6 +46,7 @@ class _PokemonData(PokeSpecies):
             and self.xxl_upper_bound == other.xxl_upper_bound
         )
 
+
 def _to_pokemon_data(
     pokemon_settings: PokemonSettings,
     pokemon_extended_settings: PokemonExtendedSettings,
@@ -68,6 +67,7 @@ def _to_pokemon_data(
         xxl_upper_bound=pokemon_extended_settings.size_settings.xxl_upper_bound,
     )
 
+
 def _unfold_settings(pokemon_settings: PokemonSettings) -> list[_PokemonData]:
 
     poke = PokeSpecies(
@@ -82,7 +82,9 @@ def _unfold_settings(pokemon_settings: PokemonSettings) -> list[_PokemonData]:
         _to_pokemon_data(pokemon_settings, pokemon_extended_settings),
     ]
 
+
 _POKEMON_DATA: PokeData[_PokemonData] = gen_pokemon_data(POKEMON, _unfold_settings)
+
 
 def get_all_pokemon() -> list[PokeSpecies]:
     return sorted(_POKEMON_DATA.get_all_species())

@@ -1,15 +1,19 @@
 from dataclasses import dataclass
 
-from nfl.proto import CONTEST_SETTINGS
-from nfl.proto import PokemonSettings
-from nfl.proto import SizeSettings
+from nfl.proto import CONTEST_SETTINGS, PokemonSettings, SizeSettings
 from nfl.service.common.size_class import SizeClass
 
-
-height_coefficient = CONTEST_SETTINGS.contest_score_coefficient.pokemon_size.height_coefficient
-weight_coefficient = CONTEST_SETTINGS.contest_score_coefficient.pokemon_size.weight_coefficient
+height_coefficient = (
+    CONTEST_SETTINGS.contest_score_coefficient.pokemon_size.height_coefficient
+)
+weight_coefficient = (
+    CONTEST_SETTINGS.contest_score_coefficient.pokemon_size.weight_coefficient
+)
 iv_coefficient = CONTEST_SETTINGS.contest_score_coefficient.pokemon_size.iv_coefficient
-xxl_adjustment_factor = CONTEST_SETTINGS.contest_score_coefficient.pokemon_size.xxl_adjustment_factor
+xxl_adjustment_factor = (
+    CONTEST_SETTINGS.contest_score_coefficient.pokemon_size.xxl_adjustment_factor
+)
+
 
 @dataclass
 class Pokemon:
@@ -19,6 +23,7 @@ class Pokemon:
     weight_kg: float
     height_m: float
     size_class: SizeClass
+
 
 def contest_score(pokemon: Pokemon):
     max_height = (
@@ -34,9 +39,10 @@ def contest_score(pokemon: Pokemon):
         + pokemon.pokemon_settings.weight_std_dev * 4
     )
 
-	# Value `0.853658536585366` comes from  `1.75 / 2.05`
+    # Value `0.853658536585366` comes from  `1.75 / 2.05`
     xxl_adjustment = (
-        (weight_coefficient * 0.853658536585366 + iv_coefficient) * xxl_adjustment_factor
+        (weight_coefficient * 0.853658536585366 + iv_coefficient)
+        * xxl_adjustment_factor
         if pokemon.size_class == SizeClass.XXL
         else 0.0
     )

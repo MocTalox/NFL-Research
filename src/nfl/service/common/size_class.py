@@ -31,10 +31,8 @@ class SizeClass(Enum):
 
     def in_bounds(self, height: float, size_settings: SizeSettings):
         height_min, height_max = self.get_bounds(size_settings)
-        return (
-            (self is SizeClass.XXS or height_min <= height)
-            and
-            (self is SizeClass.XXL or height <= height_max)
+        return (self is SizeClass.XXS or height_min <= height) and (
+            self is SizeClass.XXL or height <= height_max
         )
 
     @classmethod

@@ -1,10 +1,17 @@
-from dataclasses import dataclass, asdict
+import json
+from dataclasses import asdict, dataclass
 from enum import Enum
 from typing import Any
-import json
 
-from nfl.proto import HoloPokemonId, HoloPokemonForm, HoloPokemonMove, HoloPokemonType, HoloWeatherCondition, HoloCharacterCategory
-from nfl.utils import PokeSpecies
+from nfl.helpers import PokeSpecies
+from nfl.proto import (
+    HoloCharacterCategory,
+    HoloPokemonForm,
+    HoloPokemonId,
+    HoloPokemonMove,
+    HoloPokemonType,
+    HoloWeatherCondition,
+)
 from nfl.service.common import data
 from nfl.service.logic import pokemon_stats as stats
 
@@ -15,8 +22,10 @@ class EnumEncoder(json.JSONEncoder):
             return o.name
         return super().default(o)
 
+
 def _dataclass_to_json(obj: Any) -> str:
     return json.dumps(asdict(obj), cls=EnumEncoder)
+
 
 @dataclass
 class PokeInput:
@@ -25,15 +34,20 @@ class PokeInput:
     temp_evo: str | None = None
     shadow: bool = False
 
+
 def _enum_name(enum: Enum) -> str:
     return enum.name.replace("_", " ").title()
 
+
 def get_pokemon_names(query: str | None = None):
-    return {"pokemons": [
-        _enum_name(pokemon)
-        for pokemon in HoloPokemonId
-        if not query or query.lower() in pokemon.name.lower()
-    ]}
+    return {
+        "pokemons": [
+            _enum_name(pokemon)
+            for pokemon in HoloPokemonId
+            if not query or query.lower() in pokemon.name.lower()
+        ]
+    }
+
 
 def get_pokemon_forms(pokemon: str | None = None, query: str | None = None):
     if pokemon is not None:
@@ -42,14 +56,19 @@ def get_pokemon_forms(pokemon: str | None = None, query: str | None = None):
     else:
         forms_src = HoloPokemonForm
 
-    return {"forms": [
-        _enum_name(form)
-        for form in forms_src
-        if not query or query.lower() in form.name.lower()
-    ]}
+    return {
+        "forms": [
+            _enum_name(form)
+            for form in forms_src
+            if not query or query.lower() in form.name.lower()
+        ]
+    }
+
 
 def get_move_names(pokemon: PokeInput, query: str | None = None):
-    pokemon_species = PokeSpecies.resolve(name=pokemon.name, form=pokemon.form, temp_evo=pokemon.temp_evo)
+    pokemon_species = PokeSpecies.resolve(
+        name=pokemon.name, form=pokemon.form, temp_evo=pokemon.temp_evo
+    )
     pokemon_settings = data.get_pokemon_settings(pokemon_species)
     assert pokemon_settings
 
@@ -63,27 +82,56 @@ def get_move_names(pokemon: PokeInput, query: str | None = None):
         *pokemon_settings.legacy_cinematic_moves,
     ]
 
-    return {"moves": [
-        _enum_name(move) 
-        for move in moves 
-        if not query or query.lower() in move.name.lower()
-    ]}
+    return {
+        "moves": [
+            _enum_name(move)
+            for move in moves
+            if not query or query.lower() in move.name.lower()
+        ]
+    }
+
 
 def get_enemy_names():
-    return {"characters": [
-        _enum_name(character)
-        for character in HoloCharacterCategory
-    ]}
+    return {
+        "characters": [_enum_name(character) for character in HoloCharacterCategory]
+    }
 
-def calculate_damage(pokemon: PokeInput, move: str, min_atk: int, max_atk: int, min_level: int, max_level: int, enemy: str, enemy_pokemon: PokeInput, trainer_level: int) -> dict[str, Any]:
-    from nfl.proto import HoloPokemonMove, HoloCharacterCategory, HoloCombatType
-    from nfl.service.common.data import get_pokemon_settings, PVP_MOVES
-    from nfl.service.logic.damage_formula import damage_formula_raw, Pokemon, BattleState
-    from nfl.service.logic.pokemon_stats import get_tgr_stats, get_tgr_hp, get_tgr_cp, get_cpm, get_rcpm
-    from nfl.utils import PokeSpecies
 
-    pokemon_species = PokeSpecies.resolve(name=pokemon.name, form=pokemon.form, temp_evo=pokemon.temp_evo)
-    enemy_pokemon_species = PokeSpecies.resolve(name=enemy_pokemon.name, form=enemy_pokemon.form, temp_evo=enemy_pokemon.temp_evo)
+def calculate_damage(
+    pokemon: PokeInput,
+    move: str,
+    min_atk: int,
+    max_atk: int,
+    min_level: int,
+    max_level: int,
+    enemy: str,
+    enemy_pokemon: PokeInput,
+    trainer_level: int,
+) -> dict[str, Any]:
+    from nfl.helpers import PokeSpecies
+    from nfl.proto import HoloCharacterCategory, HoloCombatType, HoloPokemonMove
+    from nfl.service.common.data import PVP_MOVES, get_pokemon_settings
+    from nfl.service.logic.damage_formula import (
+        BattleState,
+        Pokemon,
+        damage_formula_raw,
+    )
+    from nfl.service.logic.pokemon_stats import (
+        get_cpm,
+        get_rcpm,
+        get_tgr_cp,
+        get_tgr_hp,
+        get_tgr_stats,
+    )
+
+    pokemon_species = PokeSpecies.resolve(
+        name=pokemon.name, form=pokemon.form, temp_evo=pokemon.temp_evo
+    )
+    enemy_pokemon_species = PokeSpecies.resolve(
+        name=enemy_pokemon.name,
+        form=enemy_pokemon.form,
+        temp_evo=enemy_pokemon.temp_evo,
+    )
     move = PokeSpecies.resolve_id(move)
     enemy = PokeSpecies.resolve_id(enemy)
 
@@ -91,7 +139,16 @@ def calculate_damage(pokemon: PokeInput, move: str, min_atk: int, max_atk: int, 
     eps = get_pokemon_settings(enemy_pokemon_species)
     assert ps and eps
 
-    e = Pokemon(eps, 15, 15, 15, get_rcpm(trainer_level), True, False, HoloCharacterCategory[enemy])
+    e = Pokemon(
+        eps,
+        15,
+        15,
+        15,
+        get_rcpm(trainer_level),
+        True,
+        False,
+        HoloCharacterCategory[enemy],
+    )
     a, d, _ = get_tgr_stats(eps, e.cpm, e.tgr_member, 15, 15, 15)
     hp = get_tgr_hp(eps, e.cpm, e.tgr_member, 15)
     cp = get_tgr_cp(eps, e.cpm, e.tgr_member, 15, 15, 15)
@@ -114,52 +171,69 @@ def calculate_damage(pokemon: PokeInput, move: str, min_atk: int, max_atk: int, 
 
     return {"enemy": enemy_info, "breakpoints": breakpoints}
 
+
 ### Other Examples of APIs ###
 
+
 def get_pokemon_settings(pokemon: PokeInput):
-    poke = PokeSpecies.resolve(name=pokemon.name, form=pokemon.form, temp_evo=pokemon.temp_evo)
+    poke = PokeSpecies.resolve(
+        name=pokemon.name, form=pokemon.form, temp_evo=pokemon.temp_evo
+    )
     pokemon_settings = data.get_pokemon_settings(poke)
     if pokemon_settings is None:
         return None
     if poke.temp_evo:
-        pokemon_settings = data.get_temp_evo_pokemon_settings(pokemon_settings, poke.temp_evo)
+        pokemon_settings = data.get_temp_evo_pokemon_settings(
+            pokemon_settings, poke.temp_evo
+        )
     return _dataclass_to_json(pokemon_settings)
 
+
 def get_size_settings(pokemon: PokeInput):
-    poke = PokeSpecies.resolve(name=pokemon.name, form=pokemon.form, temp_evo=pokemon.temp_evo)
+    poke = PokeSpecies.resolve(
+        name=pokemon.name, form=pokemon.form, temp_evo=pokemon.temp_evo
+    )
     pokemon_extended_settings = data.get_pokemon_extended_settings(poke)
     if pokemon_extended_settings is None:
         return None
     if poke.temp_evo:
-        size_settings = data.get_temp_evo_size_settings(pokemon_extended_settings, poke.temp_evo)
+        size_settings = data.get_temp_evo_size_settings(
+            pokemon_extended_settings, poke.temp_evo
+        )
     else:
         size_settings = pokemon_extended_settings.size_settings
     return _dataclass_to_json(size_settings)
+
 
 def get_pve_move_settings(move: str):
     holo_move = HoloPokemonMove[move]
     move_settings = data.PVE_MOVES[holo_move]
     return _dataclass_to_json(move_settings)
 
+
 def get_pvp_move_settings(move: str):
     holo_move = HoloPokemonMove[move]
     move_settings = data.PVP_MOVES[holo_move]
     return _dataclass_to_json(move_settings)
+
 
 def get_type_boosting_weather(type: str):
     holo_type = HoloPokemonType[type]
     weather = data.TYPES_WEATHER[holo_type]
     return json.dumps({"weather": weather})
 
+
 def get_move_boosting_weather(move: str):
     holo_move = HoloPokemonMove[move]
     weather = data.get_move_boosting_weather(holo_move)
     return json.dumps({"weather": weather})
 
+
 def get_weather_affinities(weather: str):
     holo_weather = HoloWeatherCondition[weather]
     weather_affinities = data.WEATHER[holo_weather]
     return _dataclass_to_json(weather_affinities)
+
 
 def get_type_effectiveness(type: str):
     holo_type = HoloPokemonType[type]
@@ -167,18 +241,15 @@ def get_type_effectiveness(type: str):
     res: dict[str, Any] = {
         "attack_type": type_effective.attack_type,
         "effectiveness": [
-            {
-                "defense_type": defense_type,
-                "attack_scalar": value
-            }
+            {"defense_type": defense_type, "attack_scalar": value}
             for value, defense_type in zip(
-                type_effective.attack_scalar,
-                list(HoloPokemonType)[1:]
+                type_effective.attack_scalar, list(HoloPokemonType)[1:]
             )
             if value != 1.0
-        ]
+        ],
     }
     return json.dumps(res)
+
 
 def get_cpm(level: float):
     cpm = stats.get_cpm(level)
