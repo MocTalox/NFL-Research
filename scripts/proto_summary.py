@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections import defaultdict
 from collections.abc import Iterable
 
-from nfl.data import Message, get_templates
+from nfl.io import Message, get_templates
 
 
 class GMProto:

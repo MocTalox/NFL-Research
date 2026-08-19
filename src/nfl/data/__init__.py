@@ -1,43 +1,63 @@
-from ._gm_data import (
-    CachedGameMasterAccess,
-    DefaultGameMasterAccess,
-    FileGameMasterAccess,
-    GameMasterAccess,
-    RemoteGameMasterAccess,
+from .data import (
+    BEHEMOTH_BASH_AE,
+    BEHEMOTH_BLADE_AE,
+    CPM,
+    EXTENDED,
+    FORM_POKEMON,
+    FORMS,
+    FRIENDSHIP,
+    FRIENDSHIP_DMG_BONUS,
+    HELPERS,
+    HELPERS_DMG_BONUS,
+    NON_COMBAT_MOVES,
+    POKEMON,
+    PVE_MOVES,
+    PVP_MOVES,
+    RANKS,
+    RCPM,
+    TYPES,
+    TYPES_WEATHER,
+    WEATHER,
+    get_move_boosting_weather,
+    get_pokemon_extended_settings,
+    get_pokemon_settings,
+    get_temp_evo_pokemon_settings,
+    get_temp_evo_size_settings,
+    get_tgr_rank_mult,
 )
-from .message import Message
-from .override import Action, AddTemplate, Override, RemTemplate
-from .template import Template
-
-_access: GameMasterAccess = DefaultGameMasterAccess()
-
-
-def configure_game_master_access(access: GameMasterAccess) -> None:
-    global _access
-    _access = access
-
-
-def get_game_master() -> dict[str, dict[str, Template]]:
-    return _access.get_game_master()
-
-
-def get_templates(key: str) -> dict[str, Template]:
-    return _access.get_templates(key)
-
+from .poke_data import PokeData, gen_pokemon_data, gen_pokemon_data_raw
+from .poke_species import PokeSpecies
+from .size_class import SizeClass
 
 __all__ = [
-    "Action",
-    "AddTemplate",
-    "CachedGameMasterAccess",
-    "DefaultGameMasterAccess",
-    "FileGameMasterAccess",
-    "GameMasterAccess",
-    "Message",
-    "Override",
-    "RemTemplate",
-    "RemoteGameMasterAccess",
-    "Template",
-    "configure_game_master_access",
-    "get_game_master",
-    "get_templates",
+    "BEHEMOTH_BASH_AE",
+    "BEHEMOTH_BLADE_AE",
+    "CPM",
+    "EXTENDED",
+    "FORMS",
+    "FORM_POKEMON",
+    "FRIENDSHIP",
+    "FRIENDSHIP_DMG_BONUS",
+    "HELPERS",
+    "HELPERS_DMG_BONUS",
+    "NON_COMBAT_MOVES",
+    "POKEMON",
+    "PVE_MOVES",
+    "PVP_MOVES",
+    "RANKS",
+    "RCPM",
+    "TYPES",
+    "TYPES_WEATHER",
+    "WEATHER",
+    "PokeData",
+    "PokeSpecies",
+    "SizeClass",
+    "gen_pokemon_data",
+    "gen_pokemon_data_raw",
+    "get_move_boosting_weather",
+    "get_pokemon_extended_settings",
+    "get_pokemon_settings",
+    "get_temp_evo_pokemon_settings",
+    "get_temp_evo_size_settings",
+    "get_tgr_rank_mult"
 ]

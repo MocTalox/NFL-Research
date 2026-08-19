@@ -1,6 +1,14 @@
 from dataclasses import dataclass, field
 from functools import reduce
 
+from nfl.data import (
+    BEHEMOTH_BASH_AE,
+    BEHEMOTH_BLADE_AE,
+    FRIENDSHIP_DMG_BONUS,
+    HELPERS_DMG_BONUS,
+    TYPES,
+    WEATHER,
+)
 from nfl.proto import (
     BATTLE_SETTINGS,
     COMBAT_SETTINGS,
@@ -16,20 +24,13 @@ from nfl.proto import (
     MoveSettings,
     PokemonSettings,
 )
-from nfl.service.common.data import (
-    BEHEMOTH_BASH_AE,
-    BEHEMOTH_BLADE_AE,
-    FRIENDSHIP_DMG_BONUS,
-    HELPERS_DMG_BONUS,
-    TYPES,
-    WEATHER,
-)
-from nfl.service.logic.pokemon_stats import get_stats, get_tgr_stats
 from nfl.utils import f32
+
+from .pokemon_stats import get_stats, get_tgr_stats
 
 
 @dataclass
-class Pokemon:
+class BattlePokemon:
     pokemon_settings: PokemonSettings | None = None
     atk_iv: int = 0
     def_iv: int = 0
@@ -53,7 +54,7 @@ class BattleState:
 
 
 @dataclass(frozen=True)
-class DamageMultipliers:
+class _DamageMultipliers:
     fast_attack: float = 1.0
     charge_attack: float = 1.0
     same_type_attack: float = 1.0
@@ -72,7 +73,7 @@ class DamageMultipliers:
 
 
 _DAMAGE_MULTIPLIERS = {
-    HoloCombatType.VS_SEEKER: DamageMultipliers(
+    HoloCombatType.VS_SEEKER: _DamageMultipliers(
         fast_attack=COMBAT_SETTINGS.fast_attack_bonus_multiplier,
         charge_attack=COMBAT_SETTINGS.charge_attack_bonus_multiplier,
         same_type_attack=COMBAT_SETTINGS.same_type_attack_bonus_multiplier,
@@ -80,7 +81,7 @@ _DAMAGE_MULTIPLIERS = {
         shadow_pokemon_defense=COMBAT_SETTINGS.shadow_pokemon_defense_bonus_multiplier,
         purified_pokemon_attack=COMBAT_SETTINGS.purified_pokemon_attack_multiplier_vs_shadow,
     ),
-    HoloCombatType.SOLO: DamageMultipliers(
+    HoloCombatType.SOLO: _DamageMultipliers(
         same_type_attack=BATTLE_SETTINGS.same_type_attack_bonus_multiplier,
         dodge_damage_reduction=BATTLE_SETTINGS.dodge_damage_reduction_percent,
         weather_attack=WEATHER_BONUS_SETTINGS.attack_bonus_multiplier,
@@ -91,7 +92,7 @@ _DAMAGE_MULTIPLIERS = {
         same_type_mega_attack=MEGA_EVO_SETTINGS.attack_boost_from_mega_same_type,
         different_type_mega_attack=MEGA_EVO_SETTINGS.attack_boost_from_mega_different_type,
     ),
-    HoloCombatType.COMBAT_TYPE_RAID: DamageMultipliers(
+    HoloCombatType.COMBAT_TYPE_RAID: _DamageMultipliers(
         same_type_attack=BATTLE_SETTINGS.same_type_attack_bonus_multiplier,
         dodge_damage_reduction=BATTLE_SETTINGS.dodge_damage_reduction_percent,
         weather_attack=WEATHER_BONUS_SETTINGS.attack_bonus_multiplier,
@@ -105,7 +106,7 @@ _DAMAGE_MULTIPLIERS = {
         blade_ae_attack=BEHEMOTH_BLADE_AE[HoloCombatType.COMBAT_TYPE_RAID],
         bash_ae_defense=BEHEMOTH_BASH_AE[HoloCombatType.COMBAT_TYPE_RAID],
     ),
-    HoloCombatType.COMBAT_TYPE_DMAX: DamageMultipliers(
+    HoloCombatType.COMBAT_TYPE_DMAX: _DamageMultipliers(
         same_type_attack=BATTLE_SETTINGS.same_type_attack_bonus_multiplier,
         dodge_damage_reduction=BATTLE_SETTINGS.dodge_damage_reduction_percent,
         weather_attack=WEATHER_BONUS_SETTINGS.attack_bonus_multiplier,
@@ -120,7 +121,7 @@ _DAMAGE_MULTIPLIERS = {
         blade_ae_attack=BEHEMOTH_BLADE_AE[HoloCombatType.COMBAT_TYPE_DMAX],
         bash_ae_defense=BEHEMOTH_BASH_AE[HoloCombatType.COMBAT_TYPE_DMAX],
     ),
-    HoloCombatType.COMBAT_TYPE_GMAX: DamageMultipliers(
+    HoloCombatType.COMBAT_TYPE_GMAX: _DamageMultipliers(
         same_type_attack=BATTLE_SETTINGS.same_type_attack_bonus_multiplier,
         dodge_damage_reduction=BATTLE_SETTINGS.dodge_damage_reduction_percent,
         weather_attack=WEATHER_BONUS_SETTINGS.attack_bonus_multiplier,
@@ -264,8 +265,8 @@ def get_blade_bash_boost(combat_type: HoloCombatType, blade: bool, bash: bool) -
 
 
 def damage_formula(
-    attacker: Pokemon,
-    target: Pokemon,
+    attacker: BattlePokemon,
+    target: BattlePokemon,
     move_settings: MoveSettings | CombatMove,
     move_pos: int,
     dodged: bool,
@@ -292,8 +293,8 @@ def damage_formula(
 
 
 def damage_formula_raw(
-    attacker: Pokemon,
-    target: Pokemon,
+    attacker: BattlePokemon,
+    target: BattlePokemon,
     move_power: float,
     move_type: HoloPokemonType,
     move_pos: int,

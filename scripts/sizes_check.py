@@ -1,14 +1,13 @@
-from nfl.helpers import get_poke
+from nfl.data import PokeSpecies, get_pokemon_extended_settings, get_pokemon_settings
 from nfl.proto import FORM_SETTINGS, HoloPokemonForm
-from nfl.service.common.data import EXTENDED, POKEMON
 from nfl.utils import f64
 
 
 def run():
     for fs in FORM_SETTINGS:
         for f in [HoloPokemonForm.FORM_UNSET] + [form.form for form in fs.forms]:
-            p = get_poke(POKEMON, fs.pokemon, f)
-            e = get_poke(EXTENDED, fs.pokemon, f)
+            p = get_pokemon_settings(PokeSpecies(name=fs.pokemon, form=f))
+            e = get_pokemon_extended_settings(PokeSpecies(name=fs.pokemon, form=f))
             if not p:
                 print(f"pokemon_settings: {fs.pokemon} / {f}")
                 continue
@@ -36,8 +35,8 @@ def run():
                 print(f"xxl_upper_bound: {fs.pokemon} / {f}")
     for fs in FORM_SETTINGS:
         for f in [HoloPokemonForm.FORM_UNSET] + [form.form for form in fs.forms]:
-            p = get_poke(POKEMON, fs.pokemon, f)
-            e = get_poke(EXTENDED, fs.pokemon, f)
+            p = get_pokemon_settings(PokeSpecies(name=fs.pokemon, form=f))
+            e = get_pokemon_extended_settings(PokeSpecies(name=fs.pokemon, form=f))
             if not p:
                 print(f"pokemon_settings: {fs.pokemon} / {f}")
                 continue

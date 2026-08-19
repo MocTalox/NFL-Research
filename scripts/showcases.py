@@ -1,13 +1,13 @@
-from nfl.helpers import PokeSpecies
-from nfl.proto import HoloTempEvoId
-from nfl.service.common.data import (
+from nfl.calcs import ShowcasePokemon, contest_score
+from nfl.data import (
+    PokeSpecies,
+    SizeClass,
     get_pokemon_extended_settings,
     get_pokemon_settings,
     get_temp_evo_pokemon_settings,
     get_temp_evo_size_settings,
 )
-from nfl.service.common.size_class import SizeClass
-from nfl.service.logic.contest_score import Pokemon, contest_score
+from nfl.proto import HoloTempEvoId
 
 
 def poke(
@@ -30,7 +30,7 @@ def poke(
 def run():
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("FALINKS", None, HoloTempEvoId.TEMP_EVOLUTION_MEGA),
                 100,
                 750.63,
@@ -41,7 +41,7 @@ def run():
     )
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("PUMPKABOO", "PUMPKABOO_SMALL"),
                 1 + 14 + 13,
                 6.245460033416748,
@@ -52,7 +52,7 @@ def run():
     )
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("LECHONK", None),
                 15 + 5 + 14,
                 12.45292664,
@@ -63,7 +63,7 @@ def run():
     )  # 1083.063422
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("BUNNELBY", None),
                 6 + 3 + 12,
                 7.73238802,
@@ -74,7 +74,7 @@ def run():
     )  # 1041.333484
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("SLAKOTH", None),
                 5 + 15 + 9,
                 40.85430145,
@@ -85,7 +85,7 @@ def run():
     )  # 1058.167837
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("SWABLU", None),
                 12 + 9 + 13,
                 1.874579191,
@@ -96,7 +96,7 @@ def run():
     )  # 1029.059482
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("LECHONK", None),
                 14 + 10 + 15,
                 25.04260826,
@@ -107,7 +107,7 @@ def run():
     )  # 994.3671879
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("FLETCHLING", None),
                 14 + 10 + 15,
                 3.760264158,
@@ -118,7 +118,7 @@ def run():
     )  # 865.8209233
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("EEVEE", None),
                 12 + 14 + 12,
                 13.47558212,
@@ -129,7 +129,7 @@ def run():
     )  # 840.6967393
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("MEOWTH", None),
                 12 + 10 + 1,
                 8.567674637,
@@ -140,7 +140,7 @@ def run():
     )  # 839.197601
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("GREEDENT", None),
                 15 + 4 + 13,
                 12.92473984,
@@ -151,7 +151,7 @@ def run():
     )  # 836.7245278
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("BUNNELBY", None),
                 10 + 10 + 10,
                 9.343919754,
@@ -162,7 +162,7 @@ def run():
     )  # 829.2416278
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("WOOLOO", None),
                 13 + 10 + 14,
                 12.15228081,
@@ -173,7 +173,7 @@ def run():
     )  # 805.8251632
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("BRAVIARY", None),
                 14 + 15 + 15,
                 82.33031464,
@@ -184,7 +184,7 @@ def run():
     )  # 787.714284
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("FURFROU", None),
                 4 + 10 + 13,
                 41.74080658,
@@ -195,7 +195,7 @@ def run():
     )  # 737.9105546
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("ZIGZAGOON", None),
                 14 + 15 + 14,
                 29.18685532,
@@ -206,7 +206,7 @@ def run():
     )  # 700.2987674
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("SPINDA", None),
                 15 + 15 + 14,
                 6.162862301,
@@ -217,7 +217,7 @@ def run():
     )  # 703.0177429
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("TOUCANNON", None),
                 15 + 15 + 13,
                 41.21990585,
@@ -228,7 +228,7 @@ def run():
     )  # 735.2645051
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("REGIGIGAS", None),
                 10 + 13 + 12,
                 414.9747314,
@@ -239,7 +239,7 @@ def run():
     )  # 666.8866408
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("REGIGIGAS", None),
                 13 + 13 + 14,
                 511.1306152,
@@ -250,7 +250,7 @@ def run():
     )  # 686.0032829
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("LICKITUNG", None),
                 5 + 12 + 13,
                 139.0036011,
@@ -261,7 +261,7 @@ def run():
     )  # 825.1469862
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("DUDUNSPARCE", None),
                 3 + 15 + 3,
                 68.77416992,
@@ -272,7 +272,7 @@ def run():
     )  # 796.0979214
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("KECLEON", None),
                 2 + 11 + 3,
                 30.15408516,
@@ -283,7 +283,7 @@ def run():
     )  # 706.0251212
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("SNORLAX", None),
                 9 + 13 + 8,
                 832.1674194,
@@ -294,7 +294,7 @@ def run():
     )  # 754.074779
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("SAWSBUCK", None),
                 5 + 13 + 4,
                 123.8382339,
@@ -305,7 +305,7 @@ def run():
     )  # 704.0339862
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("SLAKING", None),
                 15 + 11 + 15,
                 148.1611633,
@@ -316,7 +316,7 @@ def run():
     )  # 685.4662024
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("WEEZING", None),
                 5 + 12 + 5,
                 33.9213028,
@@ -327,7 +327,7 @@ def run():
     )  # 1716.660356
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("WEEZING", None),
                 13 + 15 + 15,
                 15.5542469,
@@ -338,7 +338,7 @@ def run():
     )  # 1134.700616
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("KOFFING", None),
                 2 + 13 + 14,
                 1.944025517,
@@ -349,7 +349,7 @@ def run():
     )  # 1087.513388
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("FOONGUS", None),
                 14 + 1 + 12,
                 1.593192816,
@@ -360,7 +360,7 @@ def run():
     )  # 911.7485629
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("CLODSIRE", None),
                 1 + 10 + 9,
                 338.25177,
@@ -371,7 +371,7 @@ def run():
     )  # 774.8704192
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("BELLSPROUT", None),
                 10 + 13 + 14,
                 6.450083733,
@@ -382,7 +382,7 @@ def run():
     )  # 796.4542323
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("TOXEL", None),
                 12 + 14 + 13,
                 17.39114571,
@@ -393,7 +393,7 @@ def run():
     )  # 688.4792839
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("GASTLY", None),
                 7 + 14 + 5,
                 0.2158249617,
@@ -404,7 +404,7 @@ def run():
     )  # 724.1168059
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("ROSERADE", None),
                 1 + 12 + 11,
                 26.10993576,
@@ -415,7 +415,7 @@ def run():
     )  # 758.869334
     print(
         contest_score(
-            Pokemon(
+            ShowcasePokemon(
                 *poke("SALANDIT", None),
                 10 + 10 + 10,
                 6.653783321,

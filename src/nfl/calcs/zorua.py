@@ -1,8 +1,7 @@
 from __future__ import annotations
 
+from nfl.data import EXTENDED, POKEMON, SizeClass
 from nfl.proto import HoloPokemonForm, HoloPokemonId, PokemonSettings, SizeSettings
-from nfl.service.common.data import EXTENDED, POKEMON
-from nfl.service.common.size_class import SizeClass
 
 ZORUA_POKEMON_SETTINGS = POKEMON[HoloPokemonId.ZORUA][HoloPokemonForm.FORM_UNSET]
 ZORUA_SIZE_SETTINGS = EXTENDED[HoloPokemonId.ZORUA][

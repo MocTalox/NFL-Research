@@ -95,7 +95,7 @@ def tgr_service_all_for():
 
 
 def tgr_service_single():
-    from nfl.helpers import PokeSpecies
+    from nfl.data import PokeSpecies
     from nfl.service.tgr_service import (
         MoveSetRanking,
         tgr_best_pokemon_moveset,
@@ -132,17 +132,16 @@ def debug_ext_service():
 
 
 def main():
-    from nfl.helpers import PokeSpecies
-    from nfl.service.common import data
-    from nfl.service.common.size_class import SizeClass
-    from nfl.service.logic.size_change import Pokemon, evolution_size
+    from nfl import data
+    from nfl.calcs import SizedPokemon, evolution_size
+    from nfl.data import PokeSpecies, SizeClass
     from nfl.utils import f32
 
     ps = data.get_pokemon_settings(PokeSpecies.resolve("Shroodle"))
     pes = data.get_pokemon_extended_settings(PokeSpecies.resolve("Shroodle"))
     assert ps and pes
     res = evolution_size(
-        Pokemon.build(
+        SizedPokemon.build(
             pokemon=PokeSpecies.resolve("CORPHISH"),
             weight_kg=24.26,
             height_m=0.89,
@@ -152,17 +151,17 @@ def main():
     )
     print(res)
     return
-    from nfl.helpers import PokeSpecies
-    from nfl.service.common import data
-    from nfl.service.common.size_class import SizeClass
-    from nfl.service.logic.contest_score import Pokemon, contest_score
+    from nfl.cals import ShowcasePokemon, contest_score
+
+    from nfl import data
+    from nfl.data import PokeSpecies, SizeClass
     from nfl.utils import f32
 
     ps = data.get_pokemon_settings(PokeSpecies.resolve("Shroodle"))
     pes = data.get_pokemon_extended_settings(PokeSpecies.resolve("Shroodle"))
     assert ps and pes
     res = contest_score(
-        Pokemon(
+        ShowcasePokemon(
             ps,
             pes.size_settings,
             individual_values=13 + 13 + 13,
@@ -173,11 +172,11 @@ def main():
     )
     print(res)
     return
-    from nfl.service.common import data
+    from nfl import data
 
     print(list(data.FORM_POKEMON.items())[:50])
     return
-    from nfl.data._proto_parser import Data, read_proto_file
+    from nfl.io._proto_parser import Data, read_proto_file
 
     names: set[str] = set()
     vartypes: set[tuple[str, bool]] = set()
@@ -247,19 +246,21 @@ def main():
         if pokemon.pokemon_id == HoloPokemonId.BAXCALIBUR:
             print(pokemon)
     return
-    from nfl.helpers import PokeSpecies
+    from nfl.cals import (
+        BattlePokemon,
+        BattleState,
+        damage_formula_raw,
+        get_cpm,
+        get_rcpm,
+        get_tgr_hp,
+    )
+
+    from nfl.data import PVP_MOVES, PokeSpecies, get_pokemon_settings
     from nfl.proto import (
         HoloCharacterCategory,
         HoloCombatType,
         HoloPokemonMove,
     )
-    from nfl.service.common.data import PVP_MOVES, get_pokemon_settings
-    from nfl.service.logic.damage_formula import (
-        BattleState,
-        Pokemon,
-        damage_formula_raw,
-    )
-    from nfl.service.logic.pokemon_stats import get_cpm, get_rcpm, get_tgr_hp
 
     e = PokeSpecies.resolve("excadrill")
     v = PokeSpecies.resolve("voltorb")
@@ -268,7 +269,7 @@ def main():
     assert eps and vps
 
     vrcpm = get_rcpm(80)
-    vp = Pokemon(vps, 15, 15, 15, vrcpm, True, False, HoloCharacterCategory.GRUNT)
+    vp = BattlePokemon(vps, 15, 15, 15, vrcpm, True, False, HoloCharacterCategory.GRUNT)
     vhp = get_tgr_hp(vps, vrcpm, vp.tgr_member, 15)
     print(f"Voltorb HP: {vhp}")
 
@@ -278,7 +279,7 @@ def main():
     for lvl in range(80, 101):
         lvl = lvl / 2
         cpm = get_cpm(lvl)
-        ep = Pokemon(eps, 15, 15, 15, cpm, True, False)
+        ep = BattlePokemon(eps, 15, 15, 15, cpm, True, False)
         dmg = damage_formula_raw(ep, vp, m.power, m.type, 0, False, b)
         print(f"Level: {lvl} -> Damage: {int(dmg) + 1} ({dmg})")
 

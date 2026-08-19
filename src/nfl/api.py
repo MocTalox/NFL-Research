@@ -3,7 +3,9 @@ from dataclasses import asdict, dataclass
 from enum import Enum
 from typing import Any
 
-from nfl.helpers import PokeSpecies
+from nfl import calcs as stats
+from nfl import data
+from nfl.data import PokeSpecies
 from nfl.proto import (
     HoloCharacterCategory,
     HoloPokemonForm,
@@ -12,8 +14,6 @@ from nfl.proto import (
     HoloPokemonType,
     HoloWeatherCondition,
 )
-from nfl.service.common import data
-from nfl.service.logic import pokemon_stats as stats
 
 
 class EnumEncoder(json.JSONEncoder):
@@ -108,21 +108,18 @@ def calculate_damage(
     enemy_pokemon: PokeInput,
     trainer_level: int,
 ) -> dict[str, Any]:
-    from nfl.helpers import PokeSpecies
-    from nfl.proto import HoloCharacterCategory, HoloCombatType, HoloPokemonMove
-    from nfl.service.common.data import PVP_MOVES, get_pokemon_settings
-    from nfl.service.logic.damage_formula import (
+    from nfl.calcs import (
+        BattlePokemon,
         BattleState,
-        Pokemon,
         damage_formula_raw,
-    )
-    from nfl.service.logic.pokemon_stats import (
         get_cpm,
         get_rcpm,
         get_tgr_cp,
         get_tgr_hp,
         get_tgr_stats,
     )
+    from nfl.data import PVP_MOVES, PokeSpecies, get_pokemon_settings
+    from nfl.proto import HoloCharacterCategory, HoloCombatType, HoloPokemonMove
 
     pokemon_species = PokeSpecies.resolve(
         name=pokemon.name, form=pokemon.form, temp_evo=pokemon.temp_evo
@@ -139,7 +136,7 @@ def calculate_damage(
     eps = get_pokemon_settings(enemy_pokemon_species)
     assert ps and eps
 
-    e = Pokemon(
+    e = BattlePokemon(
         eps,
         15,
         15,
@@ -164,7 +161,7 @@ def calculate_damage(
         for level in range(min_level * 2, max_level * 2 + 1):
             level = level / 2
             cpm = get_cpm(level)
-            p = Pokemon(ps, atk, 15, 15, cpm, pokemon.shadow, False)
+            p = BattlePokemon(ps, atk, 15, 15, cpm, pokemon.shadow, False)
             dmg = damage_formula_raw(p, e, m.power, m.type, 0, False, b)
             damages.append({"level": level, "damage": int(dmg) + 1, "damage_raw": dmg})
         breakpoints.append({"atk": atk, "damages": damages})

@@ -1,6 +1,5 @@
 from dataclasses import replace
 
-from nfl.helpers import PokeSpecies, get_poke, to_poke_map
 from nfl.proto import (
     COMBAT_MOVE,
     FORM_SETTINGS,
@@ -22,6 +21,9 @@ from nfl.proto import (
     PokemonSettings,
     SizeSettings,
 )
+
+from ._poke_map import get_poke, to_poke_map
+from .poke_species import PokeSpecies
 
 
 def _get_non_combat_move_attack_defense_bonus(move: HoloPokemonMove):

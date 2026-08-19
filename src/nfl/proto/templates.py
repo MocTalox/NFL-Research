@@ -1,7 +1,7 @@
 from collections.abc import Callable
 from typing import TypeVar
 
-from nfl.data import Message, get_templates
+from nfl.io import Message, get_templates
 
 from .msg.battle_settings import BattleSettings
 from .msg.bread_move_mappings import BreadMoveMappings

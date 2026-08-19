@@ -7,7 +7,7 @@ from typing import Generic, NamedTuple, TypeVar
 
 from nfl.proto import HoloPokemonId, HoloTempEvoId
 
-from .poke_map import PokeMap
+from ._poke_map import PokeMap
 from .poke_species import PokeSpecies
 
 P = TypeVar("P", bound=PokeSpecies)

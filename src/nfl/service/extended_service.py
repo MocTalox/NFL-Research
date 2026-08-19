@@ -7,9 +7,14 @@ return new float[] { w, h };
 
 from dataclasses import dataclass
 
-from nfl.helpers import PokeData, PokeSpecies, gen_pokemon_data
+from nfl.data import (
+    POKEMON,
+    PokeData,
+    PokeSpecies,
+    gen_pokemon_data,
+    get_pokemon_extended_settings,
+)
 from nfl.proto import PokemonExtendedSettings, PokemonSettings
-from nfl.service.common.data import POKEMON, get_pokemon_extended_settings
 
 
 @dataclass(frozen=True)

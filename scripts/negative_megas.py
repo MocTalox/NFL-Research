@@ -3,11 +3,14 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from nfl.helpers import PokeSpecies, get_poke
+from nfl.calcs import SizedPokemon, evolution_size
+from nfl.data import (
+    PokeSpecies,
+    SizeClass,
+    get_pokemon_extended_settings,
+    get_pokemon_settings,
+)
 from nfl.proto import FORM_SETTINGS, HoloPokemonForm
-from nfl.service.common.data import EXTENDED, POKEMON
-from nfl.service.common.size_class import SizeClass
-from nfl.service.logic.size_change import Pokemon, evolution_size
 
 
 def create_plot(
@@ -198,8 +201,8 @@ def create_plot(
 
 def run():
     for fs in FORM_SETTINGS:
-        p = get_poke(POKEMON, fs.pokemon, HoloPokemonForm.FORM_UNSET)
-        e = get_poke(EXTENDED, fs.pokemon, HoloPokemonForm.FORM_UNSET)
+        p = get_pokemon_settings(PokeSpecies(name=fs.pokemon))
+        e = get_pokemon_extended_settings(PokeSpecies(name=fs.pokemon))
         if fs.pokemon.name == "BASCULEGION":
             continue
         assert p and e
@@ -223,7 +226,7 @@ def run():
                     if w <= 0:
                         w = (hv**n) * p.pokedex_weight_kg
                     _ = evolution_size(
-                        Pokemon(poke, p, e, w, h, s),
+                        SizedPokemon(poke, p, e, w, h, s),
                         teo.temp_evo_id,
                     )
                     if False:  # TODO hardcore activation

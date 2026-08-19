@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from nfl.data import Message
+from nfl.io import Message
 
 
 @dataclass(frozen=True)

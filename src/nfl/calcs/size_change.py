@@ -2,26 +2,26 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from nfl.helpers import PokeSpecies
-from nfl.proto import HoloTempEvoId, PokemonSettings, SizeSettings
-from nfl.service.common.data import (
+from nfl.data import (
+    PokeSpecies,
+    SizeClass,
     get_pokemon_extended_settings,
     get_pokemon_settings,
     get_temp_evo_pokemon_settings,
     get_temp_evo_size_settings,
 )
-from nfl.service.common.size_class import SizeClass
+from nfl.proto import HoloTempEvoId, PokemonSettings, SizeSettings
 from nfl.utils import has_decimals
 
 
 @dataclass(frozen=True)
-class PokemonInfo:
+class SizedPokemonInfo:
     pokemon_id: PokeSpecies
     pokemon_settings: PokemonSettings
     size_settings: SizeSettings
 
     @classmethod
-    def build_info(cls, pokemon: PokeSpecies) -> PokemonInfo:
+    def build_info(cls, pokemon: PokeSpecies) -> SizedPokemonInfo:
         pokemon_settings = get_pokemon_settings(pokemon)
         pokemon_extended_settings = get_pokemon_extended_settings(pokemon)
         assert pokemon_settings and pokemon_extended_settings
@@ -40,7 +40,7 @@ class PokemonInfo:
 
 
 @dataclass(frozen=True)
-class Pokemon(PokemonInfo):
+class SizedPokemon(SizedPokemonInfo):
     weight_kg: float
     height_m: float
     size_class: SizeClass
@@ -52,14 +52,14 @@ class Pokemon(PokemonInfo):
         weight_kg: float,
         height_m: float,
         size_class: SizeClass | None = None,
-    ) -> Pokemon:
+    ) -> SizedPokemon:
         if weight_kg < 0 or height_m < 0:
             raise ValueError(
                 f"Invalid Pokémon dimensions: weight_kg={weight_kg}, height_m={height_m}. "
                 f"Values must be positive."
             )
 
-        pokemon_info = PokemonInfo.build_info(pokemon)
+        pokemon_info = SizedPokemonInfo.build_info(pokemon)
 
         if size_class is None:
             size_class = SizeClass.from_height(height_m, pokemon_info.size_settings)
@@ -87,13 +87,13 @@ class Pokemon(PokemonInfo):
             size_class,
         )
 
-    def change_size(self, d_weight: float, d_height: float) -> Pokemon:
+    def change_size(self, d_weight: float, d_height: float) -> SizedPokemon:
         height_min, height_max = self.size_class.get_bounds(self.size_settings)
 
         weight = max(self.weight_kg + d_weight, 0)
         height = max(min(self.height_m + d_height, height_max), height_min)
 
-        return Pokemon(
+        return SizedPokemon(
             self.pokemon_id,
             self.pokemon_settings,
             self.size_settings,
@@ -104,7 +104,7 @@ class Pokemon(PokemonInfo):
 
 
 def _resolve_evo_settings(
-    evo_pokemon: PokemonInfo | PokeSpecies | HoloTempEvoId, base_pokemon: PokemonInfo
+    evo_pokemon: SizedPokemonInfo | PokeSpecies | HoloTempEvoId, base_pokemon: SizedPokemonInfo
 ):
     if isinstance(evo_pokemon, HoloTempEvoId):
         evo_pokemon = PokeSpecies(
@@ -113,7 +113,7 @@ def _resolve_evo_settings(
             temp_evo=evo_pokemon,
         )
     if isinstance(evo_pokemon, PokeSpecies):
-        evo_pokemon = PokemonInfo.build_info(evo_pokemon)
+        evo_pokemon = SizedPokemonInfo.build_info(evo_pokemon)
     return evo_pokemon
 
 
@@ -122,8 +122,8 @@ def _lerp(value: float, a_min: float, a_max: float, b_min: float, b_max: float):
 
 
 def evolution_size(
-    pokemon: Pokemon, evo_pokemon: PokemonInfo | PokeSpecies | HoloTempEvoId
-) -> Pokemon:
+    pokemon: SizedPokemon, evo_pokemon: SizedPokemonInfo | PokeSpecies | HoloTempEvoId
+) -> SizedPokemon:
     evo_pokemon = _resolve_evo_settings(evo_pokemon, pokemon)
 
     temp_evo_xxl_glitch = evo_pokemon.pokemon_id.temp_evo
@@ -157,7 +157,7 @@ def evolution_size(
         pokemon.size_settings if temp_evo_xxl_glitch else evo_pokemon.size_settings,
     )
 
-    return Pokemon(
+    return SizedPokemon(
         evo_pokemon.pokemon_id,
         evo_pokemon.pokemon_settings,
         evo_pokemon.size_settings,
@@ -168,9 +168,9 @@ def evolution_size(
 
 
 def evolution_size_range(
-    pokemon: Pokemon,
-    evo_pokemon: PokemonInfo | PokeSpecies | HoloTempEvoId,
-) -> dict[str, Pokemon | dict[str, float | SizeClass]]:
+    pokemon: SizedPokemon,
+    evo_pokemon: SizedPokemonInfo | PokeSpecies | HoloTempEvoId,
+) -> dict[str, SizedPokemon | dict[str, float | SizeClass]]:
     evo_pokemon = _resolve_evo_settings(evo_pokemon, pokemon)
 
     min_min = evolution_size(pokemon.change_size(-0.005, -0.005), evo_pokemon)

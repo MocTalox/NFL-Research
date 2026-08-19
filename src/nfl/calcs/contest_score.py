@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
+from nfl.data import SizeClass
 from nfl.proto import CONTEST_SETTINGS, PokemonSettings, SizeSettings
-from nfl.service.common.size_class import SizeClass
 
 height_coefficient = (
     CONTEST_SETTINGS.contest_score_coefficient.pokemon_size.height_coefficient
@@ -16,7 +16,7 @@ xxl_adjustment_factor = (
 
 
 @dataclass
-class Pokemon:
+class ShowcasePokemon:
     pokemon_settings: PokemonSettings
     size_settings: SizeSettings | None
     individual_values: int
@@ -25,7 +25,7 @@ class Pokemon:
     size_class: SizeClass
 
 
-def contest_score(pokemon: Pokemon):
+def contest_score(pokemon: ShowcasePokemon):
     max_height = (
         pokemon.size_settings.xxl_upper_bound
         if pokemon.size_settings

@@ -3,21 +3,22 @@ from functools import partial
 from itertools import count
 from math import floor
 
-from nfl.helpers import PokeSpecies
-from nfl.proto import HoloCombatType, HoloPokemonMove, HoloWeatherCondition
-from nfl.service.common.data import (
+from nfl.calcs import (
+    BattlePokemon,
+    BattleState,
+    damage_formula_raw,
+    get_cpm,
+    get_hp,
+)
+from nfl.calcs.damage_formula import get_effect
+from nfl.data import (
     POKEMON,
     PVE_MOVES,
+    PokeSpecies,
     get_move_boosting_weather,
     get_pokemon_settings,
 )
-from nfl.service.logic.damage_formula import (
-    BattleState,
-    Pokemon,
-    damage_formula_raw,
-    get_effect,
-)
-from nfl.service.logic.pokemon_stats import get_cpm, get_hp
+from nfl.proto import HoloCombatType, HoloPokemonMove, HoloWeatherCondition
 from nfl.utils import f32, f32_step, f64
 
 
@@ -27,7 +28,7 @@ def get_cpm_list(levels: list[float]) -> list[tuple[float, float]]:
 
 dialga = get_pokemon_settings(PokeSpecies.resolve("dialga"))
 assert dialga
-boss = Pokemon(
+boss = BattlePokemon(
     dialga,
     15,
     15,
@@ -67,7 +68,7 @@ defenders = [poke for s in POKEMON.values() for poke in s.values()]
 
 
 def raw_dmg_func(
-    move: HoloPokemonMove, state: BattleState, defender: Pokemon, mult: float
+    move: HoloPokemonMove, state: BattleState, defender: BattlePokemon, mult: float
 ):
     move_settings = PVE_MOVES[move]
     return mult * damage_formula_raw(
@@ -85,7 +86,7 @@ def test_dmg_func(
 ):
     state = BattleState()
     state.weather_id = weather_id
-    defender = Pokemon()
+    defender = BattlePokemon()
     defender.pokemon_settings = get_poke_settings(defender_ps)
     defender.def_iv = iv_def
     defender.cpm = get_cpm(level)
@@ -178,7 +179,7 @@ def cpm_floats_diff(
 
 res: list[list[object]] = []
 state = BattleState(HoloCombatType.COMBAT_TYPE_RAID)
-defender = Pokemon()
+defender = BattlePokemon()
 base, low, hig = 1.7989907554974764, 1.79898, 1.799
 low, hig = f32_step(base, -25), f32_step(base, 25)
 print("Starting")

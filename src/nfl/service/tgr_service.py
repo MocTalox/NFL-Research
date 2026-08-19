@@ -4,7 +4,19 @@ from dataclasses import dataclass
 from itertools import product
 from typing import Protocol
 
-from nfl.helpers import PokeData, PokeSpecies, gen_pokemon_data
+from nfl.calcs.damage_formula import (
+    get_effect,
+    get_shadow_attack_bonus,
+    get_stab,
+)
+from nfl.data import (
+    POKEMON,
+    PVP_MOVES,
+    PokeData,
+    PokeSpecies,
+    gen_pokemon_data,
+    get_temp_evo_pokemon_settings,
+)
 from nfl.proto import (
     CombatMove,
     HoloCombatType,
@@ -12,12 +24,6 @@ from nfl.proto import (
     HoloPokemonType,
     HoloTempEvoId,
     PokemonSettings,
-)
-from nfl.service.common.data import POKEMON, PVP_MOVES, get_temp_evo_pokemon_settings
-from nfl.service.logic.damage_formula import (
-    get_effect,
-    get_shadow_attack_bonus,
-    get_stab,
 )
 
 
