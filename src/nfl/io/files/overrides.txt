@@ -391,3 +391,35 @@ override {
   target: "stationedPokemonTableSettings.tierBoosts[19].hundredths_of_percent"
   value: 2000
 }
+override {
+  action_type: SET
+  template_id: "EXTENDED_V0892_POKEMON_URSHIFU_SINGLE_STRIKE"
+  target: "pokemonExtendedSettings.breadOverrides(0).breadMode"
+  value: BREAD_DOUGH_MODE
+  predicate {
+    condition {
+      target: "breadMode"
+      value: BREAD_DOUGH_MODE_2
+    }
+  }
+}
+override {
+  action_type: SET
+  template_id: "BREAD_SHARED_SETTINGS"
+  target: "breadSettings.allowedSourdoughPokemon(0).breadMode"
+  value: BREAD_DOUGH_MODE
+  predicate {
+    condition {
+      target: "pokemonId"
+      value: URSHIFU
+    }
+    condition {
+      target: "form"
+      value: URSHIFU_RAPID_STRIKE
+    }
+    condition {
+      target: "breadMode"
+      value: BREAD_DOUGH_MODE_2
+    }
+  }
+}

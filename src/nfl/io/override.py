@@ -20,12 +20,38 @@ class Override:
     template_id: tuple[str, ...]
     target: list[str]
     value: list[str | RawValue | Message]
+    predicate: tuple[Predicate, ...]
 
     @classmethod
     def from_message(cls, msg: Message) -> Override:
         return cls(
             action_type=msg.get_enum("action_type", Action),
             template_id=msg.get_string_list("template_id"),
+            target=msg.get_string("target").split("."),
+            value=msg.get("value"),
+            predicate=msg.get_object_list("predicate", Predicate.from_message),
+        )
+
+
+@dataclass(frozen=True)
+class Predicate:
+    condition: tuple[Condition, ...]
+
+    @classmethod
+    def from_message(cls, msg: Message) -> Predicate:
+        return cls(
+            condition=msg.get_object_list("condition", Condition.from_message),
+        )
+
+
+@dataclass(frozen=True)
+class Condition:
+    target: list[str]
+    value: list[str | RawValue | Message]
+
+    @classmethod
+    def from_message(cls, msg: Message) -> Condition:
+        return cls(
             target=msg.get_string("target").split("."),
             value=msg.get("value"),
         )

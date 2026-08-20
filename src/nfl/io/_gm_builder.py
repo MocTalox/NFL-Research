@@ -2,7 +2,7 @@ import re
 
 from ._gm_parser import parse_proto_file
 from .message import Message
-from .override import Action, AddTemplate, Override, RemTemplate
+from .override import Action, AddTemplate, Condition, Override, Predicate, RemTemplate
 from .template import Template
 
 
@@ -11,11 +11,6 @@ def build_game_master(
 ) -> dict[str, dict[str, Template]]:
     parsed_game_master = parse_proto_file(raw_game_master)
     parsed_overrides = parse_proto_file(raw_overrides or "")
-
-    def unfold_step(key: str) -> tuple[str, int | None]:
-        if m := re.match(r"(\w+)\[(\d+)\]", key):
-            return (m.group(1), int(m.group(2)))
-        return (key, None)
 
     data: dict[str, dict[str, Template]] = {}
     mapper: dict[str, str] = {}
@@ -45,13 +40,7 @@ def build_game_master(
                     f"Template key mismatch for template_id={template_id}: "
                     f"override targets key={key}, but template has key={template.key}"
                 )
-            value = template.value
-            for step in path:
-                step_key, step_index = unfold_step(step)
-                if step_index is None:
-                    value = value.get_message(step_key)
-                else:
-                    value = value.get_message_list(step_key)[step_index]
+            value = _find_value(template.value, path, override.predicate)
             if override.action_type is Action.DEL or override.action_type is Action.SET:
                 value.delete(target)
             if override.action_type is Action.ADD or override.action_type is Action.SET:
@@ -81,3 +70,37 @@ def build_game_master(
         mapper[template.template_id] = template.key
 
     return data
+
+
+def _find_value(value: Message, path: list[str], pred: tuple[Predicate, ...]) -> Message:
+    for step in path:
+        step_key, step_index, step_cond = _unfold_step(step)
+        if step_index is None:
+            value = value.get_message(step_key)
+        elif step_cond:
+            value = next(
+                v
+                for v in value.get_message_list(step_key)
+                if _match_predicate(v, pred[step_index], pred)
+            )
+        else:
+            value = value.get_message_list(step_key)[step_index]
+    return value
+
+
+def _unfold_step(key: str) -> tuple[str, int | None, bool]:
+    if m := re.match(r"(\w+)\[(\d+)\]", key):
+        return (m.group(1), int(m.group(2)), False)
+    if m := re.match(r"(\w+)\((\d+)\)", key):
+        return (m.group(1), int(m.group(2)), True)
+    return (key, None, False)
+
+
+def _match_predicate(value: Message, predicate: Predicate, pred: tuple[Predicate, ...]) -> bool:
+    return all(_match_condition(value, cond, pred) for cond in predicate.condition)
+
+
+def _match_condition(value: Message, condition: Condition, pred: tuple[Predicate, ...]) -> bool:
+    *path, target = condition.target
+    value = _find_value(value, path, pred)
+    return value.get(target) == condition.value
