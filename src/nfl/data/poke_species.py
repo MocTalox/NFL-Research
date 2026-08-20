@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from nfl.proto import (
     HoloAlignment,
     HoloBreadModeEnum,
+    HoloLocationCard,
     HoloPokemonForm,
     HoloPokemonId,
     HoloTempEvoId,
@@ -19,6 +20,9 @@ class PokeSpecies:
     temp_evo: HoloTempEvoId = HoloTempEvoId.TEMP_EVOLUTION_UNSET
     shadow: HoloAlignment = HoloAlignment.ALIGNMENT_UNSET
     bread: HoloBreadModeEnum = HoloBreadModeEnum.NONE
+    shiny: bool = False
+    lucky: bool = False
+    bg: HoloLocationCard = HoloLocationCard.LOCATION_CARD_UNSET
 
     @property
     def identity(self) -> PokeSpecies:
@@ -28,6 +32,9 @@ class PokeSpecies:
             temp_evo=self.temp_evo,
             shadow=self.shadow,
             bread=self.bread,
+            shiny=self.shiny,
+            lucky=self.lucky,
+            bg=self.bg,
         )
 
     def is_the_same(self, other: PokeSpecies) -> bool:
@@ -35,6 +42,15 @@ class PokeSpecies:
 
     def __str__(self):
         parts: list[str] = []
+
+        if self.shiny:
+            parts.append("SHINY")
+
+        if self.lucky:
+            parts.append("LUCKY")
+
+        if self.bg:
+            parts.append(self.bg.name)
 
         if self.shadow:
             parts.append(self.shadow.name)
@@ -57,12 +73,16 @@ class PokeSpecies:
         temp_evo: str | None = None,
         shadow: str | None = None,
         bread: str | None = None,
+        shiny: bool = False,
+        lucky: bool = False,
+        bg: str | None = None,
     ) -> PokeSpecies:
         name = PokeSpecies.resolve_id(name)
         form = PokeSpecies.resolve_id(form) if form else None
         temp_evo = PokeSpecies.resolve_id(temp_evo) if temp_evo else None
         shadow = PokeSpecies.resolve_id(shadow) if shadow else None
         bread = PokeSpecies.resolve_id(bread) if bread else None
+        bg = PokeSpecies.resolve_id(bg) if bg else None
         if (
             form
             and form != HoloPokemonForm.FORM_UNSET.name
@@ -86,6 +106,9 @@ class PokeSpecies:
             else HoloTempEvoId.TEMP_EVOLUTION_UNSET,
             shadow=HoloAlignment[shadow] if shadow else HoloAlignment.ALIGNMENT_UNSET,
             bread=HoloBreadModeEnum[bread] if bread else HoloBreadModeEnum.NONE,
+            shiny=shiny,
+            lucky=lucky,
+            bg=HoloLocationCard[bg] if bg else HoloLocationCard.LOCATION_CARD_UNSET,
         )
 
     @staticmethod

@@ -1,9 +1,11 @@
 from .holo.holoholo import (
     HoloAlignment,
     HoloBreadModeEnum,
+    HoloCardType,
     HoloCharacterCategory,
     HoloCombatType,
     HoloFriendshipLevel,
+    HoloLocationCard,
     HoloPokemonClass,
     HoloPokemonFamilyId,
     HoloPokemonForm,
@@ -27,6 +29,7 @@ from .msg.combat_stat_stage_settings import CombatStatStageSettings
 from .msg.contest_settings import ContestScoreCoefficient, ContestSettings, PokemonSize
 from .msg.form_settings import Form, FormSettings
 from .msg.friendship_milestone_settings import FriendshipMilestoneSettings
+from .msg.location_card_settings import LocationCardSettings
 from .msg.mega_evo_settings import MegaEvoSettings
 from .msg.move_settings import MoveSettings
 from .msg.non_combat_move_settings import (
@@ -86,9 +89,11 @@ __all__ = [
     "FriendshipMilestoneSettings",
     "HoloAlignment",
     "HoloBreadModeEnum",
+    "HoloCardType",
     "HoloCharacterCategory",
     "HoloCombatType",
     "HoloFriendshipLevel",
+    "HoloLocationCard",
     "HoloPokemonClass",
     "HoloPokemonFamilyId",
     "HoloPokemonForm",
@@ -97,6 +102,7 @@ __all__ = [
     "HoloPokemonType",
     "HoloTempEvoId",
     "HoloWeatherCondition",
+    "LocationCardSettings",
     "Mappings_BMM",
     "Mappings_SMMS",
     "MegaEvoSettings",

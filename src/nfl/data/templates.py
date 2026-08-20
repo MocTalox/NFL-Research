@@ -12,6 +12,7 @@ from nfl.proto import (
     ContestSettings,
     FormSettings,
     FriendshipMilestoneSettings,
+    LocationCardSettings,
     MegaEvoSettings,
     MoveSettings,
     NonCombatMoveSettings,
@@ -90,6 +91,11 @@ FORM_SETTINGS = _load_set(
 FRIENDSHIP_MILESTONE_SETTINGS = _load_set(
     "friendshipMilestoneSettings",
     FriendshipMilestoneSettings.from_message,
+)
+
+LOCATION_CARD_SETTINGS = _load_set(
+    "locationCardSettings",
+    LocationCardSettings.from_message,
 )
 
 MEGA_EVO_SETTINGS = _load_elem(
