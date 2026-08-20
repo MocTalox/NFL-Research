@@ -137,8 +137,8 @@ def main():
     from nfl.data import PokeSpecies, SizeClass
     from nfl.utils import f32
 
-    ps = data.get_pokemon_settings(PokeSpecies.resolve("Shroodle"))
-    pes = data.get_pokemon_extended_settings(PokeSpecies.resolve("Shroodle"))
+    ps = data.POKEMON.get(PokeSpecies.resolve("Shroodle"))
+    pes = data.EXTENDED.get(PokeSpecies.resolve("Shroodle"))
     assert ps and pes
     res = evolution_size(
         SizedPokemon.build(
@@ -157,8 +157,8 @@ def main():
     from nfl.data import PokeSpecies, SizeClass
     from nfl.utils import f32
 
-    ps = data.get_pokemon_settings(PokeSpecies.resolve("Shroodle"))
-    pes = data.get_pokemon_extended_settings(PokeSpecies.resolve("Shroodle"))
+    ps = data.POKEMON.get(PokeSpecies.resolve("Shroodle"))
+    pes = data.EXTENDED.get(PokeSpecies.resolve("Shroodle"))
     assert ps and pes
     res = contest_score(
         ShowcasePokemon(
@@ -257,7 +257,7 @@ def main():
         get_tgr_hp,
     )
 
-    from nfl.data import PVP_MOVES, PokeSpecies, get_pokemon_settings
+    from nfl.data import POKEMON, PVP_MOVES, PokeSpecies
     from nfl.proto import (
         HoloCharacterCategory,
         HoloCombatType,
@@ -266,8 +266,8 @@ def main():
 
     e = PokeSpecies.resolve("excadrill")
     v = PokeSpecies.resolve("voltorb")
-    eps = get_pokemon_settings(e)
-    vps = get_pokemon_settings(v)
+    eps = POKEMON.get(e)
+    vps = POKEMON.get(v)
     assert eps and vps
 
     vrcpm = get_rcpm(80)

@@ -5,11 +5,11 @@ import numpy as np
 
 from nfl.calcs import SizedPokemon, evolution_size
 from nfl.data import (
+    EXTENDED,
     FORM_SETTINGS,
+    POKEMON,
     PokeSpecies,
     SizeClass,
-    get_pokemon_extended_settings,
-    get_pokemon_settings,
 )
 from nfl.proto import HoloPokemonForm
 
@@ -202,8 +202,8 @@ def create_plot(
 
 def run():
     for fs in FORM_SETTINGS:
-        p = get_pokemon_settings(PokeSpecies(name=fs.pokemon))
-        e = get_pokemon_extended_settings(PokeSpecies(name=fs.pokemon))
+        p = POKEMON.get(PokeSpecies(name=fs.pokemon))
+        e = EXTENDED.get(PokeSpecies(name=fs.pokemon))
         if fs.pokemon.name == "BASCULEGION":
             continue
         assert p and e

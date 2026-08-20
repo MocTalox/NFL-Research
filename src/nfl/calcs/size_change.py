@@ -3,10 +3,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from nfl.data import (
+    EXTENDED,
+    POKEMON,
     PokeSpecies,
     SizeClass,
-    get_pokemon_extended_settings,
-    get_pokemon_settings,
     get_temp_evo_pokemon_settings,
     get_temp_evo_size_settings,
 )
@@ -22,8 +22,8 @@ class SizedPokemonInfo:
 
     @classmethod
     def build_info(cls, pokemon: PokeSpecies) -> SizedPokemonInfo:
-        pokemon_settings = get_pokemon_settings(pokemon)
-        pokemon_extended_settings = get_pokemon_extended_settings(pokemon)
+        pokemon_settings = POKEMON.get(pokemon)
+        pokemon_extended_settings = EXTENDED.get(pokemon)
         assert pokemon_settings and pokemon_extended_settings
 
         if pokemon.temp_evo:

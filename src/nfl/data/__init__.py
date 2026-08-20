@@ -19,8 +19,6 @@ from .catalog import (
     TYPES_WEATHER,
     WEATHER,
     get_move_boosting_weather,
-    get_pokemon_extended_settings,
-    get_pokemon_settings,
     get_temp_evo_pokemon_settings,
     get_temp_evo_size_settings,
     get_tgr_rank_mult,
@@ -105,8 +103,6 @@ __all__ = [
     "PokeSpecies",
     "SizeClass",
     "get_move_boosting_weather",
-    "get_pokemon_extended_settings",
-    "get_pokemon_settings",
     "get_temp_evo_pokemon_settings",
     "get_temp_evo_size_settings",
     "get_tgr_rank_mult"

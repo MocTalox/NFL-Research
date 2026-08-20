@@ -16,7 +16,6 @@ from nfl.data import (
     PVE_MOVES,
     PokeSpecies,
     get_move_boosting_weather,
-    get_pokemon_settings,
 )
 from nfl.proto import HoloCombatType, HoloPokemonMove, HoloWeatherCondition
 from nfl.utils import f32, f32_step, f64
@@ -26,7 +25,7 @@ def get_cpm_list(levels: list[float]) -> list[tuple[float, float]]:
     return [(level, get_cpm(level)) for level in levels]
 
 
-dialga = get_pokemon_settings(PokeSpecies.resolve("dialga"))
+dialga = POKEMON.get(PokeSpecies.resolve("dialga"))
 assert dialga
 boss = BattlePokemon(
     dialga,
@@ -45,7 +44,7 @@ boss_moves = [
 ]
 
 defenders = [
-    get_pokemon_settings(ps)
+    POKEMON.get(ps)
     for ps in [
         PokeSpecies.resolve("Bulbasaur"),
         PokeSpecies.resolve("Ivysaur"),
@@ -64,7 +63,7 @@ defenders = [
         PokeSpecies.resolve("Combee"),
     ]
 ]
-defenders = [poke for s in POKEMON.values() for poke in s.values()]
+defenders = [poke for s in POKEMON.values() for poke in s]
 
 
 def raw_dmg_func(

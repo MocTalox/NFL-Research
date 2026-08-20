@@ -11,7 +11,6 @@ from nfl.proto import (
 )
 
 from .poke_form_map import PokeFormMap
-from .poke_species import PokeSpecies
 from .templates import (
     COMBAT_MOVE,
     FORM_SETTINGS,
@@ -81,14 +80,6 @@ def get_tgr_rank_mult(character_category: HoloCharacterCategory) -> float:
     if character_category not in RANKS:
         raise ValueError(f"No rank multiplier configured for {character_category}")
     return RANKS[character_category].rank_multiplier
-
-
-def get_pokemon_settings(poke: PokeSpecies) -> PokemonSettings | None:
-    return POKEMON.get(poke)  # TODO remove
-
-
-def get_pokemon_extended_settings(poke: PokeSpecies) -> PokemonExtendedSettings | None:
-    return EXTENDED.get(poke)  # TODO remove
 
 
 def get_move_boosting_weather(move: HoloPokemonMove) -> HoloWeatherCondition:

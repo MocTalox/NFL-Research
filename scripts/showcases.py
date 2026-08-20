@@ -1,9 +1,9 @@
 from nfl.calcs import ShowcasePokemon, contest_score
 from nfl.data import (
+    EXTENDED,
+    POKEMON,
     PokeSpecies,
     SizeClass,
-    get_pokemon_extended_settings,
-    get_pokemon_settings,
     get_temp_evo_pokemon_settings,
     get_temp_evo_size_settings,
 )
@@ -16,8 +16,8 @@ def poke(
     temp_evo_id: HoloTempEvoId = HoloTempEvoId.TEMP_EVOLUTION_UNSET,
 ):
     poke = PokeSpecies.resolve(name, form)
-    pokemon_settings = get_pokemon_settings(poke)
-    extended_settings = get_pokemon_extended_settings(poke)
+    pokemon_settings = POKEMON.get(poke)
+    extended_settings = EXTENDED.get(poke)
     assert pokemon_settings and extended_settings
     if temp_evo_id:
         pokemon_settings = get_temp_evo_pokemon_settings(pokemon_settings, temp_evo_id)

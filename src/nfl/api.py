@@ -69,7 +69,7 @@ def get_move_names(pokemon: PokeInput, query: str | None = None):
     pokemon_species = PokeSpecies.resolve(
         name=pokemon.name, form=pokemon.form, temp_evo=pokemon.temp_evo
     )
-    pokemon_settings = data.get_pokemon_settings(pokemon_species)
+    pokemon_settings = data.POKEMON.get(pokemon_species)
     assert pokemon_settings
 
     moves = [
@@ -118,7 +118,7 @@ def calculate_damage(
         get_tgr_hp,
         get_tgr_stats,
     )
-    from nfl.data import PVP_MOVES, PokeSpecies, get_pokemon_settings
+    from nfl.data import POKEMON, PVP_MOVES, PokeSpecies
     from nfl.proto import HoloCharacterCategory, HoloCombatType, HoloPokemonMove
 
     pokemon_species = PokeSpecies.resolve(
@@ -132,8 +132,8 @@ def calculate_damage(
     move = PokeSpecies.resolve_id(move)
     enemy = PokeSpecies.resolve_id(enemy)
 
-    ps = get_pokemon_settings(pokemon_species)
-    eps = get_pokemon_settings(enemy_pokemon_species)
+    ps = POKEMON.get(pokemon_species)
+    eps = POKEMON.get(enemy_pokemon_species)
     assert ps and eps
 
     e = BattlePokemon(
@@ -176,7 +176,7 @@ def get_pokemon_settings(pokemon: PokeInput):
     poke = PokeSpecies.resolve(
         name=pokemon.name, form=pokemon.form, temp_evo=pokemon.temp_evo
     )
-    pokemon_settings = data.get_pokemon_settings(poke)
+    pokemon_settings = data.POKEMON.get(poke)
     if pokemon_settings is None:
         return None
     if poke.temp_evo:
@@ -190,7 +190,7 @@ def get_size_settings(pokemon: PokeInput):
     poke = PokeSpecies.resolve(
         name=pokemon.name, form=pokemon.form, temp_evo=pokemon.temp_evo
     )
-    pokemon_extended_settings = data.get_pokemon_extended_settings(poke)
+    pokemon_extended_settings = data.EXTENDED.get(poke)
     if pokemon_extended_settings is None:
         return None
     if poke.temp_evo:

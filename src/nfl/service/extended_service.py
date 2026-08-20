@@ -8,10 +8,10 @@ return new float[] { w, h };
 from dataclasses import dataclass
 
 from nfl.data import (
+    EXTENDED,
     POKEMON,
     PokeData,
     PokeSpecies,
-    get_pokemon_extended_settings,
 )
 from nfl.proto import PokemonExtendedSettings, PokemonSettings
 
@@ -78,7 +78,7 @@ def _unfold_settings(pokemon_settings: PokemonSettings) -> list[_PokemonData]:
         name=pokemon_settings.pokemon_id,
         form=pokemon_settings.form,
     )
-    pokemon_extended_settings = get_pokemon_extended_settings(poke)
+    pokemon_extended_settings = EXTENDED.get(poke)
 
     if not pokemon_extended_settings:
         return []
