@@ -30,5 +30,8 @@ class PokeFormMap(Generic[T]):
         inner = self._data.get(poke)
         return None if inner is None else inner.get(form)
 
+    def __getitem__(self, key: HoloPokemonId):
+        return self._data[key]
+
     def values(self) -> Iterable[Iterable[T]]:
         return (inner.values() for inner in self._data.values())
