@@ -7,6 +7,7 @@ from nfl import calcs as stats
 from nfl import data
 from nfl.data import PokeSpecies
 from nfl.proto import (
+    HoloAlignment,
     HoloCharacterCategory,
     HoloPokemonForm,
     HoloPokemonId,
@@ -32,7 +33,7 @@ class PokeInput:
     name: str
     form: str | None = None
     temp_evo: str | None = None
-    shadow: bool = False
+    shadow: bool = False  # TODO rework
 
 
 def _enum_name(enum: Enum) -> str:
@@ -142,8 +143,7 @@ def calculate_damage(
         15,
         15,
         get_rcpm(trainer_level),
-        True,
-        False,
+        HoloAlignment.SHADOW,
         HoloCharacterCategory[enemy],
     )
     a, d, _ = get_tgr_stats(eps, e.cpm, e.tgr_member, 15, 15, 15)
@@ -161,7 +161,16 @@ def calculate_damage(
         for level in range(min_level * 2, max_level * 2 + 1):
             level = level / 2
             cpm = get_cpm(level)
-            p = BattlePokemon(ps, atk, 15, 15, cpm, pokemon.shadow, False)
+            p = BattlePokemon(
+                ps,
+                atk,
+                15,
+                15,
+                cpm,
+                HoloAlignment.SHADOW
+                if pokemon.shadow
+                else HoloAlignment.ALIGNMENT_UNSET,
+            )
             dmg = damage_formula_raw(p, e, m.power, m.type, 0, False, b)
             damages.append({"level": level, "damage": int(dmg) + 1, "damage_raw": dmg})
         breakpoints.append({"atk": atk, "damages": damages})

@@ -112,7 +112,7 @@ def tgr_service_single():
     rank.add_colum("Survival", lambda r: r.total_bulk)
 
     for pokemon in tgr_best_pokemon_moveset(
-        PokeSpecies.resolve("Metagross", shadow=True)
+        PokeSpecies.resolve("Metagross", shadow="Shadow")
     ):
         rank.add_row(pokemon)
 

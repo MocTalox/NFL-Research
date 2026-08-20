@@ -16,6 +16,7 @@ from nfl.data import (
 )
 from nfl.proto import (
     CombatMove,
+    HoloAlignment,
     HoloCharacterCategory,
     HoloCombatType,
     HoloFriendshipLevel,
@@ -36,8 +37,7 @@ class BattlePokemon:
     def_iv: int = 0
     sta_iv: int = 0
     cpm: float = 0.0
-    shadow: bool = False
-    purified: bool = False
+    shadow: HoloAlignment = HoloAlignment.ALIGNMENT_UNSET
     tgr_member: HoloCharacterCategory = HoloCharacterCategory.UNSET
 
 
@@ -154,24 +154,25 @@ def get_mega_boost(
     )
 
 
-def get_purified_attack_bonus(
-    combat_type: HoloCombatType,
-    purified_attacker: bool,
-    shadow_target: bool,
-) -> float:
-    mults = _DAMAGE_MULTIPLIERS[combat_type]
-    return mults.purified_pokemon_attack if purified_attacker and shadow_target else 1.0
-
-
 def get_shadow_attack_bonus(
     combat_type: HoloCombatType,
-    shadow_attacker: bool,
-    shadow_target: bool,
+    shadow_attacker: HoloAlignment,
+    shadow_target: HoloAlignment,
 ) -> float:
     mults = _DAMAGE_MULTIPLIERS[combat_type]
-    shadow_attack_bonus = mults.shadow_pokemon_attack if shadow_attacker else 1.0
-    shadow_defense_bonus = mults.shadow_pokemon_defense if shadow_target else 1.0
-    return f32(shadow_attack_bonus / shadow_defense_bonus)
+    shadow_attack_bonus = (
+        mults.shadow_pokemon_attack if shadow_attacker == HoloAlignment.SHADOW else 1.0
+    )
+    shadow_defense_bonus = (
+        mults.shadow_pokemon_defense if shadow_target == HoloAlignment.SHADOW else 1.0
+    )
+    purified_attack_bonus = (
+        mults.purified_pokemon_attack
+        if shadow_attacker == HoloAlignment.PURIFIED
+        and shadow_target == HoloAlignment.SHADOW
+        else 1.0
+    )
+    return f32(shadow_attack_bonus / shadow_defense_bonus * purified_attack_bonus)
 
 
 def get_weather_boost(
@@ -345,7 +346,6 @@ def damage_formula_raw(
 
     multipliers = [
         get_mega_boost(state.combat_type, move_type, state.mega_boosted_types),
-        get_purified_attack_bonus(state.combat_type, attacker.purified, target.shadow),
         get_shadow_attack_bonus(state.combat_type, attacker.shadow, target.shadow),
         get_weather_boost(state.combat_type, move_type, state.weather_id),
         get_stab(

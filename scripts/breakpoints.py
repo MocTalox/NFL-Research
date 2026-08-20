@@ -17,7 +17,12 @@ from nfl.data import (
     PokeSpecies,
     get_move_boosting_weather,
 )
-from nfl.proto import HoloCombatType, HoloPokemonMove, HoloWeatherCondition
+from nfl.proto import (
+    HoloAlignment,
+    HoloCombatType,
+    HoloPokemonMove,
+    HoloWeatherCondition,
+)
 from nfl.utils import f32, f32_step, f64
 
 
@@ -33,8 +38,7 @@ boss = BattlePokemon(
     15,
     15,
     f32(0.82),
-    True,
-    False,
+    HoloAlignment.SHADOW,
 )
 boss_moves = [
     *dialga.quick_moves,

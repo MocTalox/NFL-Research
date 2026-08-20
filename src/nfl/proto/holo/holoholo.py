@@ -51,7 +51,7 @@ class HoloTempEvoId(_HoloEnum):
 
 @unique
 # Original name: `BreadModeEnum.Types.Modifier`
-class HoloBreadMode(_HoloEnum):
+class HoloBreadModeEnum(_HoloEnum):
     NONE = 0
     BREAD_MODE = 1
     BREAD_DOUGH_MODE = 2
@@ -3617,3 +3617,10 @@ class HoloFriendshipLevel(_HoloEnum):
     FRIENDSHIP_LEVEL_3 = 4
     FRIENDSHIP_LEVEL_4 = 5
     FRIENDSHIP_LEVEL_5 = 6
+
+
+@unique
+class HoloAlignment(_HoloEnum):
+    ALIGNMENT_UNSET = 0
+    SHADOW = 1
+    PURIFIED = 2

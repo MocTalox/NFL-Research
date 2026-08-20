@@ -18,6 +18,7 @@ from nfl.data import (
 )
 from nfl.proto import (
     CombatMove,
+    HoloAlignment,
     HoloCombatType,
     HoloPokemonMove,
     HoloPokemonType,
@@ -60,7 +61,7 @@ class _EnemyData:
     type_1: HoloPokemonType
     type_2: HoloPokemonType
     defense: int
-    shadow: bool
+    shadow: HoloAlignment
 
 
 @dataclass(frozen=True)
@@ -93,7 +94,7 @@ class _StatCalculator(Protocol):
 def _to_pokemon_data(
     pokemon_settings: PokemonSettings,
     temp_evo_id: HoloTempEvoId = HoloTempEvoId.TEMP_EVOLUTION_UNSET,
-    shadow: bool = False,
+    shadow: HoloAlignment = HoloAlignment.ALIGNMENT_UNSET,
 ):
 
     if temp_evo_id:
@@ -112,9 +113,9 @@ def _to_pokemon_data(
     ]
 
     if pokemon_settings.shadow is not None:
-        if shadow:
+        if shadow == HoloAlignment.SHADOW:
             charged_moves.append(pokemon_settings.shadow.shadow_charge_move)
-        else:
+        if shadow == HoloAlignment.PURIFIED:
             charged_moves.append(pokemon_settings.shadow.purified_charge_move)
 
     return _PokemonData(
@@ -139,9 +140,18 @@ def _unfold_settings(pokemon_settings: PokemonSettings):
     res.append(_to_pokemon_data(pokemon_settings))
 
     if pokemon_settings.shadow:
-        res.append(_to_pokemon_data(pokemon_settings, shadow=True))
+        res.append(_to_pokemon_data(pokemon_settings, shadow=HoloAlignment.SHADOW))
+        res.append(_to_pokemon_data(pokemon_settings, shadow=HoloAlignment.PURIFIED))
     for temp_evo in pokemon_settings.temp_evo_overrides:
         res.append(_to_pokemon_data(pokemon_settings, temp_evo_id=temp_evo.temp_evo_id))
+        if pokemon_settings.shadow:
+            res.append(
+                _to_pokemon_data(
+                    pokemon_settings,
+                    temp_evo_id=temp_evo.temp_evo_id,
+                    shadow=HoloAlignment.PURIFIED,
+                )
+            )
 
     return res
 
@@ -184,7 +194,10 @@ def tgr_best_pokemon_moveset(poke_species: PokeSpecies) -> list[MoveSetRanking]:
         raise ValueError(f"No Pokémon data found for species: {poke_species}")
 
     defender = _EnemyData(
-        HoloPokemonType.POKEMON_TYPE_NONE, HoloPokemonType.POKEMON_TYPE_NONE, 150, True
+        HoloPokemonType.POKEMON_TYPE_NONE,
+        HoloPokemonType.POKEMON_TYPE_NONE,
+        150,
+        HoloAlignment.SHADOW,
     )
 
     rankings = [
@@ -201,7 +214,10 @@ def tgr_best_attackers_for_type(
 ) -> list[MoveSetRanking]:
 
     defender = _EnemyData(
-        HoloPokemonType.POKEMON_TYPE_NONE, HoloPokemonType.POKEMON_TYPE_NONE, 150, True
+        HoloPokemonType.POKEMON_TYPE_NONE,
+        HoloPokemonType.POKEMON_TYPE_NONE,
+        150,
+        HoloAlignment.SHADOW,
     )
     return _best_attackers(defender, type, limit)
 
@@ -210,7 +226,9 @@ def tgr_best_attackers_against_type(
     type: HoloPokemonType, limit: int
 ) -> list[MoveSetRanking]:
 
-    defender = _EnemyData(type, HoloPokemonType.POKEMON_TYPE_NONE, 150, True)
+    defender = _EnemyData(
+        type, HoloPokemonType.POKEMON_TYPE_NONE, 150, HoloAlignment.SHADOW
+    )
     return _best_attackers(defender, None, limit)
 
 

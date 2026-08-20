@@ -5,7 +5,7 @@ from collections.abc import Callable, Iterable, Iterator
 from dataclasses import dataclass
 from typing import Generic, NamedTuple, TypeVar
 
-from nfl.proto import HoloPokemonId, HoloTempEvoId
+from nfl.proto import HoloAlignment, HoloBreadModeEnum, HoloPokemonId, HoloTempEvoId
 
 from .poke_form_map import PokeFormMap
 from .poke_species import PokeSpecies
@@ -57,9 +57,10 @@ class _PokeGroup(Generic[P]):
     forms: list[P]
 
 
-class _GroupKey(NamedTuple):
+class _GroupKey(NamedTuple):  # TODO maybe specified user-side
     temp_evo: HoloTempEvoId
-    shadow: bool
+    shadow: HoloAlignment
+    bread: HoloBreadModeEnum
 
 
 _NORMAL = {
@@ -79,7 +80,7 @@ def _normalize_forms(
     )
 
     for poke in species_stream:
-        poke_group = poke_groups[_GroupKey(poke.temp_evo, poke.shadow)]
+        poke_group = poke_groups[_GroupKey(poke.temp_evo, poke.shadow, poke.bread)]
         poke_group.forms.append(poke)
         if not poke.form:
             assert poke_group.main is None

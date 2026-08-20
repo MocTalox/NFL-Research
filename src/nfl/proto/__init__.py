@@ -1,5 +1,6 @@
 from .holo.holoholo import (
-    HoloBreadMode,
+    HoloAlignment,
+    HoloBreadModeEnum,
     HoloCharacterCategory,
     HoloCombatType,
     HoloFriendshipLevel,
@@ -83,7 +84,8 @@ __all__ = [
     "Form",
     "FormSettings",
     "FriendshipMilestoneSettings",
-    "HoloBreadMode",
+    "HoloAlignment",
+    "HoloBreadModeEnum",
     "HoloCharacterCategory",
     "HoloCombatType",
     "HoloFriendshipLevel",

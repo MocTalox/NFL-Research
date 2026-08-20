@@ -3,7 +3,13 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
-from nfl.proto import HoloPokemonForm, HoloPokemonId, HoloTempEvoId
+from nfl.proto import (
+    HoloAlignment,
+    HoloBreadModeEnum,
+    HoloPokemonForm,
+    HoloPokemonId,
+    HoloTempEvoId,
+)
 
 
 @dataclass(frozen=True, order=True, kw_only=True)
@@ -11,7 +17,8 @@ class PokeSpecies:
     name: HoloPokemonId
     form: HoloPokemonForm = HoloPokemonForm.FORM_UNSET
     temp_evo: HoloTempEvoId = HoloTempEvoId.TEMP_EVOLUTION_UNSET
-    shadow: bool = False
+    shadow: HoloAlignment = HoloAlignment.ALIGNMENT_UNSET
+    bread: HoloBreadModeEnum = HoloBreadModeEnum.NONE
 
     @property
     def identity(self) -> PokeSpecies:
@@ -20,6 +27,7 @@ class PokeSpecies:
             form=self.form,
             temp_evo=self.temp_evo,
             shadow=self.shadow,
+            bread=self.bread,
         )
 
     def is_the_same(self, other: PokeSpecies) -> bool:
@@ -29,7 +37,10 @@ class PokeSpecies:
         parts: list[str] = []
 
         if self.shadow:
-            parts.append("SHADOW")
+            parts.append(self.shadow.name)
+
+        if self.bread:
+            parts.append(self.bread.name)
 
         if self.temp_evo:
             parts.append(self.temp_evo.name)
@@ -44,11 +55,14 @@ class PokeSpecies:
         name: str,
         form: str | None = None,
         temp_evo: str | None = None,
-        shadow: bool = False,
+        shadow: str | None = None,
+        bread: str | None = None,
     ) -> PokeSpecies:
         name = PokeSpecies.resolve_id(name)
         form = PokeSpecies.resolve_id(form) if form else None
         temp_evo = PokeSpecies.resolve_id(temp_evo) if temp_evo else None
+        shadow = PokeSpecies.resolve_id(shadow) if shadow else None
+        bread = PokeSpecies.resolve_id(bread) if bread else None
         if (
             form
             and form != HoloPokemonForm.FORM_UNSET.name
@@ -57,13 +71,21 @@ class PokeSpecies:
             form = f"{name}_{form}"
         if temp_evo and not temp_evo.startswith("TEMP_EVOLUTION_"):
             temp_evo = f"TEMP_EVOLUTION_{temp_evo}"
+        if bread:
+            if bread in ["DMAX", "DYNAMAX"]:
+                bread = HoloBreadModeEnum.BREAD_MODE.name
+            if bread in ["GMAX", "GIGANTAMAX"]:
+                bread = HoloBreadModeEnum.BREAD_DOUGH_MODE.name
+            if bread in ["MAX", "EMAX", "ETERNAMAX"]:
+                bread = HoloBreadModeEnum.BREAD_SPECIAL_MODE.name
         return cls(
             name=HoloPokemonId[name],
             form=HoloPokemonForm[form] if form else HoloPokemonForm.FORM_UNSET,
             temp_evo=HoloTempEvoId[temp_evo]
             if temp_evo
             else HoloTempEvoId.TEMP_EVOLUTION_UNSET,
-            shadow=shadow,
+            shadow=HoloAlignment[shadow] if shadow else HoloAlignment.ALIGNMENT_UNSET,
+            bread=HoloBreadModeEnum[bread] if bread else HoloBreadModeEnum.NONE,
         )
 
     @staticmethod

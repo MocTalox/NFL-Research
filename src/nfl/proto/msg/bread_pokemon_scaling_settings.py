@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from nfl.io import Message
-from nfl.proto import HoloBreadMode, HoloPokemonForm, HoloPokemonId
+from nfl.proto import HoloBreadModeEnum, HoloPokemonForm, HoloPokemonId
 
 
 @dataclass(frozen=True)
@@ -49,10 +49,10 @@ class PokemonFormData:
 
 @dataclass(frozen=True)
 class VisualData:
-    bread_mode: HoloBreadMode
+    bread_mode: HoloBreadModeEnum
 
     @classmethod
     def from_message(cls, msg: Message) -> VisualData:
         return cls(
-            bread_mode=msg.get_enum("breadMode", HoloBreadMode),
+            bread_mode=msg.get_enum("breadMode", HoloBreadModeEnum),
         )
