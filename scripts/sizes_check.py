@@ -1,5 +1,10 @@
-from nfl.data import PokeSpecies, get_pokemon_extended_settings, get_pokemon_settings
-from nfl.proto import FORM_SETTINGS, HoloPokemonForm
+from nfl.data import (
+    FORM_SETTINGS,
+    PokeSpecies,
+    get_pokemon_extended_settings,
+    get_pokemon_settings,
+)
+from nfl.proto import HoloPokemonForm
 from nfl.utils import f64
 
 

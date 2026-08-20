@@ -5,12 +5,13 @@ import numpy as np
 
 from nfl.calcs import SizedPokemon, evolution_size
 from nfl.data import (
+    FORM_SETTINGS,
     PokeSpecies,
     SizeClass,
     get_pokemon_extended_settings,
     get_pokemon_settings,
 )
-from nfl.proto import FORM_SETTINGS, HoloPokemonForm
+from nfl.proto import HoloPokemonForm
 
 
 def create_plot(

@@ -14,7 +14,6 @@ from nfl.data import (
     PVP_MOVES,
     PokeData,
     PokeSpecies,
-    gen_pokemon_data,
     get_temp_evo_pokemon_settings,
 )
 from nfl.proto import (
@@ -147,7 +146,7 @@ def _unfold_settings(pokemon_settings: PokemonSettings):
     return res
 
 
-_POKEMON_DATA: PokeData[_PokemonData] = gen_pokemon_data(POKEMON, _unfold_settings)
+_POKEMON_DATA: PokeData[_PokemonData] = PokeData(POKEMON, _unfold_settings)
 
 
 def get_all_pokemon() -> list[PokeSpecies]:

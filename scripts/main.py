@@ -209,13 +209,15 @@ def main():
     for vartype, rep in vartypes:
         print(f"repeated {vartype}" if rep else vartype)
     return
-    from nfl.proto import TEMPORARY_EVOLUTION_SETTINGS, HoloPokemonId
+    from nfl.data import TEMPORARY_EVOLUTION_SETTINGS
+    from nfl.proto import HoloPokemonId
 
     for tes in TEMPORARY_EVOLUTION_SETTINGS:
         if tes.pokemon_id == HoloPokemonId.RAICHU:
             print(tes)
     return
-    from nfl.proto import FORM_SETTINGS, POKEMON_SETTINGS, HoloPokemonId, game_master
+    from nfl.data import FORM_SETTINGS, POKEMON_SETTINGS
+    from nfl.proto import HoloPokemonId, game_master
 
     """
     for template in game_master()["friendshipMilestoneSettings"].values():

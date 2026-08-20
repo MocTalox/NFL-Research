@@ -1,6 +1,18 @@
 from dataclasses import replace
 
 from nfl.proto import (
+    HoloCharacterCategory,
+    HoloPokemonMove,
+    HoloTempEvoId,
+    HoloWeatherCondition,
+    PokemonExtendedSettings,
+    PokemonSettings,
+    SizeSettings,
+)
+
+from .poke_form_map import PokeFormMap
+from .poke_species import PokeSpecies
+from .templates import (
     COMBAT_MOVE,
     FORM_SETTINGS,
     FRIENDSHIP_MILESTONE_SETTINGS,
@@ -13,17 +25,7 @@ from nfl.proto import (
     STATIONED_POKEMON_TABLE_SETTINGS,
     TYPE_EFFECTIVE,
     WEATHER_AFFINITIES,
-    HoloCharacterCategory,
-    HoloPokemonMove,
-    HoloTempEvoId,
-    HoloWeatherCondition,
-    PokemonExtendedSettings,
-    PokemonSettings,
-    SizeSettings,
 )
-
-from ._poke_map import get_poke, to_poke_map
-from .poke_species import PokeSpecies
 
 
 def _get_non_combat_move_attack_defense_bonus(move: HoloPokemonMove):
@@ -35,9 +37,15 @@ def _get_non_combat_move_attack_defense_bonus(move: HoloPokemonMove):
 CPM = [cpm for cpm in PLAYER_LEVEL.cp_multiplier]
 RCPM = [cpm for cpm in ROCKET_SETTINGS.cp_multiplier]
 RANKS = {rank.character_category: rank for rank in ROCKET_SETTINGS.rank}
-POKEMON = to_poke_map(POKEMON_SETTINGS, lambda p: p.pokemon_id, lambda p: p.form)
-EXTENDED = to_poke_map(
-    POKEMON_EXTENDED_SETTINGS, lambda p: p.unique_id, lambda p: p.form
+POKEMON = PokeFormMap(
+    POKEMON_SETTINGS,
+    lambda p: p.pokemon_id,
+    lambda p: p.form,
+)
+EXTENDED = PokeFormMap(
+    POKEMON_EXTENDED_SETTINGS,
+    lambda p: p.unique_id,
+    lambda p: p.form,
 )
 FORMS = {fs.pokemon: [form.form for form in fs.forms] for fs in FORM_SETTINGS}
 FORM_POKEMON = {form.form: fs.pokemon for fs in FORM_SETTINGS for form in fs.forms}
@@ -76,11 +84,11 @@ def get_tgr_rank_mult(character_category: HoloCharacterCategory) -> float:
 
 
 def get_pokemon_settings(poke: PokeSpecies) -> PokemonSettings | None:
-    return get_poke(POKEMON, poke.name, poke.form)
+    return POKEMON.get(poke)  # TODO remove
 
 
 def get_pokemon_extended_settings(poke: PokeSpecies) -> PokemonExtendedSettings | None:
-    return get_poke(EXTENDED, poke.name, poke.form)
+    return EXTENDED.get(poke)  # TODO remove
 
 
 def get_move_boosting_weather(move: HoloPokemonMove) -> HoloWeatherCondition:

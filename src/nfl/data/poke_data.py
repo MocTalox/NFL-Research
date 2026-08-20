@@ -7,7 +7,7 @@ from typing import Generic, NamedTuple, TypeVar
 
 from nfl.proto import HoloPokemonId, HoloTempEvoId
 
-from ._poke_map import PokeMap
+from .poke_form_map import PokeFormMap
 from .poke_species import PokeSpecies
 
 P = TypeVar("P", bound=PokeSpecies)
@@ -15,17 +15,31 @@ F = TypeVar("F")
 
 
 class PokeData(Generic[P]):
-    def __init__(self):
+    def __init__(
+        self,
+        source: PokeFormMap[F] | Iterable[Iterable[F]],
+        unfold: Callable[[F], Iterable[P]],
+    ):
+        if isinstance(source, PokeFormMap):
+            source = source.values()
+
+        all_pokemons = (
+            (individual for form in pokemon for individual in unfold(form))
+            for pokemon in source
+        )
+
+        unique_pokemons = (
+            pokemon
+            for all_forms in all_pokemons
+            for pokemon in _normalize_forms(all_forms)
+        )
+
         self._data: dict[PokeSpecies, P] = {}
 
-    @classmethod
-    def generate(cls, pokemons: Iterable[P]) -> PokeData[P]:
-        result = cls()
-        for pokemon in pokemons:
-            if pokemon.identity in result._data:
+        for pokemon in unique_pokemons:
+            if pokemon.identity in self._data:
                 raise ValueError(f"Duplicate entry for identity: {pokemon.identity}")
-            result._data[pokemon.identity] = pokemon
-        return result
+            self._data[pokemon.identity] = pokemon
 
     def get(self, poke: PokeSpecies) -> P | None:
         return self._data.get(poke)
@@ -35,29 +49,6 @@ class PokeData(Generic[P]):
 
     def get_all_pokes(self) -> Iterable[P]:
         return self._data.values()
-
-
-def gen_pokemon_data(source: PokeMap[F], unfold: Callable[[F], list[P]]) -> PokeData[P]:
-
-    iterator_source = (inner.values() for inner in source.values())
-
-    return gen_pokemon_data_raw(iterator_source, unfold)
-
-
-def gen_pokemon_data_raw(
-    source: Iterable[Iterable[F]], unfold: Callable[[F], Iterable[P]]
-) -> PokeData[P]:
-
-    all_pokemons = (
-        (individual for form in pokemon for individual in unfold(form))
-        for pokemon in source
-    )
-
-    unique_pokemons = (
-        pokemon for all_forms in all_pokemons for pokemon in _normalize_forms(all_forms)
-    )
-
-    return PokeData[P].generate(unique_pokemons)
 
 
 @dataclass

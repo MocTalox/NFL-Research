@@ -2,31 +2,32 @@ from collections.abc import Callable
 from typing import TypeVar
 
 from nfl.io import Message, get_templates
-
-from .msg.battle_settings import BattleSettings
-from .msg.bread_move_mappings import BreadMoveMappings
-from .msg.bread_pokemon_scaling_settings import BreadPokemonScalingSettings
-from .msg.combat_move import CombatMove
-from .msg.combat_settings import CombatSettings
-from .msg.combat_stat_stage_settings import CombatStatStageSettings
-from .msg.contest_settings import ContestSettings
-from .msg.form_settings import FormSettings
-from .msg.friendship_milestone_settings import FriendshipMilestoneSettings
-from .msg.mega_evo_settings import MegaEvoSettings
-from .msg.move_settings import MoveSettings
-from .msg.non_combat_move_settings import NonCombatMoveSettings
-from .msg.player_level import PlayerLevel
-from .msg.pokemon_extended_settings import PokemonExtendedSettings
-from .msg.pokemon_family import PokemonFamily
-from .msg.pokemon_settings import PokemonSettings
-from .msg.raid_settings import RaidSettings
-from .msg.rocket_settings import RocketSettings
-from .msg.sourdough_move_mapping_settings import SourdoughMoveMappingSettings
-from .msg.stationed_pokemon_table_settings import StationedPokemonTableSettings
-from .msg.temporary_evolution_settings import TemporaryEvolutionSettings
-from .msg.type_effective import TypeEffective
-from .msg.weather_affinities import WeatherAffinities
-from .msg.weather_bonus_settings import WeatherBonusSettings
+from nfl.proto import (
+    BattleSettings,
+    BreadMoveMappings,
+    BreadPokemonScalingSettings,
+    CombatMove,
+    CombatSettings,
+    CombatStatStageSettings,
+    ContestSettings,
+    FormSettings,
+    FriendshipMilestoneSettings,
+    MegaEvoSettings,
+    MoveSettings,
+    NonCombatMoveSettings,
+    PlayerLevel,
+    PokemonExtendedSettings,
+    PokemonFamily,
+    PokemonSettings,
+    RaidSettings,
+    RocketSettings,
+    SourdoughMoveMappingSettings,
+    StationedPokemonTableSettings,
+    TemporaryEvolutionSettings,
+    TypeEffective,
+    WeatherAffinities,
+    WeatherBonusSettings,
+)
 
 T = TypeVar("T")
 

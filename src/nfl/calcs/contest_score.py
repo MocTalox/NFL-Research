@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from nfl.data import SizeClass
-from nfl.proto import CONTEST_SETTINGS, PokemonSettings, SizeSettings
+from nfl.data import CONTEST_SETTINGS, SizeClass
+from nfl.proto import PokemonSettings, SizeSettings
 
 height_coefficient = (
     CONTEST_SETTINGS.contest_score_coefficient.pokemon_size.height_coefficient

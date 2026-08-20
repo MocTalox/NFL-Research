@@ -2,19 +2,19 @@ from dataclasses import dataclass, field
 from functools import reduce
 
 from nfl.data import (
+    BATTLE_SETTINGS,
     BEHEMOTH_BASH_AE,
     BEHEMOTH_BLADE_AE,
+    COMBAT_SETTINGS,
     FRIENDSHIP_DMG_BONUS,
     HELPERS_DMG_BONUS,
-    TYPES,
-    WEATHER,
-)
-from nfl.proto import (
-    BATTLE_SETTINGS,
-    COMBAT_SETTINGS,
     MEGA_EVO_SETTINGS,
     RAID_SETTINGS,
+    TYPES,
+    WEATHER,
     WEATHER_BONUS_SETTINGS,
+)
+from nfl.proto import (
     CombatMove,
     HoloCharacterCategory,
     HoloCombatType,
