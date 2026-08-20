@@ -107,5 +107,5 @@ __all__ = [
     "get_move_boosting_weather",
     "get_temp_evo_pokemon_settings",
     "get_temp_evo_size_settings",
-    "get_tgr_rank_mult"
+    "get_tgr_rank_mult",
 ]

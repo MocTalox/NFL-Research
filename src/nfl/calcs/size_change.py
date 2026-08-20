@@ -104,7 +104,8 @@ class SizedPokemon(SizedPokemonInfo):
 
 
 def _resolve_evo_settings(
-    evo_pokemon: SizedPokemonInfo | PokeSpecies | HoloTempEvoId, base_pokemon: SizedPokemonInfo
+    evo_pokemon: SizedPokemonInfo | PokeSpecies | HoloTempEvoId,
+    base_pokemon: SizedPokemonInfo,
 ):
     if isinstance(evo_pokemon, HoloTempEvoId):
         evo_pokemon = PokeSpecies(

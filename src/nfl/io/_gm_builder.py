@@ -72,7 +72,9 @@ def build_game_master(
     return data
 
 
-def _find_value(value: Message, path: list[str], pred: tuple[Predicate, ...]) -> Message:
+def _find_value(
+    value: Message, path: list[str], pred: tuple[Predicate, ...]
+) -> Message:
     for step in path:
         step_key, step_index, step_cond = _unfold_step(step)
         if step_index is None:
@@ -96,11 +98,15 @@ def _unfold_step(key: str) -> tuple[str, int | None, bool]:
     return (key, None, False)
 
 
-def _match_predicate(value: Message, predicate: Predicate, pred: tuple[Predicate, ...]) -> bool:
+def _match_predicate(
+    value: Message, predicate: Predicate, pred: tuple[Predicate, ...]
+) -> bool:
     return all(_match_condition(value, cond, pred) for cond in predicate.condition)
 
 
-def _match_condition(value: Message, condition: Condition, pred: tuple[Predicate, ...]) -> bool:
+def _match_condition(
+    value: Message, condition: Condition, pred: tuple[Predicate, ...]
+) -> bool:
     *path, target = condition.target
     value = _find_value(value, path, pred)
     return value.get(target) == condition.value
