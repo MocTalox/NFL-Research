@@ -233,6 +233,14 @@ add_template {
       character_category: GIOVANNI
       rank_multiplier: 1.15
     }
+    rank {
+      character_category: GRUNTBF
+      rank_multiplier: 1.0
+    }
+    rank {
+      character_category: GRUNTBM
+      rank_multiplier: 1.0
+    }
   }
 }
 override {
