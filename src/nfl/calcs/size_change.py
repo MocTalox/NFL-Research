@@ -10,6 +10,7 @@ from nfl.data import (
     get_temp_evo_pokemon_settings,
     get_temp_evo_size_settings,
 )
+from nfl.exceptions import ValidationError
 from nfl.proto import HoloTempEvoId, PokemonSettings, SizeSettings
 from nfl.utils import has_decimals
 
@@ -54,7 +55,7 @@ class SizedPokemon(SizedPokemonInfo):
         size_class: SizeClass | None = None,
     ) -> SizedPokemon:
         if weight_kg < 0 or height_m < 0:
-            raise ValueError(
+            raise ValidationError(
                 f"Invalid Pokémon dimensions: weight_kg={weight_kg}, height_m={height_m}. "
                 f"Values must be positive."
             )
@@ -73,7 +74,7 @@ class SizedPokemon(SizedPokemonInfo):
                 size_class.in_bounds(h, pokemon_info.size_settings) for h in candidates
             ):
                 lower, upper = size_class.get_bounds(pokemon_info.size_settings)
-                raise ValueError(
+                raise ValidationError(
                     f"Size class mismatch: {pokemon} with height {height_m}m "
                     f"cannot be {size_class} ([{lower}, {upper}])"
                 )

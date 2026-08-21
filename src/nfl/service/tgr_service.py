@@ -16,6 +16,7 @@ from nfl.data import (
     PokeSpecies,
     get_temp_evo_pokemon_settings,
 )
+from nfl.exceptions import NotFoundError
 from nfl.proto import (
     CombatMove,
     HoloAlignment,
@@ -191,7 +192,7 @@ def tgr_best_pokemon_moveset(poke_species: PokeSpecies) -> list[MoveSetRanking]:
 
     pokemon = _POKEMON_DATA.get(poke_species)
     if pokemon is None:
-        raise ValueError(f"No Pokémon data found for species: {poke_species}")
+        raise NotFoundError(f"No Pokémon data found for species: {poke_species}")
 
     defender = _EnemyData(
         HoloPokemonType.POKEMON_TYPE_NONE,

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from nfl.data import EXTENDED, POKEMON, SizeClass
+from nfl.exceptions import ValidationError
 from nfl.proto import HoloPokemonForm, HoloPokemonId, PokemonSettings, SizeSettings
 
 ZORUA_POKEMON_SETTINGS = POKEMON[HoloPokemonId.ZORUA][HoloPokemonForm.FORM_UNSET]
@@ -16,9 +17,14 @@ def zorua_size(
     buddy_pokemon_settings: PokemonSettings,
     buddy_size_settings: SizeSettings,
 ):
+    if wild_zorua_weight_kg < 0 or wild_zorua_height_m < 0:
+        raise ValidationError(
+            f"Invalid Zorua dimensions: weight_kg={wild_zorua_weight_kg}, "
+            f"height_m={wild_zorua_height_m}. Values must be positive."
+        )
     if not wild_zorua_size_class.in_bounds(wild_zorua_height_m, ZORUA_SIZE_SETTINGS):
         lower, upper = wild_zorua_size_class.get_bounds(ZORUA_SIZE_SETTINGS)
-        raise ValueError(
+        raise ValidationError(
             f"Size class mismatch: Zorua with height {wild_zorua_height_m}m "
             f"cannot be {wild_zorua_size_class} ([{lower}, {upper}])"
         )

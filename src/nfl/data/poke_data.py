@@ -5,6 +5,7 @@ from collections.abc import Callable, Iterable, Iterator
 from dataclasses import dataclass
 from typing import Generic, NamedTuple, TypeVar
 
+from nfl.exceptions import ValidationError
 from nfl.proto import HoloAlignment, HoloBreadModeEnum, HoloPokemonId, HoloTempEvoId
 
 from .poke_form_map import PokeFormMap
@@ -38,7 +39,9 @@ class PokeData(Generic[P]):
 
         for pokemon in unique_pokemons:
             if pokemon.identity in self._data:
-                raise ValueError(f"Duplicate entry for identity: {pokemon.identity}")
+                raise ValidationError(
+                    f"Duplicate entry for identity: {pokemon.identity}"
+                )
             self._data[pokemon.identity] = pokemon
 
     def get(self, poke: PokeSpecies) -> P | None:

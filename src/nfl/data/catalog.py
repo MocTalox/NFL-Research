@@ -1,5 +1,6 @@
 from dataclasses import replace
 
+from nfl.exceptions import NotFoundError, ValidationError
 from nfl.proto import (
     HoloCharacterCategory,
     HoloPokemonMove,
@@ -78,7 +79,7 @@ BEHEMOTH_BASH_AE = {
 
 def get_tgr_rank_mult(character_category: HoloCharacterCategory) -> float:
     if character_category not in RANKS:
-        raise ValueError(f"No rank multiplier configured for {character_category}")
+        raise ValidationError(f"No rank multiplier configured for {character_category}")
     return RANKS[character_category].rank_multiplier
 
 
@@ -100,7 +101,7 @@ def get_temp_evo_pokemon_settings(
     )
 
     if not temp_evo_overrides:
-        raise ValueError(
+        raise NotFoundError(
             f"Missing temporary evolution overrides for {pokemon_settings.pokemon_id} "
             f"({pokemon_settings.form}): {temp_evo_id}"
         )
@@ -130,7 +131,7 @@ def get_temp_evo_size_settings(
     )
 
     if not temp_evo_overrides:
-        raise ValueError(
+        raise NotFoundError(
             f"Missing temporary evolution overrides for {pokemon_extended_settings.unique_id} "
             f"({pokemon_extended_settings.form}): {temp_evo_id}"
         )

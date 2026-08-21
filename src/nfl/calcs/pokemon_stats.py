@@ -1,13 +1,14 @@
 from math import floor
 
 from nfl.data import CPM, RCPM, get_tgr_rank_mult
+from nfl.exceptions import ValidationError
 from nfl.proto import HoloCharacterCategory, PokemonSettings
 from nfl.utils import f32
 
 
 def get_cpm(level: float) -> float:
     if level % 0.5 != 0:
-        raise ValueError(
+        raise ValidationError(
             f"Invalid level {level}: must be a multiple of 0.5 (e.g. 1.0, 1.5, 2.0)."
         )
     if level % 1 == 0:
