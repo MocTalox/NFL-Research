@@ -1,4 +1,5 @@
 import re
+from collections.abc import Iterator
 
 from nfl.utils._raw_value import RawValue
 
@@ -9,9 +10,7 @@ _ELEMENT_PATTERN = re.compile(r'([a-zA-Z0-9_]*): (?:"([^"]*)"|(.*))')
 _CLOSING_PATTERN = re.compile(r"\}")
 
 
-def parse_proto_file(text: str) -> Message:
-    lines = text.splitlines()
-
+def parse_proto_file(lines: Iterator[str]) -> Message:
     root = Message()
     stack = [root]
 

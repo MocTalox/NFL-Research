@@ -1,11 +1,12 @@
 import pickle
+from collections.abc import Iterator
 from functools import cache
 from pathlib import Path
 from typing import Any, Protocol
 from urllib.request import urlopen
 
 from nfl.exceptions import ConfigurationError
-from nfl.utils._resources import read_data_resource_files
+from nfl.utils._resources import read_resource_file_as_stream
 
 from ._gm_builder import build_game_master
 from .template import Template
@@ -18,11 +19,11 @@ class GameMasterAccess(Protocol):
 
 
 class DefaultGameMasterAccess:
-    def _read_game_master(self) -> str:
-        return read_data_resource_files("gamemaster.txt")
+    def _read_game_master(self) -> Iterator[str]:
+        return read_resource_file_as_stream("gamemaster.txt")
 
-    def _read_overrides(self) -> str | None:
-        return read_data_resource_files("overrides.txt")
+    def _read_overrides(self) -> Iterator[str] | None:
+        return read_resource_file_as_stream("overrides.txt")
 
     @cache  # noqa: B019 — instances are long-lived and few in number
     def get_game_master(self) -> dict[str, dict[str, Template]]:
@@ -42,17 +43,19 @@ class FileGameMasterAccess(DefaultGameMasterAccess):
     def __init__(self, path: str | Path):
         self.path = Path(path)
 
-    def _read_game_master(self) -> str:
-        return self.path.read_text(encoding="utf-8")
+    def _read_game_master(self) -> Iterator[str]:
+        with self.path.open("r", encoding="utf-8") as file:
+            yield from file
 
 
 class RemoteGameMasterAccess(DefaultGameMasterAccess):
     def __init__(self, url: str):
         self.url = url
 
-    def _read_game_master(self) -> str:
+    def _read_game_master(self) -> Iterator[str]:
         with urlopen(self.url) as response:
-            return response.read().decode("utf-8")
+            for line in response:
+                yield line.decode("utf-8")
 
 
 class CachedGameMasterAccess:

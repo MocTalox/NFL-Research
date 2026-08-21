@@ -1,4 +1,5 @@
 import re
+from collections.abc import Iterator
 
 from ._gm_parser import parse_proto_file
 from .message import Message
@@ -7,10 +8,10 @@ from .template import Template
 
 
 def build_game_master(
-    raw_game_master: str, raw_overrides: str | None
+    game_master_stream: Iterator[str], overrides_stream: Iterator[str] | None
 ) -> dict[str, dict[str, Template]]:
-    parsed_game_master = parse_proto_file(raw_game_master)
-    parsed_overrides = parse_proto_file(raw_overrides or "")
+    parsed_game_master = parse_proto_file(game_master_stream)
+    parsed_overrides = parse_proto_file(overrides_stream or iter(()))
 
     data: dict[str, dict[str, Template]] = {}
     mapper: dict[str, str] = {}
