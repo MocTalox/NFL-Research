@@ -61,7 +61,7 @@ class PokemonSettings:
                 "eliteCinematicMove", HoloPokemonMove
             ),
             temp_evo_overrides=msg.get_object_list(
-                "temp_evo_overrides", TempEvoOverrides_PS.from_message, "tempEvoId"
+                "tempEvoOverrides", TempEvoOverrides_PS.from_message, "tempEvoId"
             ),
             elite_quick_move=msg.get_enum_list("eliteQuickMove", HoloPokemonMove),
             pokemon_class=msg.get_enum_or_none("pokemonClass", HoloPokemonClass),
