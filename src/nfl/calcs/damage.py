@@ -27,7 +27,7 @@ from nfl.proto import (
 )
 from nfl.utils import f32
 
-from .pokemon_stats import get_stats, get_tgr_stats
+from .stats import get_stats, get_tgr_stats
 
 
 @dataclass

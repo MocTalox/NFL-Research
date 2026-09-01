@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from itertools import product
 from typing import Protocol
 
-from nfl.calcs.damage_formula import (
+from nfl.calcs.damage import (
     get_effect,
     get_shadow_attack_bonus,
     get_stab,

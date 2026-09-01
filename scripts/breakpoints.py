@@ -10,7 +10,7 @@ from nfl.calcs import (
     get_cpm,
     get_hp,
 )
-from nfl.calcs.damage_formula import get_effect
+from nfl.calcs.damage import get_effect
 from nfl.data import (
     POKEMON,
     PVE_MOVES,
