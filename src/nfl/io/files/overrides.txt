@@ -431,3 +431,74 @@ override {
     }
   }
 }
+add_template {
+  template_id: "TEMP_EVO_MOVE_MAPPINGS"
+  key: "temp_evo_move_mappings"
+  value {
+    mappings {
+      pokemon_id: VICTREEBEL
+      temp_evo_id: TEMP_EVOLUTION_MEGA
+      move: TEMP_EVOLUTION_MEGA_V0071_POKEMON_VICTREEBEL
+    }
+    mappings {
+      pokemon_id: STARMIE
+      temp_evo_id: TEMP_EVOLUTION_MEGA
+      move: TEMP_EVOLUTION_MEGA_V0121_POKEMON_STARMIE
+    }
+    mappings {
+      pokemon_id: DRAGONITE
+      temp_evo_id: TEMP_EVOLUTION_MEGA
+      move: TEMP_EVOLUTION_MEGA_V0149_POKEMON_DRAGONITE
+    }
+    mappings {
+      pokemon_id: SKARMORY
+      temp_evo_id: TEMP_EVOLUTION_MEGA
+      move: TEMP_EVOLUTION_MEGA_V0227_POKEMON_SKARMORY
+    }
+    mappings {
+      pokemon_id: CHESNAUGHT
+      temp_evo_id: TEMP_EVOLUTION_MEGA
+      move: TEMP_EVOLUTION_MEGA_V0652_POKEMON_CHESNAUGHT
+    }
+    mappings {
+      pokemon_id: DELPHOX
+      temp_evo_id: TEMP_EVOLUTION_MEGA
+      move: TEMP_EVOLUTION_MEGA_V0655_POKEMON_DELPHOX
+    }
+    mappings {
+      pokemon_id: GRENINJA
+      temp_evo_id: TEMP_EVOLUTION_MEGA
+      move: TEMP_EVOLUTION_MEGA_V0658_POKEMON_GRENINJA
+    }
+    mappings {
+      pokemon_id: MALAMAR
+      temp_evo_id: TEMP_EVOLUTION_MEGA
+      move: TEMP_EVOLUTION_MEGA_V0687_POKEMON_MALAMAR
+    }
+    mappings {
+      pokemon_id: FALINKS
+      temp_evo_id: TEMP_EVOLUTION_MEGA
+      move: TEMP_EVOLUTION_MEGA_V0870_POKEMON_FALINKS
+    }
+    mappings {
+      pokemon_id: RAICHU
+      temp_evo_id: TEMP_EVOLUTION_MEGA_X
+      move: TEMP_EVOLUTION_MEGA_X_V0026_POKEMON_RAICHU
+    }
+    mappings {
+      pokemon_id: MEWTWO
+      temp_evo_id: TEMP_EVOLUTION_MEGA_X
+      move: TEMP_EVOLUTION_MEGA_X_V0150_POKEMON_MEWTWO
+    }
+    mappings {
+      pokemon_id: RAICHU
+      temp_evo_id: TEMP_EVOLUTION_MEGA_Y
+      move: TEMP_EVOLUTION_MEGA_Y_V0026_POKEMON_RAICHU
+    }
+    mappings {
+      pokemon_id: MEWTWO
+      temp_evo_id: TEMP_EVOLUTION_MEGA_Y
+      move: TEMP_EVOLUTION_MEGA_Y_V0150_POKEMON_MEWTWO
+    }
+  }
+}

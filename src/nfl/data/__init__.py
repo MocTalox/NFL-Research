@@ -15,6 +15,7 @@ from .catalog import (
     PVP_MOVES,
     RANKS,
     RCPM,
+    TEMP_EVO_MOVES,
     TEMP_EVOS,
     TYPES,
     TYPES_WEATHER,
@@ -22,6 +23,7 @@ from .catalog import (
     get_move_boosting_weather,
     get_pokemon_settings,
     get_size_settings,
+    get_temp_evo_move,
     get_tgr_rank_mult,
 )
 from .poke_data import PokeData
@@ -50,6 +52,7 @@ from .templates import (
     ROCKET_SETTINGS,
     SOURDOUGH_MOVE_MAPPING_SETTINGS,
     STATIONED_POKEMON_TABLE_SETTINGS,
+    TEMP_EVO_MOVE_MAPPINGS,
     TEMPORARY_EVOLUTION_SETTINGS,
     TYPE_EFFECTIVE,
     WEATHER_AFFINITIES,
@@ -96,6 +99,8 @@ __all__ = [
     "STATIONED_POKEMON_TABLE_SETTINGS",
     "TEMPORARY_EVOLUTION_SETTINGS",
     "TEMP_EVOS",
+    "TEMP_EVO_MOVES",
+    "TEMP_EVO_MOVE_MAPPINGS",
     "TYPES",
     "TYPES_WEATHER",
     "TYPE_EFFECTIVE",
@@ -109,5 +114,6 @@ __all__ = [
     "get_move_boosting_weather",
     "get_pokemon_settings",
     "get_size_settings",
+    "get_temp_evo_move",
     "get_tgr_rank_mult",
 ]

@@ -24,6 +24,7 @@ from nfl.data import (
     get_move_boosting_weather,
     get_pokemon_settings,
     get_size_settings,
+    get_temp_evo_move,
 )
 from nfl.proto import (
     HoloCharacterCategory,
@@ -80,6 +81,9 @@ def api_get_pokemon_moves(
         *pokemon_settings.non_tm_cinematic_moves,
         *pokemon_settings.legacy_cinematic_moves,
     ]
+
+    if move := get_temp_evo_move(pokemon_species.name, pokemon_species.temp_evo):
+        moves.append(move)
 
     return [_enum_name(move) for move in moves]
 

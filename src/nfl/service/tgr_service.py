@@ -15,7 +15,7 @@ from nfl.data import (
     PokeData,
     PokeSpecies,
 )
-from nfl.data.catalog import get_pokemon_settings_temp_evo
+from nfl.data.catalog import get_pokemon_settings_temp_evo, get_temp_evo_move
 from nfl.exceptions import NotFoundError
 from nfl.proto import (
     CombatMove,
@@ -118,8 +118,8 @@ def _to_pokemon_data(
         if alignment == HoloAlignment.PURIFIED:
             charged_moves.append(pokemon_settings.shadow.purified_charge_move)
 
-    # if temp_evo_id:  # TODO add mega moves
-    #     charged_moves.append(...)
+    if move := get_temp_evo_move(pokemon_settings.pokemon_id, temp_evo_id):
+        charged_moves.append(move)
 
     return _PokemonData(
         name=pokemon_settings.pokemon_id,
