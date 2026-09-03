@@ -19,47 +19,6 @@ def save_csv(csv_list: CsvList[T], file_name: str) -> None:
 ##### Callers #####
 
 
-def proto():
-    from scripts.proto_summary import GMProto
-
-    for proto in [
-        "temporaryEvolutionSettings",
-    ]:
-        print(f'Proto "{proto}"')
-        print(GMProto.extract_proto(proto))
-
-
-def breakpoints():
-    import breakpoints
-
-    res = "\n".join([";".join([str(y) for y in x]) for x in breakpoints.run()])
-    save_text(res, "_out.txt")
-
-
-def sizes_check():
-    import sizes_check
-
-    sizes_check.run()
-
-
-def evo_sizes():
-    import evo_sizes
-
-    evo_sizes.run()
-
-
-def showcases():
-    import showcases
-
-    showcases.run()
-
-
-def negative_megas():
-    import negative_megas
-
-    negative_megas.run()
-
-
 def tgr_service_all():
     from nfl.proto import HoloPokemonType
     from nfl.service.tgr_service import MoveSetRanking, tgr_best_attackers_against_type

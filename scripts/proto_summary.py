@@ -82,3 +82,10 @@ class GMProto:
             for value in values:
                 if isinstance(value, Message):
                     field._extract_message_proto(value)
+
+
+for proto in [
+    "temporaryEvolutionSettings",
+]:
+    print(f'Proto "{proto}"')
+    print(GMProto.extract_proto(proto))
