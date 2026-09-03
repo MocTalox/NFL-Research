@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from functools import cache
 from typing import Literal, TypeAlias
 
-from nfl.utils._resources import read_data_resource_files
+from nfl.utils._resources import read_resource_file
 
 """
 total = 23978
@@ -195,5 +195,5 @@ def _parse_line(line: str, state: State):
 
 @cache
 def read_proto_file() -> Data:
-    text = read_data_resource_files("gamemaster.proto")
+    text = read_resource_file("gamemaster.proto")
     return _parse_proto_file(text)

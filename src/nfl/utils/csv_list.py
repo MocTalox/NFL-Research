@@ -16,7 +16,7 @@ class CsvList(Generic[T]):
         self._rows.append(row_object)
 
     def add_colum(self, name: str, getter: Callable[[T], object]) -> None:
-        self._columns.append(lambda row: str(getter(row)) if row else name)
+        self._columns.append(lambda row: str(getter(row)) if row is not None else name)
 
     def _csv_row(self, row: T | None) -> str:
         return ",".join(CsvList._escape(column(row)) for column in self._columns)
