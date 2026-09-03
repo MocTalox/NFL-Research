@@ -195,4 +195,11 @@ class Message:
         try:  # Try by name first
             return enum_class[id.str_value]
         except KeyError:  # Otherwise try by numeric id
-            return enum_class(int(id.str_value))
+            try:
+                return enum_class(int(id.str_value))
+            except ValueError:
+                print(
+                    f"[WARN] Unknown value found for "
+                    f"{enum_class.__name__}: {id.str_value}"
+                )
+                return enum_class(-1)

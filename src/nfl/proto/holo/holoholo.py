@@ -11,6 +11,7 @@ class _HoloEnum(IntEnum):
 
 @unique
 class HoloPokemonType(_HoloEnum):
+    UNDEFINED = -1
     POKEMON_TYPE_NONE = 0
     POKEMON_TYPE_NORMAL = 1
     POKEMON_TYPE_FIGHTING = 2
@@ -34,6 +35,7 @@ class HoloPokemonType(_HoloEnum):
 
 @unique
 class HoloPokemonClass(_HoloEnum):
+    UNDEFINED = -1
     POKEMON_CLASS_NORMAL = 0
     POKEMON_CLASS_LEGENDARY = 1
     POKEMON_CLASS_MYTHIC = 2
@@ -42,6 +44,7 @@ class HoloPokemonClass(_HoloEnum):
 
 @unique
 class HoloTempEvoId(_HoloEnum):
+    UNDEFINED = -1
     TEMP_EVOLUTION_UNSET = 0
     TEMP_EVOLUTION_MEGA = 1
     TEMP_EVOLUTION_MEGA_X = 2
@@ -52,6 +55,7 @@ class HoloTempEvoId(_HoloEnum):
 @unique
 # Original name: `BreadModeEnum.Types.Modifier`
 class HoloBreadModeEnum(_HoloEnum):
+    UNDEFINED = -1
     NONE = 0
     BREAD_MODE = 1
     BREAD_DOUGH_MODE = 2
@@ -61,6 +65,7 @@ class HoloBreadModeEnum(_HoloEnum):
 
 @unique
 class HoloWeatherCondition(_HoloEnum):
+    UNDEFINED = -1
     NONE = 0
     CLEAR = 1
     RAINY = 2
@@ -73,6 +78,7 @@ class HoloWeatherCondition(_HoloEnum):
 
 @unique
 class HoloPokemonId(_HoloEnum):
+    UNDEFINED = -1
     MISSINGNO = 0
     BULBASAUR = 1
     IVYSAUR = 2
@@ -1103,6 +1109,7 @@ class HoloPokemonId(_HoloEnum):
 
 @unique
 class HoloPokemonFamilyId(_HoloEnum):
+    UNDEFINED = -1
     FAMILY_UNSET = 0
     FAMILY_BULBASAUR = 1
     FAMILY_CHARMANDER = 4
@@ -1657,6 +1664,7 @@ class HoloPokemonFamilyId(_HoloEnum):
 @unique
 # Original name: `PokemonDisplayProto.Form`
 class HoloPokemonForm(_HoloEnum):
+    UNDEFINED = -1
     FORM_UNSET = 0
     UNOWN_A = 1
     UNOWN_B = 2
@@ -3145,14 +3153,11 @@ class HoloPokemonForm(_HoloEnum):
     CHARMELEON_GOGGLES_2026 = 3355
     CHARIZARD_GOGGLES_2026 = 3356
     PIKACHU_GLASS_HELMET_2026 = 3357
-    ID_3358 = 3358
-    ID_3359 = 3359
-    ID_3360 = 3360
-    ID_3375 = 3375
 
 
 @unique
 class HoloPokemonMove(_HoloEnum):
+    UNDEFINED = -1
     MOVE_UNSET = 0
     THUNDER_SHOCK = 1
     QUICK_ATTACK = 2
@@ -3690,6 +3695,7 @@ class HoloPokemonMove(_HoloEnum):
 
 @unique
 class HoloCharacterCategory(_HoloEnum):
+    UNDEFINED = -1
     UNSET = 0
     TEAM_LEADER = 1
     GRUNT = 2
@@ -3705,6 +3711,7 @@ class HoloCharacterCategory(_HoloEnum):
 
 @unique
 class HoloCombatType(_HoloEnum):
+    UNDEFINED = -1
     COMBAT_TYPE_UNSET = 0
     SOLO = 1
     QR_CODE = 2
@@ -3719,6 +3726,7 @@ class HoloCombatType(_HoloEnum):
 
 @unique
 class HoloFriendshipLevel(_HoloEnum):
+    UNDEFINED = -1
     FRIENDSHIP_LEVEL_UNSET = 0
     FRIENDSHIP_LEVEL_0 = 1
     FRIENDSHIP_LEVEL_1 = 2
@@ -3730,6 +3738,7 @@ class HoloFriendshipLevel(_HoloEnum):
 
 @unique
 class HoloAlignment(_HoloEnum):
+    UNDEFINED = -1
     ALIGNMENT_UNSET = 0
     SHADOW = 1
     PURIFIED = 2
@@ -3737,6 +3746,7 @@ class HoloAlignment(_HoloEnum):
 
 @unique
 class HoloLocationCard(_HoloEnum):
+    UNDEFINED = -1
     LOCATION_CARD_UNSET = 0
     LC_2023_LASVEGAS_GOTOUR_001 = 1
     LC_2023_JEJU_AIRADVENTURES_001 = 2
@@ -4075,11 +4085,11 @@ class HoloLocationCard(_HoloEnum):
     LC_TPC30_SG = 336
     LC_TPC30_PH = 337
     LC_TPC30_TH = 338
-    ID_407 = 407
 
 
 @unique
 class HoloCardType(_HoloEnum):
+    UNDEFINED = -1
     CARD_TYPE_UNSET = 0
     LOCATION_CARD = 1
     SPECIAL_BACKGROUND = 2
