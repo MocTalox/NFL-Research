@@ -1,10 +1,3 @@
-"""
-float hei = poke.avgHeight, wei = poke.avgWeight, max = poke.xxlUpperBound;
-float aux = (800 / max + 150 / (max + hei * 0.5f));
-float h = (pts - 178) / aux, w = h * (wei / hei);
-return new float[] { w, h };
-"""
-
 from dataclasses import dataclass
 
 from nfl.data import (
@@ -14,6 +7,13 @@ from nfl.data import (
     PokeSpecies,
 )
 from nfl.proto import PokemonExtendedSettings, PokemonSettings
+
+"""
+float hei = poke.avgHeight, wei = poke.avgWeight, max = poke.xxlUpperBound;
+float aux = (800 / max + 150 / (max + hei * 0.5f));
+float h = (pts - 178) / aux, w = h * (wei / hei);
+return new float[] { w, h };
+"""
 
 
 @dataclass(frozen=True)
@@ -37,7 +37,6 @@ class _PokemonData(PokeSpecies):
         return (
             self.name == other.name
             and self.temp_evo == other.temp_evo
-            and self.shadow == other.shadow
             and self.pokedex_height_m == other.pokedex_height_m
             and self.pokedex_weight_kg == other.pokedex_weight_kg
             and self.height_std_dev == other.height_std_dev
@@ -55,7 +54,6 @@ def _to_pokemon_data(
     pokemon_settings: PokemonSettings,
     pokemon_extended_settings: PokemonExtendedSettings,
 ):
-
     return _PokemonData(
         name=pokemon_settings.pokemon_id,
         form=pokemon_settings.form,
@@ -73,18 +71,17 @@ def _to_pokemon_data(
 
 
 def _unfold_settings(pokemon_settings: PokemonSettings) -> list[_PokemonData]:
+    res: list[_PokemonData] = []
 
-    poke = PokeSpecies(
-        name=pokemon_settings.pokemon_id,
-        form=pokemon_settings.form,
+    pokemon_extended_settings = EXTENDED.get_poke_form(
+        pokemon_settings.pokemon_id, pokemon_settings.form
     )
-    pokemon_extended_settings = EXTENDED.get(poke)
 
-    if not pokemon_extended_settings:
-        return []
-    return [
-        _to_pokemon_data(pokemon_settings, pokemon_extended_settings),
-    ]
+    if pokemon_extended_settings:
+        res.append(_to_pokemon_data(pokemon_settings, pokemon_extended_settings))
+        # TODO add temp evos?
+
+    return res
 
 
 _POKEMON_DATA: PokeData[_PokemonData] = PokeData(POKEMON, _unfold_settings)
@@ -92,3 +89,6 @@ _POKEMON_DATA: PokeData[_PokemonData] = PokeData(POKEMON, _unfold_settings)
 
 def get_all_pokemon() -> list[PokeSpecies]:
     return sorted(_POKEMON_DATA.get_all_species())
+
+
+# TODO implement logic

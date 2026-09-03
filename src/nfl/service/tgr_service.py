@@ -14,8 +14,8 @@ from nfl.data import (
     PVP_MOVES,
     PokeData,
     PokeSpecies,
-    get_temp_evo_pokemon_settings,
 )
+from nfl.data.catalog import get_pokemon_settings_temp_evo
 from nfl.exceptions import NotFoundError
 from nfl.proto import (
     CombatMove,
@@ -46,7 +46,7 @@ class _PokemonData(PokeSpecies):
         return (
             self.name == other.name
             and self.temp_evo == other.temp_evo
-            and self.shadow == other.shadow
+            and self.alignment == other.alignment
             and self.type_1 == other.type_1
             and self.type_2 == other.type_2
             and self.attack == other.attack
@@ -62,7 +62,7 @@ class _EnemyData:
     type_1: HoloPokemonType
     type_2: HoloPokemonType
     defense: int
-    shadow: HoloAlignment
+    alignment: HoloAlignment
 
 
 @dataclass(frozen=True)
@@ -95,11 +95,10 @@ class _StatCalculator(Protocol):
 def _to_pokemon_data(
     pokemon_settings: PokemonSettings,
     temp_evo_id: HoloTempEvoId = HoloTempEvoId.TEMP_EVOLUTION_UNSET,
-    shadow: HoloAlignment = HoloAlignment.ALIGNMENT_UNSET,
+    alignment: HoloAlignment = HoloAlignment.ALIGNMENT_UNSET,
 ):
-
     if temp_evo_id:
-        pokemon_settings = get_temp_evo_pokemon_settings(pokemon_settings, temp_evo_id)
+        pokemon_settings = get_pokemon_settings_temp_evo(pokemon_settings, temp_evo_id)
 
     quick_moves = [
         *pokemon_settings.quick_moves,
@@ -114,16 +113,19 @@ def _to_pokemon_data(
     ]
 
     if pokemon_settings.shadow is not None:
-        if shadow == HoloAlignment.SHADOW:
+        if alignment == HoloAlignment.SHADOW:
             charged_moves.append(pokemon_settings.shadow.shadow_charge_move)
-        if shadow == HoloAlignment.PURIFIED:
+        if alignment == HoloAlignment.PURIFIED:
             charged_moves.append(pokemon_settings.shadow.purified_charge_move)
+
+    # if temp_evo_id:  # TODO add mega moves
+    #     charged_moves.append(...)
 
     return _PokemonData(
         name=pokemon_settings.pokemon_id,
         form=pokemon_settings.form,
         temp_evo=temp_evo_id,
-        shadow=shadow,
+        alignment=alignment,
         type_1=pokemon_settings.type,
         type_2=pokemon_settings.type_2,
         attack=pokemon_settings.stats.base_attack,
@@ -135,14 +137,13 @@ def _to_pokemon_data(
 
 
 def _unfold_settings(pokemon_settings: PokemonSettings):
-
     res: list[_PokemonData] = []
 
     res.append(_to_pokemon_data(pokemon_settings))
 
     if pokemon_settings.shadow:
-        res.append(_to_pokemon_data(pokemon_settings, shadow=HoloAlignment.SHADOW))
-        res.append(_to_pokemon_data(pokemon_settings, shadow=HoloAlignment.PURIFIED))
+        res.append(_to_pokemon_data(pokemon_settings, alignment=HoloAlignment.SHADOW))
+        res.append(_to_pokemon_data(pokemon_settings, alignment=HoloAlignment.PURIFIED))
     for temp_evo in pokemon_settings.temp_evo_overrides:
         res.append(_to_pokemon_data(pokemon_settings, temp_evo_id=temp_evo.temp_evo_id))
         if pokemon_settings.shadow:
@@ -150,7 +151,7 @@ def _unfold_settings(pokemon_settings: PokemonSettings):
                 _to_pokemon_data(
                     pokemon_settings,
                     temp_evo_id=temp_evo.temp_evo_id,
-                    shadow=HoloAlignment.PURIFIED,
+                    alignment=HoloAlignment.PURIFIED,
                 )
             )
 
@@ -230,11 +231,11 @@ def tgr_best_attackers_against_type(
     defender = _EnemyData(
         type, HoloPokemonType.POKEMON_TYPE_NONE, 150, HoloAlignment.SHADOW
     )
-    return _best_attackers(defender, None, limit)
+    return _best_attackers(defender, HoloPokemonType.POKEMON_TYPE_NONE, limit)
 
 
 def _best_attackers(
-    defender: _EnemyData, type: HoloPokemonType | None, limit: int
+    defender: _EnemyData, type: HoloPokemonType, limit: int
 ) -> list[MoveSetRanking]:
 
     rankings: list[MoveSetRanking] = []
@@ -296,7 +297,7 @@ def _tgr_calc_total_bulk(attacker: _PokemonMoveSet, defender: _EnemyData) -> flo
         defender.type_1, attacker.pokemon.type_1, attacker.pokemon.type_2
     )
     shadow = get_shadow_attack_bonus(
-        _COMBAT_TYPE, defender.shadow, attacker.pokemon.shadow
+        _COMBAT_TYPE, defender.alignment, attacker.pokemon.alignment
     )
     mults = stab * effect * shadow
     return (attacker.pokemon.defense + 15) * (attacker.pokemon.stamina + 15) / mults
@@ -364,7 +365,9 @@ def _calculate_stat(
 ) -> float:
 
     base_multiplier = (
-        get_shadow_attack_bonus(_COMBAT_TYPE, attacker.pokemon.shadow, defender.shadow)
+        get_shadow_attack_bonus(
+            _COMBAT_TYPE, attacker.pokemon.alignment, defender.alignment
+        )
         * (attacker.pokemon.attack + 15)
         / (defender.defense + 15)
     )

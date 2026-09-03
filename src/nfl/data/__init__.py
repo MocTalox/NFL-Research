@@ -15,12 +15,13 @@ from .catalog import (
     PVP_MOVES,
     RANKS,
     RCPM,
+    TEMP_EVOS,
     TYPES,
     TYPES_WEATHER,
     WEATHER,
     get_move_boosting_weather,
-    get_temp_evo_pokemon_settings,
-    get_temp_evo_size_settings,
+    get_pokemon_settings,
+    get_size_settings,
     get_tgr_rank_mult,
 )
 from .poke_data import PokeData
@@ -94,6 +95,7 @@ __all__ = [
     "SOURDOUGH_MOVE_MAPPING_SETTINGS",
     "STATIONED_POKEMON_TABLE_SETTINGS",
     "TEMPORARY_EVOLUTION_SETTINGS",
+    "TEMP_EVOS",
     "TYPES",
     "TYPES_WEATHER",
     "TYPE_EFFECTIVE",
@@ -105,7 +107,7 @@ __all__ = [
     "PokeSpecies",
     "SizeClass",
     "get_move_boosting_weather",
-    "get_temp_evo_pokemon_settings",
-    "get_temp_evo_size_settings",
+    "get_pokemon_settings",
+    "get_size_settings",
     "get_tgr_rank_mult",
 ]

@@ -1,14 +1,33 @@
 import json
-from dataclasses import asdict, dataclass
+from dataclasses import asdict
 from enum import Enum
 from typing import Any
 
-from nfl import calcs as stats
-from nfl import data
-from nfl.data import PokeSpecies
+from nfl.calcs import (
+    BattlePokemon,
+    BattleState,
+    calc_damage,
+    get_cpm,
+    get_rcpm,
+    get_tgr_cp,
+    get_tgr_hp,
+    get_tgr_stats,
+)
+from nfl.data import (
+    FORMS,
+    PVE_MOVES,
+    PVP_MOVES,
+    TYPES,
+    TYPES_WEATHER,
+    WEATHER,
+    PokeSpecies,
+    get_move_boosting_weather,
+    get_pokemon_settings,
+    get_size_settings,
+)
 from nfl.proto import (
-    HoloAlignment,
     HoloCharacterCategory,
+    HoloCombatType,
     HoloPokemonForm,
     HoloPokemonId,
     HoloPokemonMove,
@@ -28,50 +47,29 @@ def _dataclass_to_json(obj: Any) -> str:
     return json.dumps(asdict(obj), cls=EnumEncoder)
 
 
-@dataclass
-class PokeInput:
-    name: str
-    form: str | None = None
-    temp_evo: str | None = None
-    shadow: bool = False  # TODO rework
-
-
 def _enum_name(enum: Enum) -> str:
     return enum.name.replace("_", " ").title()
 
 
-def get_pokemon_names(query: str | None = None):
-    return {
-        "pokemons": [
-            _enum_name(pokemon)
-            for pokemon in HoloPokemonId
-            if not query or query.lower() in pokemon.name.lower()
-        ]
-    }
+def api_get_pokemon():
+    return [_enum_name(pokemon) for pokemon in HoloPokemonId]
 
 
-def get_pokemon_forms(pokemon: str | None = None, query: str | None = None):
+def api_get_forms(pokemon: str | None = None):
     if pokemon is not None:
         pokemon_species = PokeSpecies.resolve(name=pokemon)
-        forms_src = [pokemon_species.form] + data.FORMS[pokemon_species.name]
+        forms_src = [HoloPokemonForm.FORM_UNSET, *FORMS[pokemon_species.name]]
     else:
-        forms_src = HoloPokemonForm
+        forms_src = iter(HoloPokemonForm)
 
-    return {
-        "forms": [
-            _enum_name(form)
-            for form in forms_src
-            if not query or query.lower() in form.name.lower()
-        ]
-    }
+    return [_enum_name(form) for form in forms_src]
 
 
-def get_move_names(pokemon: PokeInput, query: str | None = None):
-    pokemon_species = PokeSpecies.resolve(
-        name=pokemon.name, form=pokemon.form, temp_evo=pokemon.temp_evo
-    )
-    pokemon_settings = data.POKEMON.get(pokemon_species)
-    assert pokemon_settings
+def api_get_pokemon_moves(
+    pokemon: str, form: str | None = None, temp_evo: str | None = None
+):
+    pokemon_species = PokeSpecies.resolve(pokemon, form, temp_evo)
+    pokemon_settings = get_pokemon_settings(pokemon_species)
 
     moves = [
         *pokemon_settings.quick_moves,
@@ -83,96 +81,55 @@ def get_move_names(pokemon: PokeInput, query: str | None = None):
         *pokemon_settings.legacy_cinematic_moves,
     ]
 
-    return {
-        "moves": [
-            _enum_name(move)
-            for move in moves
-            if not query or query.lower() in move.name.lower()
-        ]
-    }
+    return [_enum_name(move) for move in moves]
 
 
-def get_enemy_names():
-    return {
-        "characters": [_enum_name(character) for character in HoloCharacterCategory]
-    }
+def api_get_characters():
+    return [_enum_name(character) for character in HoloCharacterCategory]
 
 
-def calculate_damage(
-    pokemon: PokeInput,
-    move: str,
-    min_atk: int,
-    max_atk: int,
-    min_level: int,
-    max_level: int,
-    enemy: str,
-    enemy_pokemon: PokeInput,
-    trainer_level: int,
+def api_calculate_tgr_damage(
+    payload: dict[str, Any],
 ) -> dict[str, Any]:
-    from nfl.calcs import (
-        BattlePokemon,
-        BattleState,
-        damage_formula_raw,
-        get_cpm,
-        get_rcpm,
-        get_tgr_cp,
-        get_tgr_hp,
-        get_tgr_stats,
-    )
-    from nfl.data import POKEMON, PVP_MOVES, PokeSpecies
-    from nfl.proto import HoloCharacterCategory, HoloCombatType, HoloPokemonMove
-
     pokemon_species = PokeSpecies.resolve(
-        name=pokemon.name, form=pokemon.form, temp_evo=pokemon.temp_evo
+        payload["pokemon"],
+        payload.get("form"),
+        payload.get("temp_evo"),
+        payload.get("alignment"),
     )
-    enemy_pokemon_species = PokeSpecies.resolve(
-        name=enemy_pokemon.name,
-        form=enemy_pokemon.form,
-        temp_evo=enemy_pokemon.temp_evo,
+    enemy_species = PokeSpecies.resolve(
+        payload["enemy_pokemon"],
+        payload.get("enemy_form"),
+        payload.get("enemy_temp_evo"),
+        "Shadow",  # TODO HoloAlignment.SHADOW ?
     )
-    move = PokeSpecies.resolve_id(move)
-    enemy = PokeSpecies.resolve_id(enemy)
 
-    ps = POKEMON.get(pokemon_species)
-    eps = POKEMON.get(enemy_pokemon_species)
-    assert ps and eps
+    min_atk = payload["min_atk"]
+    max_atk = payload["max_atk"]
+    min_level = payload["min_level"]
+    max_level = payload["max_level"]
+    level = payload["trainer_level"]
+    move = HoloPokemonMove[PokeSpecies.resolve_id(payload["move"])]
+    enemy = HoloCharacterCategory[PokeSpecies.resolve_id(payload["enemy_character"])]
 
-    e = BattlePokemon(
-        eps,
-        15,
-        15,
-        15,
-        get_rcpm(trainer_level),
-        HoloAlignment.SHADOW,
-        HoloCharacterCategory[enemy],
-    )
-    a, d, _ = get_tgr_stats(eps, e.cpm, e.tgr_member, 15, 15, 15)
-    hp = get_tgr_hp(eps, e.cpm, e.tgr_member, 15)
-    cp = get_tgr_cp(eps, e.cpm, e.tgr_member, 15, 15, 15)
+    a, d, _ = get_tgr_stats(enemy_species, level, enemy, 15, 15, 15)
+    hp = get_tgr_hp(enemy_species, level, enemy, 15)
+    cp = get_tgr_cp(enemy_species, level, enemy, 15, 15, 15)
 
     enemy_info: dict[str, Any] = {"atk": a, "def": d, "hp": hp, "cp": cp}
 
-    m = PVP_MOVES[HoloPokemonMove[move]]
+    m = PVP_MOVES[move]
     b = BattleState(HoloCombatType.VS_SEEKER)
+    e = BattlePokemon(enemy_species, 15, 15, 15, get_rcpm(level), enemy)
 
     breakpoints: list[dict[str, Any]] = []
     for atk in range(min_atk, max_atk + 1):
         damages: list[dict[str, Any]] = []
         for level in range(min_level * 2, max_level * 2 + 1):
             level = level / 2
-            cpm = get_cpm(level)
-            p = BattlePokemon(
-                ps,
-                atk,
-                15,
-                15,
-                cpm,
-                HoloAlignment.SHADOW
-                if pokemon.shadow
-                else HoloAlignment.ALIGNMENT_UNSET,
-            )
-            dmg = damage_formula_raw(p, e, m.power, m.type, 0, False, b)
-            damages.append({"level": level, "damage": int(dmg) + 1, "damage_raw": dmg})
+            p = BattlePokemon(pokemon_species, atk, 15, 15, get_cpm(level))
+            dmg = calc_damage(p, e, m, False, False, b)
+            damages.append({"level": level, "damage": dmg})
         breakpoints.append({"atk": atk, "damages": damages})
 
     return {"enemy": enemy_info, "breakpoints": breakpoints}
@@ -181,69 +138,55 @@ def calculate_damage(
 ### Other Examples of APIs ###
 
 
-def get_pokemon_settings(pokemon: PokeInput):
-    poke = PokeSpecies.resolve(
-        name=pokemon.name, form=pokemon.form, temp_evo=pokemon.temp_evo
-    )
-    pokemon_settings = data.POKEMON.get(poke)
-    if pokemon_settings is None:
-        return None
-    if poke.temp_evo:
-        pokemon_settings = data.get_temp_evo_pokemon_settings(
-            pokemon_settings, poke.temp_evo
-        )
+def api_get_pokemon_settings(
+    pokemon: str, form: str | None = None, temp_evo: str | None = None
+):
+    pokemon_species = PokeSpecies.resolve(pokemon, form, temp_evo)
+    pokemon_settings = get_pokemon_settings(pokemon_species)
     return _dataclass_to_json(pokemon_settings)
 
 
-def get_size_settings(pokemon: PokeInput):
-    poke = PokeSpecies.resolve(
-        name=pokemon.name, form=pokemon.form, temp_evo=pokemon.temp_evo
-    )
-    pokemon_extended_settings = data.EXTENDED.get(poke)
-    if pokemon_extended_settings is None:
-        return None
-    if poke.temp_evo:
-        size_settings = data.get_temp_evo_size_settings(
-            pokemon_extended_settings, poke.temp_evo
-        )
-    else:
-        size_settings = pokemon_extended_settings.size_settings
+def api_get_size_settings(
+    pokemon: str, form: str | None = None, temp_evo: str | None = None
+):
+    pokemon_species = PokeSpecies.resolve(pokemon, form, temp_evo)
+    size_settings = get_size_settings(pokemon_species)
     return _dataclass_to_json(size_settings)
 
 
-def get_pve_move_settings(move: str):
+def api_get_pve_move_settings(move: str):
     holo_move = HoloPokemonMove[move]
-    move_settings = data.PVE_MOVES[holo_move]
+    move_settings = PVE_MOVES[holo_move]
     return _dataclass_to_json(move_settings)
 
 
-def get_pvp_move_settings(move: str):
+def api_get_pvp_move_settings(move: str):
     holo_move = HoloPokemonMove[move]
-    move_settings = data.PVP_MOVES[holo_move]
+    move_settings = PVP_MOVES[holo_move]
     return _dataclass_to_json(move_settings)
 
 
-def get_type_boosting_weather(type: str):
+def api_get_type_boosting_weather(type: str):
     holo_type = HoloPokemonType[type]
-    weather = data.TYPES_WEATHER[holo_type]
+    weather = TYPES_WEATHER[holo_type]
     return json.dumps({"weather": weather})
 
 
-def get_move_boosting_weather(move: str):
+def api_get_move_boosting_weather(move: str):
     holo_move = HoloPokemonMove[move]
-    weather = data.get_move_boosting_weather(holo_move)
+    weather = get_move_boosting_weather(holo_move)
     return json.dumps({"weather": weather})
 
 
-def get_weather_affinities(weather: str):
+def api_get_weather_affinities(weather: str):
     holo_weather = HoloWeatherCondition[weather]
-    weather_affinities = data.WEATHER[holo_weather]
+    weather_affinities = WEATHER[holo_weather]
     return _dataclass_to_json(weather_affinities)
 
 
-def get_type_effectiveness(type: str):
+def api_get_type_effectiveness(type: str):
     holo_type = HoloPokemonType[type]
-    type_effective = data.TYPES[holo_type]
+    type_effective = TYPES[holo_type]
     res: dict[str, Any] = {
         "attack_type": type_effective.attack_type,
         "effectiveness": [
@@ -257,6 +200,6 @@ def get_type_effectiveness(type: str):
     return json.dumps(res)
 
 
-def get_cpm(level: float):
-    cpm = stats.get_cpm(level)
+def api_get_cpm(level: float):
+    cpm = get_cpm(level)
     return json.dumps({"cpm": cpm})

@@ -13,7 +13,10 @@ from nfl.data import (
     TYPES,
     WEATHER,
     WEATHER_BONUS_SETTINGS,
+    PokeSpecies,
+    get_pokemon_settings,
 )
+from nfl.exceptions import ValidationError
 from nfl.proto import (
     CombatMove,
     HoloAlignment,
@@ -23,22 +26,20 @@ from nfl.proto import (
     HoloPokemonType,
     HoloWeatherCondition,
     MoveSettings,
-    PokemonSettings,
 )
 from nfl.utils import f32
 
-from .stats import get_stats, get_tgr_stats
+from .stats import get_stats_raw, get_tgr_stats_raw
 
 
 @dataclass
 class BattlePokemon:
-    pokemon_settings: PokemonSettings | None = None
-    atk_iv: int = 0
-    def_iv: int = 0
-    sta_iv: int = 0
-    cpm: float = 0.0
-    shadow: HoloAlignment = HoloAlignment.ALIGNMENT_UNSET
-    tgr_member: HoloCharacterCategory = HoloCharacterCategory.UNSET
+    pokemon: PokeSpecies
+    atk_iv: int
+    def_iv: int
+    sta_iv: int
+    cpm: float
+    owner: HoloCharacterCategory = HoloCharacterCategory.UNSET
 
 
 @dataclass
@@ -156,20 +157,24 @@ def get_mega_boost(
 
 def get_shadow_attack_bonus(
     combat_type: HoloCombatType,
-    shadow_attacker: HoloAlignment,
-    shadow_target: HoloAlignment,
+    attacker_alignment: HoloAlignment,
+    target_alignment: HoloAlignment,
 ) -> float:
     mults = _DAMAGE_MULTIPLIERS[combat_type]
     shadow_attack_bonus = (
-        mults.shadow_pokemon_attack if shadow_attacker == HoloAlignment.SHADOW else 1.0
+        mults.shadow_pokemon_attack
+        if attacker_alignment == HoloAlignment.SHADOW
+        else 1.0
     )
     shadow_defense_bonus = (
-        mults.shadow_pokemon_defense if shadow_target == HoloAlignment.SHADOW else 1.0
+        mults.shadow_pokemon_defense
+        if target_alignment == HoloAlignment.SHADOW
+        else 1.0
     )
     purified_attack_bonus = (
         mults.purified_pokemon_attack
-        if shadow_attacker == HoloAlignment.PURIFIED
-        and shadow_target == HoloAlignment.SHADOW
+        if attacker_alignment == HoloAlignment.PURIFIED
+        and target_alignment == HoloAlignment.SHADOW
         else 1.0
     )
     return f32(shadow_attack_bonus / shadow_defense_bonus * purified_attack_bonus)
@@ -219,7 +224,7 @@ def get_helpers_boost(
     num_helpers: int,
 ) -> float:
     mults = _DAMAGE_MULTIPLIERS[combat_type]
-    return (
+    return (  # TODO hardcoded 20 length
         1 + mults.helpers_attack[min(20, num_helpers)] / 10000
         if mults.helpers_attack and num_helpers
         else 1.0
@@ -265,11 +270,12 @@ def get_blade_bash_boost(combat_type: HoloCombatType, blade: bool, bash: bool) -
     return f32(attack_bonus / defense_bonus)
 
 
-def damage_formula(
+# TODO its a bit sus that this one accepts settings rather than name but ok...
+def calc_damage(
     attacker: BattlePokemon,
     target: BattlePokemon,
     move_settings: MoveSettings | CombatMove,
-    move_pos: int,
+    charged_move: bool,
     dodged: bool,
     state: BattleState,
 ) -> int:
@@ -280,12 +286,12 @@ def damage_formula(
         else move_settings.type
     )
 
-    base_damage = damage_formula_raw(
+    base_damage = calc_damage_raw(
         attacker,
         target,
         move_power,
         move_type,
-        move_pos,
+        charged_move,
         dodged,
         state,
     )
@@ -293,30 +299,33 @@ def damage_formula(
     return int(f32(base_damage + 1.0))
 
 
-def damage_formula_raw(
+def calc_damage_raw(
     attacker: BattlePokemon,
     target: BattlePokemon,
     move_power: float,
     move_type: HoloPokemonType,
-    move_pos: int,
+    charged_move: bool,
     dodged: bool,
     state: BattleState,
 ) -> float:
-    assert attacker.pokemon_settings and attacker.cpm
-    assert target.pokemon_settings and target.cpm
+    if attacker.cpm <= 0 or target.cpm <= 0:
+        raise ValidationError()  # TODO err msg
+
+    attacker_pokemon_settings = get_pokemon_settings(attacker.pokemon)
+    target_pokemon_settings = get_pokemon_settings(target.pokemon)
 
     atk_stat, _, _ = (
-        get_tgr_stats(
-            attacker.pokemon_settings,
+        get_tgr_stats_raw(
+            attacker_pokemon_settings,
             attacker.cpm,
-            target.tgr_member,
+            target.owner,
             attacker.atk_iv,
             attacker.def_iv,
             attacker.sta_iv,
         )
-        if attacker.tgr_member
-        else get_stats(
-            attacker.pokemon_settings,
+        if attacker.owner
+        else get_stats_raw(
+            attacker_pokemon_settings,
             attacker.cpm,
             attacker.atk_iv,
             attacker.def_iv,
@@ -324,17 +333,17 @@ def damage_formula_raw(
         )
     )
     _, def_stat, _ = (
-        get_tgr_stats(
-            target.pokemon_settings,
+        get_tgr_stats_raw(
+            target_pokemon_settings,
             target.cpm,
-            target.tgr_member,
+            target.owner,
             target.atk_iv,
             target.def_iv,
             target.sta_iv,
         )
-        if target.tgr_member
-        else get_stats(
-            target.pokemon_settings,
+        if target.owner
+        else get_stats_raw(
+            target_pokemon_settings,
             target.cpm,
             target.atk_iv,
             target.def_iv,
@@ -346,20 +355,22 @@ def damage_formula_raw(
 
     multipliers = [
         get_mega_boost(state.combat_type, move_type, state.mega_boosted_types),
-        get_shadow_attack_bonus(state.combat_type, attacker.shadow, target.shadow),
+        get_shadow_attack_bonus(
+            state.combat_type, attacker.pokemon.alignment, target.pokemon.alignment
+        ),
         get_weather_boost(state.combat_type, move_type, state.weather_id),
         get_stab(
             state.combat_type,
             move_type,
-            attacker.pokemon_settings.type,
-            attacker.pokemon_settings.type_2,
+            attacker_pokemon_settings.type,
+            attacker_pokemon_settings.type_2,
         ),
         get_fiendship_boost(state.combat_type, state.friendship_level),
         get_effect(
-            move_type, target.pokemon_settings.type, target.pokemon_settings.type_2
+            move_type, target_pokemon_settings.type, target_pokemon_settings.type_2
         ),
-        get_fast_boost(state.combat_type, move_pos == 0),
-        get_charge_boost(state.combat_type, move_pos > 0),
+        get_fast_boost(state.combat_type, not charged_move),
+        get_charge_boost(state.combat_type, charged_move),
         get_dodge_boost(state.combat_type, dodged),
         get_remote_boost(state.combat_type, state.remote_raid),
         get_helpers_boost(state.combat_type, state.num_helpers),

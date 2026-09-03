@@ -6,19 +6,18 @@ from math import floor
 from nfl.calcs import (
     BattlePokemon,
     BattleState,
-    damage_formula_raw,
     get_cpm,
-    get_hp,
 )
-from nfl.calcs.damage import get_effect
+from nfl.calcs.damage import calc_damage_raw, get_effect
+from nfl.calcs.stats import get_hp_raw
 from nfl.data import (
     POKEMON,
     PVE_MOVES,
     PokeSpecies,
     get_move_boosting_weather,
+    get_pokemon_settings,
 )
 from nfl.proto import (
-    HoloAlignment,
     HoloCombatType,
     HoloPokemonMove,
     HoloWeatherCondition,
@@ -30,15 +29,14 @@ def get_cpm_list(levels: list[float]) -> list[tuple[float, float]]:
     return [(level, get_cpm(level)) for level in levels]
 
 
-dialga = POKEMON.get(PokeSpecies.resolve("dialga"))
-assert dialga
+dialga_ps = PokeSpecies.resolve("dialga", alignment="Shadow")
+dialga = get_pokemon_settings(dialga_ps)
 boss = BattlePokemon(
-    dialga,
+    dialga_ps,
     15,
     15,
     15,
     f32(0.82),
-    HoloAlignment.SHADOW,
 )
 boss_moves = [
     *dialga.quick_moves,
@@ -48,7 +46,7 @@ boss_moves = [
 ]
 
 defenders = [
-    POKEMON.get(ps)
+    get_pokemon_settings(ps)
     for ps in [
         PokeSpecies.resolve("Bulbasaur"),
         PokeSpecies.resolve("Ivysaur"),
@@ -74,8 +72,14 @@ def raw_dmg_func(
     move: HoloPokemonMove, state: BattleState, defender: BattlePokemon, mult: float
 ):
     move_settings = PVE_MOVES[move]
-    return mult * damage_formula_raw(
-        boss, defender, move_settings.power, move_settings.pokemon_type, 0, False, state
+    return mult * calc_damage_raw(
+        boss,
+        defender,
+        move_settings.power,
+        move_settings.pokemon_type,
+        False,
+        False,
+        state,
     )
 
 
@@ -182,7 +186,6 @@ def cpm_floats_diff(
 
 res: list[list[object]] = []
 state = BattleState(HoloCombatType.COMBAT_TYPE_RAID)
-defender = BattlePokemon()
 base, low, hig = 1.7989907554974764, 1.79898, 1.799
 low, hig = f32_step(base, -25), f32_step(base, 25)
 print("Starting")
@@ -192,7 +195,12 @@ for move in boss_moves:
         get_move_boosting_weather(move),
     ):
         print(f"## Moveset: {state.weather_id} {move}")
-        for defender.pokemon_settings in defenders:
+        for defender_pokemon_settings in defenders:
+            ps = PokeSpecies(
+                name=defender_pokemon_settings.pokemon_id,
+                form=defender_pokemon_settings.form,
+            )
+            defender = BattlePokemon(ps, 0, 0, 0, 0.0)
             for level, defender.cpm in get_cpm_list(
                 [(n + 1) / 2 for n in range(1, 70)]
             ):
@@ -203,7 +211,7 @@ for move in boss_moves:
                     if floor(raw_dmg_low) != floor(raw_dmg_hig):
                         max_dmg = floor(raw_dmg_hig) + 1
                         hp_func = partial(
-                            get_hp, defender.pokemon_settings, defender.cpm
+                            get_hp_raw, defender_pokemon_settings, defender.cpm
                         )
                         min_iv_sta = next(
                             (sta for sta in range(16) if hp_func(sta) > max_dmg), None
@@ -211,20 +219,20 @@ for move in boss_moves:
                         if min_iv_sta is not None:
                             dmg = dmg_func(base)
                             bulk = (
-                                defender.pokemon_settings.stats.base_defense
+                                defender_pokemon_settings.stats.base_defense
                                 + defender.def_iv
                             )
                             eff = get_effect(
                                 PVE_MOVES[move].pokemon_type,
-                                defender.pokemon_settings.type,
-                                defender.pokemon_settings.type_2,
+                                defender_pokemon_settings.type,
+                                defender_pokemon_settings.type_2,
                             )
                             res.append(
                                 [
                                     move,
                                     state.weather_id,
-                                    defender.pokemon_settings.pokemon_id,
-                                    defender.pokemon_settings.form,
+                                    defender_pokemon_settings.pokemon_id,
+                                    defender_pokemon_settings.form,
                                     level,
                                     defender.def_iv,
                                     min_iv_sta,
@@ -237,6 +245,8 @@ print("Finished")
 
 res.sort(key=lambda d: (d[4], d[8]))
 
+res2 = "\n".join([";".join([str(y) for y in x]) for x in res])
 
-def run():
-    return res
+from .main import save_text
+
+save_text(res2, "_out.txt")

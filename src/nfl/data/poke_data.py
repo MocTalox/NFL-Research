@@ -24,20 +24,20 @@ class PokeData(Generic[P]):
         if isinstance(source, PokeFormMap):
             source = source.values()
 
-        all_pokemons = (
+        all_pokemon = (
             (individual for form in pokemon for individual in unfold(form))
             for pokemon in source
         )
 
-        unique_pokemons = (
+        unique_pokemon = (
             pokemon
-            for all_forms in all_pokemons
+            for all_forms in all_pokemon
             for pokemon in _normalize_forms(all_forms)
         )
 
         self._data: dict[PokeSpecies, P] = {}
 
-        for pokemon in unique_pokemons:
+        for pokemon in unique_pokemon:
             if pokemon.identity in self._data:
                 raise ValidationError(
                     f"Duplicate entry for identity: {pokemon.identity}"
@@ -62,7 +62,7 @@ class _PokeGroup(Generic[P]):
 
 class _GroupKey(NamedTuple):  # TODO maybe specified user-side
     temp_evo: HoloTempEvoId
-    shadow: HoloAlignment
+    alignment: HoloAlignment
     bread: HoloBreadModeEnum
 
 
@@ -83,10 +83,16 @@ def _normalize_forms(
     )
 
     for poke in species_stream:
-        poke_group = poke_groups[_GroupKey(poke.temp_evo, poke.shadow, poke.bread)]
+        group_key = _GroupKey(poke.temp_evo, poke.alignment, poke.bread)
+        poke_group = poke_groups[group_key]
         poke_group.forms.append(poke)
+
         if not poke.form:
-            assert poke_group.main is None
+            if poke_group.main is not None:
+                raise ValidationError(
+                    f"Multiple main species in group {group_key!r}: "
+                    f"{poke_group.main!r} and {poke!r}"
+                )
             poke_group.main = poke
 
     for poke_group in poke_groups.values():
@@ -96,7 +102,11 @@ def _normalize_forms(
 def _collapse_forms(poke_group: _PokeGroup[P]) -> Iterator[P]:
     main = poke_group.main
     forms = poke_group.forms
-    assert main is not None
+
+    if main is None:
+        raise ValidationError(
+            f"Species group contains forms but no main species: {forms!r}"
+        )
 
     if all(main.is_the_same(p) for p in forms):
         yield main

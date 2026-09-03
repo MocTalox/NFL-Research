@@ -25,8 +25,9 @@ class PokeFormMap(Generic[T]):
     def get_poke_form(
         self,
         poke: HoloPokemonId,
-        form: HoloPokemonForm,
+        form: HoloPokemonForm | None = None,
     ) -> T | None:
+        form = form if form is not None else HoloPokemonForm.FORM_UNSET
         inner = self._data.get(poke)
         return None if inner is None else inner.get(form)
 

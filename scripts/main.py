@@ -71,7 +71,7 @@ def tgr_service_single():
     rank.add_colum("Survival", lambda r: r.total_bulk)
 
     for pokemon in tgr_best_pokemon_moveset(
-        PokeSpecies.resolve("Metagross", shadow="Shadow")
+        PokeSpecies.resolve("Metagross", alignment="Shadow")
     ):
         rank.add_row(pokemon)
 
@@ -91,6 +91,8 @@ def debug_ext_service():
 
 
 def main():
+    tgr_service_all()
+    return
     from nfl import data
     from nfl.calcs import SizedPokemon, evolution_size
     from nfl.data import PokeSpecies, SizeClass
@@ -210,7 +212,7 @@ def main():
     from nfl.cals import (
         BattlePokemon,
         BattleState,
-        damage_formula_raw,
+        calc_damage_raw,
         get_cpm,
         get_rcpm,
         get_tgr_hp,
@@ -241,7 +243,7 @@ def main():
         lvl = lvl / 2
         cpm = get_cpm(lvl)
         ep = BattlePokemon(eps, 15, 15, 15, cpm, True, False)
-        dmg = damage_formula_raw(ep, vp, m.power, m.type, 0, False, b)
+        dmg = calc_damage_raw(ep, vp, m.power, m.type, 0, False, b)
         print(f"Level: {lvl} -> Damage: {int(dmg) + 1} ({dmg})")
 
 

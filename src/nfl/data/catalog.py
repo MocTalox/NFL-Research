@@ -12,6 +12,7 @@ from nfl.proto import (
 )
 
 from .poke_form_map import PokeFormMap
+from .poke_species import PokeSpecies
 from .templates import (
     COMBAT_MOVE,
     FORM_SETTINGS,
@@ -23,6 +24,7 @@ from .templates import (
     POKEMON_SETTINGS,
     ROCKET_SETTINGS,
     STATIONED_POKEMON_TABLE_SETTINGS,
+    TEMPORARY_EVOLUTION_SETTINGS,
     TYPE_EFFECTIVE,
     WEATHER_AFFINITIES,
 )
@@ -49,6 +51,10 @@ EXTENDED = PokeFormMap(
 )
 FORMS = {fs.pokemon: [form.form for form in fs.forms] for fs in FORM_SETTINGS}
 FORM_POKEMON = {form.form: fs.pokemon for fs in FORM_SETTINGS for form in fs.forms}
+TEMP_EVOS = {
+    tes.pokemon_id: [te.temporary_evolution_id for te in tes.temporary_evolutions]
+    for tes in TEMPORARY_EVOLUTION_SETTINGS
+}
 PVE_MOVES = {move.movement_id: move for move in MOVE_SETTINGS}
 PVP_MOVES = {move.unique_id: move for move in COMBAT_MOVE}
 NON_COMBAT_MOVES = {move.unique_id: move for move in NON_COMBAT_MOVE_SETTINGS}
@@ -87,24 +93,33 @@ def get_move_boosting_weather(move: HoloPokemonMove) -> HoloWeatherCondition:
     return TYPES_WEATHER[PVE_MOVES[move].pokemon_type]
 
 
-def get_temp_evo_pokemon_settings(
-    pokemon_settings: PokemonSettings,
-    temp_evo_id: HoloTempEvoId,
-):
-    temp_evo_overrides = next(
-        (
-            temp_evo_overrides
-            for temp_evo_overrides in pokemon_settings.temp_evo_overrides
-            if temp_evo_overrides.temp_evo_id == temp_evo_id
-        ),
-        None,
-    )
+def get_pokemon_settings(poke: PokeSpecies):
+    pokemon_settings = POKEMON.get(poke)
 
-    if not temp_evo_overrides:
+    if pokemon_settings is None:
+        raise NotFoundError()  # TODO err msg
+
+    return get_pokemon_settings_temp_evo(pokemon_settings, poke.temp_evo)
+
+
+def get_pokemon_settings_temp_evo(
+    pokemon_settings: PokemonSettings,
+    temp_evo: HoloTempEvoId,
+):
+    if not temp_evo:
+        return pokemon_settings
+
+    if temp_evo not in TEMP_EVOS[pokemon_settings.pokemon_id]:
         raise NotFoundError(
             f"Missing temporary evolution overrides for {pokemon_settings.pokemon_id} "
-            f"({pokemon_settings.form}): {temp_evo_id}"
+            f"({pokemon_settings.form}): {temp_evo}"
         )
+
+    temp_evo_overrides = next(
+        temp_evo_overrides
+        for temp_evo_overrides in pokemon_settings.temp_evo_overrides
+        if temp_evo_overrides.temp_evo_id == temp_evo
+    )
 
     return replace(
         pokemon_settings,
@@ -116,29 +131,40 @@ def get_temp_evo_pokemon_settings(
     )
 
 
-def get_temp_evo_size_settings(
-    pokemon_extended_settings: PokemonExtendedSettings,
-    temp_evo_id: HoloTempEvoId,
-    glitched: bool = False,
-):
-    temp_evo_overrides = next(
-        (
-            temp_evo_overrides
-            for temp_evo_overrides in pokemon_extended_settings.temp_evo_overrides
-            if temp_evo_overrides.temp_evo_id == temp_evo_id
-        ),
-        None,
+def get_size_settings(poke: PokeSpecies, glitched_temp_evo: bool = False):
+    pokemon_extended_settings = EXTENDED.get(poke)
+
+    if pokemon_extended_settings is None:
+        raise NotFoundError()  # TODO err msg
+
+    return get_size_settings_temp_evo(
+        pokemon_extended_settings, poke.temp_evo, glitched_temp_evo
     )
 
-    if not temp_evo_overrides:
+
+def get_size_settings_temp_evo(
+    pokemon_extended_settings: PokemonExtendedSettings,
+    temp_evo: HoloTempEvoId,
+    glitched_temp_evo: bool = False,
+):
+    if not temp_evo:
+        return pokemon_extended_settings.size_settings
+
+    if temp_evo not in TEMP_EVOS[pokemon_extended_settings.unique_id]:
         raise NotFoundError(
             f"Missing temporary evolution overrides for {pokemon_extended_settings.unique_id} "
-            f"({pokemon_extended_settings.form}): {temp_evo_id}"
+            f"({pokemon_extended_settings.form}): {temp_evo}"
         )
+
+    temp_evo_overrides = next(
+        temp_evo_overrides
+        for temp_evo_overrides in pokemon_extended_settings.temp_evo_overrides
+        if temp_evo_overrides.temp_evo_id == temp_evo
+    )
 
     return (
         temp_evo_overrides.size_settings
-        if not glitched
+        if not glitched_temp_evo
         else SizeSettings(
             pokemon_extended_settings.size_settings.xxs_lower_bound,
             pokemon_extended_settings.size_settings.xs_lower_bound,

@@ -18,7 +18,7 @@ class PokeSpecies:
     name: HoloPokemonId
     form: HoloPokemonForm = HoloPokemonForm.FORM_UNSET
     temp_evo: HoloTempEvoId = HoloTempEvoId.TEMP_EVOLUTION_UNSET
-    shadow: HoloAlignment = HoloAlignment.ALIGNMENT_UNSET
+    alignment: HoloAlignment = HoloAlignment.ALIGNMENT_UNSET
     bread: HoloBreadModeEnum = HoloBreadModeEnum.NONE
     shiny: bool = False
     lucky: bool = False
@@ -30,7 +30,7 @@ class PokeSpecies:
             name=self.name,
             form=self.form,
             temp_evo=self.temp_evo,
-            shadow=self.shadow,
+            alignment=self.alignment,
             bread=self.bread,
             shiny=self.shiny,
             lucky=self.lucky,
@@ -52,8 +52,8 @@ class PokeSpecies:
         if self.bg:
             parts.append(self.bg.name)
 
-        if self.shadow:
-            parts.append(self.shadow.name)
+        if self.alignment:
+            parts.append(self.alignment.name)
 
         if self.bread:
             parts.append(self.bread.name)
@@ -71,7 +71,7 @@ class PokeSpecies:
         name: str,
         form: str | None = None,
         temp_evo: str | None = None,
-        shadow: str | None = None,
+        alignment: str | None = None,
         bread: str | None = None,
         shiny: bool = False,
         lucky: bool = False,
@@ -80,7 +80,7 @@ class PokeSpecies:
         name = PokeSpecies.resolve_id(name)
         form = PokeSpecies.resolve_id(form) if form else None
         temp_evo = PokeSpecies.resolve_id(temp_evo) if temp_evo else None
-        shadow = PokeSpecies.resolve_id(shadow) if shadow else None
+        alignment = PokeSpecies.resolve_id(alignment) if alignment else None
         bread = PokeSpecies.resolve_id(bread) if bread else None
         bg = PokeSpecies.resolve_id(bg) if bg else None
         if (
@@ -104,7 +104,9 @@ class PokeSpecies:
             temp_evo=HoloTempEvoId[temp_evo]
             if temp_evo
             else HoloTempEvoId.TEMP_EVOLUTION_UNSET,
-            shadow=HoloAlignment[shadow] if shadow else HoloAlignment.ALIGNMENT_UNSET,
+            alignment=HoloAlignment[alignment]
+            if alignment
+            else HoloAlignment.ALIGNMENT_UNSET,
             bread=HoloBreadModeEnum[bread] if bread else HoloBreadModeEnum.NONE,
             shiny=shiny,
             lucky=lucky,
