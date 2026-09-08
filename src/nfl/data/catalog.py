@@ -3,7 +3,6 @@ from dataclasses import replace
 from nfl.exceptions import NotFoundError, ValidationError
 from nfl.proto import (
     HoloCharacterCategory,
-    HoloPokemonId,
     HoloPokemonMove,
     HoloTempEvoId,
     HoloWeatherCondition,
@@ -25,7 +24,6 @@ from .templates import (
     POKEMON_SETTINGS,
     ROCKET_SETTINGS,
     STATIONED_POKEMON_TABLE_SETTINGS,
-    TEMP_EVO_MOVE_MAPPINGS,
     TEMPORARY_EVOLUTION_SETTINGS,
     TYPE_EFFECTIVE,
     WEATHER_AFFINITIES,
@@ -60,9 +58,6 @@ TEMP_EVOS = {
 PVE_MOVES = {move.movement_id: move for move in MOVE_SETTINGS}
 PVP_MOVES = {move.unique_id: move for move in COMBAT_MOVE}
 NON_COMBAT_MOVES = {move.unique_id: move for move in NON_COMBAT_MOVE_SETTINGS}
-TEMP_EVO_MOVES = {
-    (m.pokemon_id, m.temp_evo_id): m.move for m in TEMP_EVO_MOVE_MAPPINGS.mappings
-}
 TYPES = {te.attack_type: te for te in TYPE_EFFECTIVE}
 WEATHER = {wa.weather_condition: wa for wa in WEATHER_AFFINITIES}
 TYPES_WEATHER = {
@@ -96,12 +91,6 @@ def get_tgr_rank_mult(character_category: HoloCharacterCategory) -> float:
 
 def get_move_boosting_weather(move: HoloPokemonMove) -> HoloWeatherCondition:
     return TYPES_WEATHER[PVE_MOVES[move].pokemon_type]
-
-
-def get_temp_evo_move(pokemon: HoloPokemonId, temp_evo: HoloTempEvoId):
-    if (pokemon, temp_evo) not in TEMP_EVO_MOVES:
-        return HoloPokemonMove.MOVE_UNSET
-    return TEMP_EVO_MOVES[pokemon, temp_evo]
 
 
 def get_pokemon_settings(poke: PokeSpecies):
@@ -150,6 +139,8 @@ def get_pokemon_settings_temp_evo(
         stats=temp_evo_overrides.stats,
         pokedex_height_m=temp_evo_overrides.average_height_m,
         pokedex_weight_kg=temp_evo_overrides.average_weight_kg,
+        nfl_temp_evo_id=temp_evo_overrides.temp_evo_id,
+        nfl_special_move=temp_evo_overrides.special_move,
     )
 
 

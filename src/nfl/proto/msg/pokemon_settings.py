@@ -37,6 +37,8 @@ class PokemonSettings:
     non_tm_cinematic_moves: tuple[HoloPokemonMove, ...]
     legacy_quick_moves: tuple[HoloPokemonMove, ...]
     legacy_cinematic_moves: tuple[HoloPokemonMove, ...]
+    nfl_temp_evo_id: HoloTempEvoId
+    nfl_special_move: HoloPokemonMove
 
     @classmethod
     def from_message(cls, msg: Message) -> PokemonSettings:
@@ -72,6 +74,8 @@ class PokemonSettings:
             legacy_cinematic_moves=msg.get_enum_list(
                 "legacyCinematicMoves", HoloPokemonMove
             ),
+            nfl_temp_evo_id=HoloTempEvoId.TEMP_EVOLUTION_UNSET,
+            nfl_special_move=HoloPokemonMove.MOVE_UNSET,
         )
 
 
@@ -128,6 +132,7 @@ class TempEvoOverrides_PS:
     average_weight_kg: float
     type_override_1: HoloPokemonType
     type_override_2: HoloPokemonType
+    special_move: HoloPokemonMove
 
     @classmethod
     def from_message(cls, msg: Message) -> TempEvoOverrides_PS:
@@ -138,4 +143,5 @@ class TempEvoOverrides_PS:
             average_weight_kg=msg.get_float("averageWeightKg"),
             type_override_1=msg.get_enum("typeOverride1", HoloPokemonType),
             type_override_2=msg.get_enum_or_none("typeOverride2", HoloPokemonType),
+            special_move=msg.get_enum_or_none("specialMove", HoloPokemonMove),
         )

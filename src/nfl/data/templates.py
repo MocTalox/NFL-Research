@@ -25,7 +25,6 @@ from nfl.proto import (
     RocketSettings,
     SourdoughMoveMappingSettings,
     StationedPokemonTableSettings,
-    TempEvoMoveMappings,
     TemporaryEvolutionSettings,
     TypeEffective,
     WeatherAffinities,
@@ -165,11 +164,6 @@ SOURDOUGH_MOVE_MAPPING_SETTINGS = _load_elem(
 STATIONED_POKEMON_TABLE_SETTINGS = _load_elem(
     "stationedPokemonTableSettings",
     StationedPokemonTableSettings.from_message,
-)
-
-TEMP_EVO_MOVE_MAPPINGS = _load_elem(
-    "temp_evo_move_mappings",
-    TempEvoMoveMappings.from_message,
 )
 
 TEMPORARY_EVOLUTION_SETTINGS = _load_set(

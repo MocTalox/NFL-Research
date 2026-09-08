@@ -62,7 +62,6 @@ from .msg.stationed_pokemon_table_settings import (
     StationedPokemonTableSettings,
     TierBoosts,
 )
-from .msg.temp_evo_move_mappings import Mappings_TEMM, TempEvoMoveMappings
 from .msg.temporary_evolution_settings import (
     TemporaryEvolutions,
     TemporaryEvolutionSettings,
@@ -106,7 +105,6 @@ __all__ = [
     "LocationCardSettings",
     "Mappings_BMM",
     "Mappings_SMMS",
-    "Mappings_TEMM",
     "MegaEvoSettings",
     "MoveSettings",
     "NonCombatMoveSettings",
@@ -124,7 +122,6 @@ __all__ = [
     "SourdoughMoveMappingSettings",
     "StationedPokemonTableSettings",
     "Stats",
-    "TempEvoMoveMappings",
     "TempEvoOverrides_PES",
     "TempEvoOverrides_PS",
     "TemporaryEvolutionSettings",
