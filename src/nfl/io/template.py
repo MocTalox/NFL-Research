@@ -27,7 +27,10 @@ class Template:
             self.value = Message()
         else:
             self.key = keys[0]
-            self.value = data_msg.get_message(self.key)
+            try:
+                self.value = data_msg.get_message(self.key)
+            except TypeError:
+                self.value = Message()
 
     def __str__(self) -> str:
         data = (

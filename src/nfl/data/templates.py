@@ -113,7 +113,7 @@ LOCATION_CARD_SETTINGS = _load_set(
 )
 
 MEGA_EVO_SETTINGS = _load_elem(
-    "mega_evo_settings",
+    "megaEvoSettings",
     MegaEvoSettings.from_message,
 )
 
