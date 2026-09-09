@@ -52,7 +52,7 @@ def _enum_name(enum: Enum) -> str:
 
 
 def api_get_pokemon():
-    return [_enum_name(pokemon) for pokemon in HoloPokemonId]
+    return [_enum_name(pokemon) for pokemon in HoloPokemonId if pokemon > 0]
 
 
 def api_get_forms(pokemon: str | None = None):
@@ -60,7 +60,7 @@ def api_get_forms(pokemon: str | None = None):
         pokemon_species = PokeSpecies.resolve(name=pokemon)
         forms_src = [HoloPokemonForm.FORM_UNSET, *FORMS[pokemon_species.name]]
     else:
-        forms_src = iter(HoloPokemonForm)
+        forms_src = (form for form in HoloPokemonForm if form >= 0)
 
     return [_enum_name(form) for form in forms_src]
 
@@ -88,7 +88,7 @@ def api_get_pokemon_moves(
 
 
 def api_get_characters():
-    return [_enum_name(character) for character in HoloCharacterCategory]
+    return [_enum_name(character) for character in HoloCharacterCategory if character > 0]
 
 
 def api_calculate_tgr_damage(
@@ -195,7 +195,7 @@ def api_get_type_effectiveness(type: str):
         "effectiveness": [
             {"defense_type": defense_type, "attack_scalar": value}
             for value, defense_type in zip(
-                type_effective.attack_scalar, list(HoloPokemonType)[1:]
+                type_effective.attack_scalar, [t for t in HoloPokemonType if t > 0]
             )
             if value != 1.0
         ],

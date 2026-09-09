@@ -24,6 +24,8 @@ def tgr_service_all():
     from nfl.service.tgr_service import MoveSetRanking, tgr_best_attackers_against_type
 
     for typing in HoloPokemonType:
+        if typing is HoloPokemonType.UNDEFINED:
+            continue
         rank: CsvList[MoveSetRanking] = CsvList()
         rank.add_colum("Pokemon", lambda r: str(r.pokemon.pokemon))
         rank.add_colum("Fast Move", lambda r: str(r.pokemon.quick.unique_id))
@@ -41,6 +43,8 @@ def tgr_service_all_for():
     from nfl.service.tgr_service import MoveSetRanking, tgr_best_attackers_for_type
 
     for typing in HoloPokemonType:
+        if typing is HoloPokemonType.UNDEFINED:
+            continue
         rank: CsvList[MoveSetRanking] = CsvList()
         rank.add_colum("Pokemon", lambda r: str(r.pokemon.pokemon))
         rank.add_colum("Fast Move", lambda r: str(r.pokemon.quick.unique_id))
