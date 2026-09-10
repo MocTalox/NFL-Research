@@ -25,6 +25,7 @@ from nfl.data import (
     get_pokemon_settings,
     get_size_settings,
 )
+from nfl.io import get_timestamp
 from nfl.proto import (
     HoloCharacterCategory,
     HoloCombatType,
@@ -49,6 +50,10 @@ def _dataclass_to_json(obj: Any) -> str:
 
 def _enum_name(enum: Enum) -> str:
     return enum.name.replace("_", " ").title()
+
+
+def api_get_gm_timestamp():
+    return get_timestamp()
 
 
 def api_get_pokemon():

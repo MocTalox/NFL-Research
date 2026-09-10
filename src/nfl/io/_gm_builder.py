@@ -9,7 +9,7 @@ from .template import Template
 
 def build_game_master(
     game_master_stream: Iterator[str], overrides_stream: Iterator[str] | None
-) -> dict[str, dict[str, Template]]:
+) -> tuple[dict[str, dict[str, Template]], list[int], int]:
     parsed_game_master = parse_proto_file(game_master_stream)
     parsed_overrides = parse_proto_file(overrides_stream or iter(()))
 
@@ -70,7 +70,10 @@ def build_game_master(
         data.setdefault(template.key, {})[template.template_id] = template
         mapper[template.template_id] = template.key
 
-    return data
+    experiments = list(parsed_game_master.get_int_list("batch_id"))
+    batch = parsed_game_master.get_int("batch_id")
+
+    return (data, experiments, batch)
 
 
 def _find_value(

@@ -13,9 +13,13 @@ from .template import Template
 
 
 class GameMasterAccess(Protocol):
-    def get_game_master(self) -> dict[str, dict[str, Template]]: ...
+    def get_game_master(self) -> tuple[dict[str, dict[str, Template]], list[int], int]: ...
 
     def get_templates(self, key: str) -> dict[str, Template]: ...
+
+    def get_experiments(self) -> list[int]: ...
+
+    def get_timestamp(self) -> int: ...
 
 
 class DefaultGameMasterAccess:
@@ -26,7 +30,7 @@ class DefaultGameMasterAccess:
         return read_resource_file_as_stream("overrides.txt")
 
     @cache  # noqa: B019 — instances are long-lived and few in number
-    def get_game_master(self) -> dict[str, dict[str, Template]]:
+    def get_game_master(self) -> tuple[dict[str, dict[str, Template]], list[int], int]:
         try:
             game_master_text = self._read_game_master()
             overrides_text = self._read_overrides()
@@ -36,7 +40,13 @@ class DefaultGameMasterAccess:
             raise ConfigurationError("Configured game master is invalid") from e
 
     def get_templates(self, key: str) -> dict[str, Template]:
-        return self.get_game_master()[key]
+        return self.get_game_master()[0][key]
+
+    def get_experiments(self) -> list[int]:
+        return self.get_game_master()[1]
+
+    def get_timestamp(self) -> int:
+        return self.get_game_master()[2]
 
 
 class FileGameMasterAccess(DefaultGameMasterAccess):
@@ -63,32 +73,63 @@ class CachedGameMasterAccess:
         self.path = Path(path)
         self.default = default
 
-    def get_game_master(self) -> dict[str, dict[str, Template]]:
+    def get_game_master(self) -> tuple[dict[str, dict[str, Template]], list[int], int]:
         return self.default.get_game_master()
 
     def get_templates(self, key: str) -> dict[str, Template]:
-        elements = self._load_cache(key)
+        elements = self._load_template_cache(key)
 
         if elements is not None:
             return elements
 
         elements = self.default.get_templates(key)
-        self._save_cache(key, elements)
+        self._save_template_cache(key, elements)
 
         return elements
+
+    def get_experiments(self) -> list[int]:
+        return self._get_metadata()[0]
+
+    def get_timestamp(self) -> int:
+        return self._get_metadata()[1]
+
+    def _get_metadata(self):
+        metadata = self._load_metadata_cache()
+
+        if metadata is not None:
+            return metadata
+
+        metadata = self.default.get_experiments(), self.default.get_timestamp()
+        self._save_metadata_cache(metadata)
+
+        return metadata
 
     def _cache_file(self, key: str) -> Path:
         return self.path / f"{key}.pkl"
 
-    def _load_cache(self, key: str):
+    def _load_template_cache(self, key: str):
         file = self._cache_file(key)
 
         if file.is_file():
             with file.open("rb") as f:
                 return pickle.load(f)
 
-    def _save_cache(self, key: str, data: Any):
+    def _save_template_cache(self, key: str, data: Any):
         file = self._cache_file(key)
+        file.parent.mkdir(parents=True, exist_ok=True)
+
+        with file.open("wb") as f:
+            pickle.dump(data, f, protocol=pickle.HIGHEST_PROTOCOL)
+
+    def _load_metadata_cache(self):
+        file = self._cache_file("gm-metadata")
+
+        if file.is_file():
+            with file.open("rb") as f:
+                return pickle.load(f)
+
+    def _save_metadata_cache(self, data: Any):
+        file = self._cache_file("gm-metadata")
         file.parent.mkdir(parents=True, exist_ok=True)
 
         with file.open("wb") as f:

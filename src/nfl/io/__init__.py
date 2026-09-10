@@ -16,12 +16,16 @@ def configure_game_master_access(access: GameMasterAccess) -> None:
     _access = access
 
 
-def get_game_master() -> dict[str, dict[str, Template]]:
-    return _access.get_game_master()
-
-
 def get_templates(key: str) -> dict[str, Template]:
     return _access.get_templates(key)
+
+
+def get_experiments() -> list[int]:
+    return _access.get_experiments()
+
+
+def get_timestamp() -> int:
+    return _access.get_timestamp()
 
 
 __all__ = [
@@ -33,6 +37,7 @@ __all__ = [
     "RemoteGameMasterAccess",
     "Template",
     "configure_game_master_access",
-    "get_game_master",
+    "get_experiments",
     "get_templates",
+    "get_timestamp",
 ]
