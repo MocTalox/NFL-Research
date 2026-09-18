@@ -100,7 +100,6 @@ def evolution_size(
         weight_kg,
         height_m,
         size_class,
-        bool(evo_pokemon.temp_evo),
     )
 
 
@@ -112,7 +111,6 @@ def evolution_size_raw(
     weight_kg: float,
     height_m: float,
     size_class: SizeClass | None = None,
-    temp_evo_xxl_glitch: bool = False,
 ) -> SizeData:
     pokemon_size_data = SizeData.build(size_settings, weight_kg, height_m, size_class)
 
@@ -122,7 +120,6 @@ def evolution_size_raw(
         evo_pokemon_settings,
         evo_size_settings,
         pokemon_size_data,
-        temp_evo_xxl_glitch,
     )
 
 
@@ -132,11 +129,11 @@ def evolution_size_formula(
     evo_pokemon_settings: PokemonSettings,
     evo_size_settings: SizeSettings,
     pokemon_size_data: SizeData,
-    temp_evo_xxl_glitch: bool = False,
 ) -> SizeData:
     weight = pokemon_size_data.weight_kg
     height = pokemon_size_data.height_m
     size_class = pokemon_size_data.size_class
+    temp_evo_xxl_glitch = bool(pokemon_settings.nfl_temp_evo_id)
 
     power = 2 if size_class != SizeClass.XXL or temp_evo_xxl_glitch else 1
 
@@ -193,7 +190,6 @@ def evolution_size_range(
         weight_kg,
         height_m,
         size_class,
-        bool(evo_pokemon.temp_evo),
     )
 
 
@@ -205,7 +201,6 @@ def evolution_size_range_raw(
     weight_kg: float,
     height_m: float,
     size_class: SizeClass | None = None,
-    temp_evo_xxl_glitch: bool = False,
 ) -> dict[str, SizeData | dict[str, float | SizeClass]]:
     pokemon_size_data = SizeData.build(size_settings, weight_kg, height_m, size_class)
 
@@ -215,7 +210,6 @@ def evolution_size_range_raw(
         evo_pokemon_settings,
         evo_size_settings,
         pokemon_size_data.change_size(size_settings, -0.005, -0.005),
-        temp_evo_xxl_glitch,
     )
     min_max = evolution_size_formula(
         pokemon_settings,
@@ -223,7 +217,6 @@ def evolution_size_range_raw(
         evo_pokemon_settings,
         evo_size_settings,
         pokemon_size_data.change_size(size_settings, -0.005, 0.005),
-        temp_evo_xxl_glitch,
     )
     max_min = evolution_size_formula(
         pokemon_settings,
@@ -231,7 +224,6 @@ def evolution_size_range_raw(
         evo_pokemon_settings,
         evo_size_settings,
         pokemon_size_data.change_size(size_settings, 0.005, -0.005),
-        temp_evo_xxl_glitch,
     )
     max_max = evolution_size_formula(
         pokemon_settings,
@@ -239,7 +231,6 @@ def evolution_size_range_raw(
         evo_pokemon_settings,
         evo_size_settings,
         pokemon_size_data.change_size(size_settings, 0.005, 0.005),
-        temp_evo_xxl_glitch,
     )
 
     weight_min = min(
