@@ -23,6 +23,7 @@ from .catalog import (
     get_pokemon_settings,
     get_size_settings,
     get_tgr_rank_mult,
+    is_tgr_member,
 )
 from .poke_data import PokeData
 from .poke_form_map import PokeFormMap
@@ -110,4 +111,5 @@ __all__ = [
     "get_pokemon_settings",
     "get_size_settings",
     "get_tgr_rank_mult",
+    "is_tgr_member",
 ]

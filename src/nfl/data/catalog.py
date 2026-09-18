@@ -83,8 +83,12 @@ BEHEMOTH_BASH_AE = {
 }
 
 
+def is_tgr_member(character_category: HoloCharacterCategory) -> bool:
+    return character_category in RANKS
+
+
 def get_tgr_rank_mult(character_category: HoloCharacterCategory) -> float:
-    if character_category not in RANKS:
+    if not is_tgr_member(character_category):
         raise ValidationError(f"No rank multiplier configured for {character_category}")
     return RANKS[character_category].rank_multiplier
 

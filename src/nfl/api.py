@@ -24,6 +24,7 @@ from nfl.data import (
     get_move_boosting_weather,
     get_pokemon_settings,
     get_size_settings,
+    is_tgr_member,
 )
 from nfl.io import get_timestamp
 from nfl.proto import (
@@ -65,7 +66,7 @@ def api_get_forms(pokemon: str | None = None):
         pokemon_species = PokeSpecies.resolve(name=pokemon)
         forms_src = [HoloPokemonForm.FORM_UNSET, *FORMS[pokemon_species.name]]
     else:
-        forms_src = (form for form in HoloPokemonForm if form >= 0)
+        forms_src = (form for form in HoloPokemonForm if form > 0)
 
     return [_enum_name(form) for form in forms_src]
 
@@ -92,8 +93,15 @@ def api_get_pokemon_moves(
     return [_enum_name(move) for move in moves]
 
 
-def api_get_characters():
-    return [_enum_name(character) for character in HoloCharacterCategory if character > 0]
+def api_get_characters(include_unset: bool = False, only_tgr: bool = False):
+    min_value = 0 if include_unset else 1
+
+    return [
+        _enum_name(character)
+        for character in HoloCharacterCategory
+        if character >= min_value
+        and (not only_tgr or is_tgr_member(character))
+    ]
 
 
 def api_calculate_tgr_damage(
