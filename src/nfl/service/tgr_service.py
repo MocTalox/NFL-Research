@@ -89,6 +89,7 @@ class _StatCalculator(Protocol):
         charged: CombatMove,
         quick_multiplier: float,
         charged_multiplier: float,
+        rounded: bool,
     ) -> float: ...
 
 
@@ -189,21 +190,28 @@ def _gen_pokemon_instances(
 # =========================
 
 
-def tgr_best_pokemon_moveset(poke_species: PokeSpecies) -> list[MoveSetRanking]:
+def tgr_best_pokemon_moveset(
+    poke_species: PokeSpecies,
+    enemy_type: HoloPokemonType = HoloPokemonType.POKEMON_TYPE_NONE,
+    enemy_type_2: HoloPokemonType = HoloPokemonType.POKEMON_TYPE_NONE,
+    enemy_defense: int = 150,
+    rounded: bool = False,
+) -> list[MoveSetRanking]:
 
     pokemon = _POKEMON_DATA.get(poke_species)
     if pokemon is None:
         raise NotFoundError(f"No Pokémon data found for species: {poke_species}")
 
     defender = _EnemyData(
-        HoloPokemonType.POKEMON_TYPE_NONE,
-        HoloPokemonType.POKEMON_TYPE_NONE,
-        150,
+        enemy_type,
+        enemy_type_2,
+        enemy_defense,
         HoloAlignment.SHADOW,
     )
 
     rankings = [
-        _create_ranking(p, defender) for p in _gen_pokemon_instances(pokemon, True)
+        _create_ranking(p, defender, rounded)
+        for p in _gen_pokemon_instances(pokemon, True)
     ]
 
     return sorted(
@@ -211,60 +219,60 @@ def tgr_best_pokemon_moveset(poke_species: PokeSpecies) -> list[MoveSetRanking]:
     )
 
 
-def tgr_best_attackers_for_type(
-    type: HoloPokemonType, limit: int
+def tgr_best_attackers(
+    pokemon_type: HoloPokemonType = HoloPokemonType.POKEMON_TYPE_NONE,
+    enemy_type: HoloPokemonType = HoloPokemonType.POKEMON_TYPE_NONE,
+    enemy_type_2: HoloPokemonType = HoloPokemonType.POKEMON_TYPE_NONE,
+    enemy_defense: int = 150,
+    limit: int = 100,
+    exclude_purified: bool = True,
+    exclude_temp_evos: bool = True,
+    rounded: bool = False,
 ) -> list[MoveSetRanking]:
 
     defender = _EnemyData(
-        HoloPokemonType.POKEMON_TYPE_NONE,
-        HoloPokemonType.POKEMON_TYPE_NONE,
-        150,
+        enemy_type,
+        enemy_type_2,
+        enemy_defense,
         HoloAlignment.SHADOW,
     )
-    return _best_attackers(defender, type, limit)
-
-
-def tgr_best_attackers_against_type(
-    type: HoloPokemonType, limit: int
-) -> list[MoveSetRanking]:
-
-    defender = _EnemyData(
-        type, HoloPokemonType.POKEMON_TYPE_NONE, 150, HoloAlignment.SHADOW
-    )
-    return _best_attackers(defender, HoloPokemonType.POKEMON_TYPE_NONE, limit)
-
-
-def _best_attackers(
-    defender: _EnemyData, type: HoloPokemonType, limit: int
-) -> list[MoveSetRanking]:
 
     rankings: list[MoveSetRanking] = []
 
     for poke in _POKEMON_DATA.get_all_pokes():
+        if exclude_purified and poke.alignment == HoloAlignment.PURIFIED:
+            continue
+        if exclude_temp_evos and poke.temp_evo:
+            continue
+
         candidates = (
-            p for p in _gen_pokemon_instances(poke) if not type or p.quick.type == type
+            p
+            for p in _gen_pokemon_instances(poke)
+            if not pokemon_type or p.quick.type == pokemon_type
         )
         best = max(
             candidates,
-            key=lambda p: _tgr_calc_damage_per_turn(p, defender),
+            key=lambda p: _tgr_calc_damage_per_turn(p, defender, rounded),
             default=None,
         )
 
         if best is not None:
-            rankings.append(_create_ranking(best, defender))
+            rankings.append(_create_ranking(best, defender, rounded))
 
     return sorted(rankings, key=lambda r: r.damage_per_turn, reverse=True)[:limit]
 
 
-def _create_ranking(poke: _PokemonMoveSet, defender: _EnemyData) -> MoveSetRanking:
+def _create_ranking(
+    poke: _PokemonMoveSet, defender: _EnemyData, rounded: bool
+) -> MoveSetRanking:
 
     return MoveSetRanking(
         pokemon=poke,
-        damage_per_turn=_tgr_calc_damage_per_turn(poke, defender),
-        charged_damage=_tgr_calc_charged_damage(poke, defender),
-        charged_index=_tgr_calc_charged_index(poke, defender),
-        charged_rate=_tgr_calc_charged_rate(poke, defender),
-        total_bulk=_tgr_calc_total_bulk(poke, defender),
+        damage_per_turn=_tgr_calc_damage_per_turn(poke, defender, rounded),
+        charged_damage=_tgr_calc_charged_damage(poke, defender, rounded),
+        charged_index=_tgr_calc_charged_index(poke, defender, rounded),
+        charged_rate=_tgr_calc_charged_rate(poke, defender, rounded),
+        total_bulk=_tgr_calc_total_bulk(poke, defender, rounded),
     )
 
 
@@ -273,23 +281,33 @@ def _create_ranking(poke: _PokemonMoveSet, defender: _EnemyData) -> MoveSetRanki
 # =========================
 
 
-def _tgr_calc_damage_per_turn(attacker: _PokemonMoveSet, defender: _EnemyData) -> float:
-    return _calculate_stat(attacker, defender, _calc_damage_per_turn)
+def _tgr_calc_damage_per_turn(
+    attacker: _PokemonMoveSet, defender: _EnemyData, rounded: bool
+) -> float:
+    return _calculate_stat(attacker, defender, _calc_damage_per_turn, rounded)
 
 
-def _tgr_calc_charged_damage(attacker: _PokemonMoveSet, defender: _EnemyData) -> float:
-    return _calculate_stat(attacker, defender, _calc_charged_damage)
+def _tgr_calc_charged_damage(
+    attacker: _PokemonMoveSet, defender: _EnemyData, rounded: bool
+) -> float:
+    return _calculate_stat(attacker, defender, _calc_charged_damage, rounded)
 
 
-def _tgr_calc_charged_index(attacker: _PokemonMoveSet, defender: _EnemyData) -> float:
-    return _calculate_stat(attacker, defender, _calc_charged_index)
+def _tgr_calc_charged_index(
+    attacker: _PokemonMoveSet, defender: _EnemyData, rounded: bool
+) -> float:
+    return _calculate_stat(attacker, defender, _calc_charged_index, rounded)
 
 
-def _tgr_calc_charged_rate(attacker: _PokemonMoveSet, defender: _EnemyData) -> float:
-    return _calculate_stat(attacker, defender, _calc_charged_rate)
+def _tgr_calc_charged_rate(
+    attacker: _PokemonMoveSet, defender: _EnemyData, rounded: bool
+) -> float:
+    return _calculate_stat(attacker, defender, _calc_charged_rate, rounded)
 
 
-def _tgr_calc_total_bulk(attacker: _PokemonMoveSet, defender: _EnemyData) -> float:
+def _tgr_calc_total_bulk(
+    attacker: _PokemonMoveSet, defender: _EnemyData, rounded: bool
+) -> float:
     # TODO As for now works as defender has just type_1
     # Consider adding a "move_type" to _EnemyData maybe
     stab = get_stab(_COMBAT_TYPE, defender.type_1, defender.type_1, defender.type_2)
@@ -313,9 +331,13 @@ def _calc_damage_per_turn(
     charged: CombatMove,
     quick_multiplier: float,
     charged_multiplier: float,
+    rounded: bool,
 ) -> float:
 
-    return quick.power * quick_multiplier / (quick.duration_turns + 1)
+    damage = quick.power * quick_multiplier
+    damage = int(damage + 1) if rounded else damage
+
+    return damage / (quick.duration_turns + 1)
 
 
 def _calc_charged_damage(
@@ -323,9 +345,13 @@ def _calc_charged_damage(
     charged: CombatMove,
     quick_multiplier: float,
     charged_multiplier: float,
+    rounded: bool,
 ) -> float:
 
-    return charged.power * charged_multiplier
+    damage = charged.power * charged_multiplier
+    damage = int(damage + 1) if rounded else damage
+
+    return damage
 
 
 def _calc_charged_index(
@@ -333,19 +359,20 @@ def _calc_charged_index(
     charged: CombatMove,
     quick_multiplier: float,
     charged_multiplier: float,
+    rounded: bool,
 ) -> float:
 
     damage_per_turn = _calc_damage_per_turn(
-        quick, charged, quick_multiplier, charged_multiplier
+        quick, charged, quick_multiplier, charged_multiplier, rounded
     )
 
     charged_damage = _calc_charged_damage(
-        quick, charged, quick_multiplier, charged_multiplier
+        quick, charged, quick_multiplier, charged_multiplier, rounded
     )
 
     if damage_per_turn == 0:
         return math.inf
-    return charged_damage / (20 * damage_per_turn)
+    return charged_damage / (21 * damage_per_turn)
 
 
 def _calc_charged_rate(
@@ -353,15 +380,19 @@ def _calc_charged_rate(
     charged: CombatMove,
     quick_multiplier: float,
     charged_multiplier: float,
+    rounded: bool,
 ) -> float:
 
     if quick.energy_delta == 0:
         return math.inf
-    return -1 * (quick.duration_turns + 1) * charged.energy_delta / quick.energy_delta
+    return -1 * charged.energy_delta / quick.energy_delta * (quick.duration_turns + 1)
 
 
 def _calculate_stat(
-    attacker: _PokemonMoveSet, defender: _EnemyData, calculator: _StatCalculator
+    attacker: _PokemonMoveSet,
+    defender: _EnemyData,
+    calculator: _StatCalculator,
+    rounded: bool,
 ) -> float:
 
     base_multiplier = (
@@ -381,7 +412,7 @@ def _calculate_stat(
     )
 
     return calculator(
-        attacker.quick, attacker.charged, quick_multiplier, charged_multiplier
+        attacker.quick, attacker.charged, quick_multiplier, charged_multiplier, rounded
     )
 
 

@@ -21,7 +21,7 @@ def save_csv(csv_list: CsvList[T], file_name: str) -> None:
 
 def tgr_service_all():
     from nfl.proto import HoloPokemonType
-    from nfl.service.tgr_service import MoveSetRanking, tgr_best_attackers_against_type
+    from nfl.service.tgr_service import MoveSetRanking, tgr_best_attackers
 
     for typing in HoloPokemonType:
         if typing is HoloPokemonType.UNDEFINED:
@@ -32,7 +32,7 @@ def tgr_service_all():
         rank.add_colum("Dmg per Turn", lambda r: r.damage_per_turn)
         rank.add_colum("Survival", lambda r: r.total_bulk)
 
-        for pokemon in tgr_best_attackers_against_type(typing, 50):
+        for pokemon in tgr_best_attackers(enemy_type=typing):
             rank.add_row(pokemon)
 
         save_csv(rank, f"_ranking_{typing}")
@@ -40,7 +40,7 @@ def tgr_service_all():
 
 def tgr_service_all_for():
     from nfl.proto import HoloPokemonType
-    from nfl.service.tgr_service import MoveSetRanking, tgr_best_attackers_for_type
+    from nfl.service.tgr_service import MoveSetRanking, tgr_best_attackers
 
     for typing in HoloPokemonType:
         if typing is HoloPokemonType.UNDEFINED:
@@ -51,7 +51,7 @@ def tgr_service_all_for():
         rank.add_colum("Dmg per Turn", lambda r: r.damage_per_turn)
         rank.add_colum("Survival", lambda r: r.total_bulk)
 
-        for pokemon in tgr_best_attackers_for_type(typing, 50):
+        for pokemon in tgr_best_attackers(pokemon_type=typing):
             rank.add_row(pokemon)
 
         save_csv(rank, f"_ranking_{typing}")
