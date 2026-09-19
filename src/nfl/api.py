@@ -3,16 +3,7 @@ from dataclasses import asdict
 from enum import Enum
 from typing import Any
 
-from nfl.calcs import (
-    BattlePokemon,
-    BattleState,
-    calc_damage,
-    get_cpm,
-    get_rcpm,
-    get_tgr_cp,
-    get_tgr_hp,
-    get_tgr_stats,
-)
+from nfl.calcs import get_cpm
 from nfl.data import (
     FORMS,
     PVE_MOVES,
@@ -29,7 +20,6 @@ from nfl.data import (
 from nfl.io import get_timestamp
 from nfl.proto import (
     HoloCharacterCategory,
-    HoloCombatType,
     HoloPokemonForm,
     HoloPokemonId,
     HoloPokemonMove,
@@ -38,7 +28,7 @@ from nfl.proto import (
 )
 
 
-class EnumEncoder(json.JSONEncoder):
+class _EnumEncoder(json.JSONEncoder):
     def default(self, o: Any):
         if isinstance(o, Enum):
             return o.name
@@ -46,7 +36,7 @@ class EnumEncoder(json.JSONEncoder):
 
 
 def _dataclass_to_json(obj: Any) -> str:
-    return json.dumps(asdict(obj), cls=EnumEncoder)
+    return json.dumps(asdict(obj), cls=_EnumEncoder)
 
 
 def _enum_name(enum: Enum) -> str:
@@ -99,56 +89,8 @@ def api_get_characters(include_unset: bool = False, only_tgr: bool = False):
     return [
         _enum_name(character)
         for character in HoloCharacterCategory
-        if character >= min_value
-        and (not only_tgr or is_tgr_member(character))
+        if character >= min_value and (not only_tgr or is_tgr_member(character))
     ]
-
-
-def api_calculate_tgr_damage(
-    payload: dict[str, Any],
-) -> dict[str, Any]:
-    pokemon_species = PokeSpecies.resolve(
-        payload["pokemon"],
-        payload.get("form"),
-        payload.get("temp_evo"),
-        payload.get("alignment"),
-    )
-    enemy_species = PokeSpecies.resolve(
-        payload["enemy_pokemon"],
-        payload.get("enemy_form"),
-        payload.get("enemy_temp_evo"),
-        "Shadow",  # TODO HoloAlignment.SHADOW ?
-    )
-
-    min_atk = payload["min_atk"]
-    max_atk = payload["max_atk"]
-    min_level = payload["min_level"]
-    max_level = payload["max_level"]
-    level = payload["trainer_level"]
-    move = HoloPokemonMove[PokeSpecies.resolve_id(payload["move"])]
-    enemy = HoloCharacterCategory[PokeSpecies.resolve_id(payload["enemy_character"])]
-
-    a, d, _ = get_tgr_stats(enemy_species, level, enemy, 15, 15, 15)
-    hp = get_tgr_hp(enemy_species, level, enemy, 15)
-    cp = get_tgr_cp(enemy_species, level, enemy, 15, 15, 15)
-
-    enemy_info: dict[str, Any] = {"atk": a, "def": d, "hp": hp, "cp": cp}
-
-    m = PVP_MOVES[move]
-    b = BattleState(HoloCombatType.VS_SEEKER)
-    e = BattlePokemon(enemy_species, 15, 15, 15, get_rcpm(level), enemy)
-
-    breakpoints: list[dict[str, Any]] = []
-    for atk in range(min_atk, max_atk + 1):
-        damages: list[dict[str, Any]] = []
-        for level in range(min_level * 2, max_level * 2 + 1):
-            level = level / 2
-            p = BattlePokemon(pokemon_species, atk, 15, 15, get_cpm(level))
-            dmg = calc_damage(p, e, m, False, False, b)
-            damages.append({"level": level, "damage": dmg})
-        breakpoints.append({"atk": atk, "damages": damages})
-
-    return {"enemy": enemy_info, "breakpoints": breakpoints}
 
 
 ### Other Examples of APIs ###
