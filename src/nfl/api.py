@@ -1,5 +1,4 @@
 import json
-from dataclasses import asdict
 from enum import Enum
 from typing import Any
 
@@ -19,17 +18,6 @@ from nfl.proto import (
     HoloPokemonType,
     HoloTempEvoId,
 )
-
-
-class _EnumEncoder(json.JSONEncoder):
-    def default(self, o: Any):
-        if isinstance(o, Enum):
-            return o.name
-        return super().default(o)
-
-
-def _dataclass_to_json(obj: Any) -> str:
-    return json.dumps(asdict(obj), cls=_EnumEncoder)
 
 
 def _enum_name(enum: Enum) -> str:
