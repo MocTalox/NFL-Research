@@ -68,7 +68,7 @@ def get_pokemon_moves(
     temp_evo: str | None = None,
     alignment: str | None = None,
 ):
-    pokemon_species = PokeSpecies.resolve(pokemon, form, temp_evo)
+    pokemon_species = PokeSpecies.resolve(pokemon, form, temp_evo, alignment)
     pokemon_settings = get_pokemon_settings(pokemon_species)
 
     moves = [
@@ -82,9 +82,9 @@ def get_pokemon_moves(
     ]
 
     if pokemon_settings.shadow is not None:
-        if alignment == HoloAlignment.SHADOW:
+        if pokemon_species.alignment == HoloAlignment.SHADOW:
             moves.append(pokemon_settings.shadow.shadow_charge_move)
-        if alignment == HoloAlignment.PURIFIED:
+        if pokemon_species.alignment == HoloAlignment.PURIFIED:
             moves.append(pokemon_settings.shadow.purified_charge_move)
 
     if pokemon_settings.nfl_special_move:
