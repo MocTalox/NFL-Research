@@ -3,28 +3,21 @@ from dataclasses import asdict
 from enum import Enum
 from typing import Any
 
-from nfl.calcs import get_cpm
 from nfl.data import (
     FORMS,
-    PVE_MOVES,
-    PVP_MOVES,
+    TEMP_EVOS,
     TYPES,
-    TYPES_WEATHER,
-    WEATHER,
     PokeSpecies,
-    get_move_boosting_weather,
     get_pokemon_settings,
-    get_size_settings,
     is_tgr_member,
 )
-from nfl.io import get_timestamp
 from nfl.proto import (
+    HoloAlignment,
     HoloCharacterCategory,
     HoloPokemonForm,
     HoloPokemonId,
-    HoloPokemonMove,
     HoloPokemonType,
-    HoloWeatherCondition,
+    HoloTempEvoId,
 )
 
 
@@ -43,15 +36,11 @@ def _enum_name(enum: Enum) -> str:
     return enum.name.replace("_", " ").title()
 
 
-def api_get_gm_timestamp():
-    return get_timestamp()
-
-
-def api_get_pokemon():
+def get_pokemon():
     return [_enum_name(pokemon) for pokemon in HoloPokemonId if pokemon > 0]
 
 
-def api_get_forms(pokemon: str | None = None):
+def get_forms(pokemon: str | None = None):
     if pokemon is not None:
         pokemon_species = PokeSpecies.resolve(name=pokemon)
         forms_src = [HoloPokemonForm.FORM_UNSET, *FORMS[pokemon_species.name]]
@@ -61,8 +50,23 @@ def api_get_forms(pokemon: str | None = None):
     return [_enum_name(form) for form in forms_src]
 
 
-def api_get_pokemon_moves(
-    pokemon: str, form: str | None = None, temp_evo: str | None = None
+# TODO somehow TEMP_EVOS does not take into account forms
+# So need to find another way to not give temp evos on armored mewtwo, galarian slowbro, etc.
+def get_temp_evos(pokemon: str | None = None, form: str | None = None):
+    if pokemon is not None:
+        pokemon_species = PokeSpecies.resolve(name=pokemon)
+        temp_evos_src = [HoloTempEvoId.TEMP_EVOLUTION_UNSET, *TEMP_EVOS[pokemon_species.name]]
+    else:
+        temp_evos_src = (temp_evo for temp_evo in HoloTempEvoId if temp_evo > 0)
+
+    return [_enum_name(temp_evo) for temp_evo in temp_evos_src]
+
+
+def get_pokemon_moves(
+    pokemon: str,
+    form: str | None = None,
+    temp_evo: str | None = None,
+    alignment: str | None = None,
 ):
     pokemon_species = PokeSpecies.resolve(pokemon, form, temp_evo)
     pokemon_settings = get_pokemon_settings(pokemon_species)
@@ -77,13 +81,27 @@ def api_get_pokemon_moves(
         *pokemon_settings.legacy_cinematic_moves,
     ]
 
+    if pokemon_settings.shadow is not None:
+        if alignment == HoloAlignment.SHADOW:
+            moves.append(pokemon_settings.shadow.shadow_charge_move)
+        if alignment == HoloAlignment.PURIFIED:
+            moves.append(pokemon_settings.shadow.purified_charge_move)
+
     if pokemon_settings.nfl_special_move:
         moves.append(pokemon_settings.nfl_special_move)
 
     return [_enum_name(move) for move in moves]
 
 
-def api_get_characters(include_unset: bool = False, only_tgr: bool = False):
+def get_alignments(include_unset: bool = True):
+    min_value = 0 if include_unset else 1
+
+    return [
+        _enum_name(alignment) for alignment in HoloAlignment if alignment >= min_value
+    ]
+
+
+def get_characters(include_unset: bool = False, only_tgr: bool = False):
     min_value = 0 if include_unset else 1
 
     return [
@@ -94,52 +112,6 @@ def api_get_characters(include_unset: bool = False, only_tgr: bool = False):
 
 
 ### Other Examples of APIs ###
-
-
-def api_get_pokemon_settings(
-    pokemon: str, form: str | None = None, temp_evo: str | None = None
-):
-    pokemon_species = PokeSpecies.resolve(pokemon, form, temp_evo)
-    pokemon_settings = get_pokemon_settings(pokemon_species)
-    return _dataclass_to_json(pokemon_settings)
-
-
-def api_get_size_settings(
-    pokemon: str, form: str | None = None, temp_evo: str | None = None
-):
-    pokemon_species = PokeSpecies.resolve(pokemon, form, temp_evo)
-    size_settings = get_size_settings(pokemon_species)
-    return _dataclass_to_json(size_settings)
-
-
-def api_get_pve_move_settings(move: str):
-    holo_move = HoloPokemonMove[move]
-    move_settings = PVE_MOVES[holo_move]
-    return _dataclass_to_json(move_settings)
-
-
-def api_get_pvp_move_settings(move: str):
-    holo_move = HoloPokemonMove[move]
-    move_settings = PVP_MOVES[holo_move]
-    return _dataclass_to_json(move_settings)
-
-
-def api_get_type_boosting_weather(type: str):
-    holo_type = HoloPokemonType[type]
-    weather = TYPES_WEATHER[holo_type]
-    return json.dumps({"weather": weather})
-
-
-def api_get_move_boosting_weather(move: str):
-    holo_move = HoloPokemonMove[move]
-    weather = get_move_boosting_weather(holo_move)
-    return json.dumps({"weather": weather})
-
-
-def api_get_weather_affinities(weather: str):
-    holo_weather = HoloWeatherCondition[weather]
-    weather_affinities = WEATHER[holo_weather]
-    return _dataclass_to_json(weather_affinities)
 
 
 def api_get_type_effectiveness(type: str):
@@ -156,8 +128,3 @@ def api_get_type_effectiveness(type: str):
         ],
     }
     return json.dumps(res)
-
-
-def api_get_cpm(level: float):
-    cpm = get_cpm(level)
-    return json.dumps({"cpm": cpm})
