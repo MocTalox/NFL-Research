@@ -42,10 +42,8 @@ def get_forms(pokemon: str | None = None):
 def get_temp_evos(pokemon: str | None = None, form: str | None = None):
     if pokemon is not None:
         pokemon_species = PokeSpecies.resolve(name=pokemon)
-        temp_evos_src = [
-            HoloTempEvoId.TEMP_EVOLUTION_UNSET,
-            *TEMP_EVOS[pokemon_species.name],
-        ]
+        temp_evos = TEMP_EVOS.get(pokemon_species.name, [])
+        temp_evos_src = [HoloTempEvoId.TEMP_EVOLUTION_UNSET, *temp_evos]
     else:
         temp_evos_src = (temp_evo for temp_evo in HoloTempEvoId if temp_evo > 0)
 
