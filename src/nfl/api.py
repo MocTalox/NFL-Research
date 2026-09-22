@@ -1,4 +1,3 @@
-import json
 from enum import Enum
 from typing import Any
 
@@ -43,7 +42,10 @@ def get_forms(pokemon: str | None = None):
 def get_temp_evos(pokemon: str | None = None, form: str | None = None):
     if pokemon is not None:
         pokemon_species = PokeSpecies.resolve(name=pokemon)
-        temp_evos_src = [HoloTempEvoId.TEMP_EVOLUTION_UNSET, *TEMP_EVOS[pokemon_species.name]]
+        temp_evos_src = [
+            HoloTempEvoId.TEMP_EVOLUTION_UNSET,
+            *TEMP_EVOS[pokemon_species.name],
+        ]
     else:
         temp_evos_src = (temp_evo for temp_evo in HoloTempEvoId if temp_evo > 0)
 
@@ -102,17 +104,17 @@ def get_characters(include_unset: bool = False, only_tgr: bool = False):
 ### Other Examples of APIs ###
 
 
-def api_get_type_effectiveness(type: str):
-    holo_type = HoloPokemonType[type]
-    type_effective = TYPES[holo_type]
-    res: dict[str, Any] = {
+def get_type_effectiveness(type: str) -> dict[str, Any]:
+    type_effective = TYPES[HoloPokemonType[type]]
+
+    return {
         "attack_type": type_effective.attack_type,
         "effectiveness": [
             {"defense_type": defense_type, "attack_scalar": value}
             for value, defense_type in zip(
-                type_effective.attack_scalar, [t for t in HoloPokemonType if t > 0]
+                type_effective.attack_scalar,
+                [t for t in HoloPokemonType if t > 0],
             )
             if value != 1.0
         ],
     }
-    return json.dumps(res)
