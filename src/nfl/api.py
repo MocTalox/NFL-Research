@@ -1,6 +1,15 @@
+from dataclasses import dataclass
 from enum import Enum
 from typing import Any
 
+from nfl.calcs import (
+    get_cp,
+    get_hp,
+    get_stats,
+    get_tgr_cp,
+    get_tgr_hp,
+    get_tgr_stats,
+)
 from nfl.data import (
     FORMS,
     TEMP_EVOS,
@@ -9,6 +18,7 @@ from nfl.data import (
     get_pokemon_settings,
     is_tgr_member,
 )
+from nfl.exceptions import ValidationError
 from nfl.proto import (
     HoloAlignment,
     HoloCharacterCategory,
@@ -17,6 +27,14 @@ from nfl.proto import (
     HoloPokemonType,
     HoloTempEvoId,
 )
+
+
+@dataclass
+class PokemonStats:
+    attack: float
+    defense: float
+    hp: int
+    cp: int
 
 
 def _enum_name(enum: Enum) -> str:
@@ -97,6 +115,34 @@ def get_characters(include_unset: bool = False, only_tgr: bool = False):
         for character in HoloCharacterCategory
         if character >= min_value and (not only_tgr or is_tgr_member(character))
     ]
+
+
+def get_pokemon_stats(
+    pokemon: HoloPokemonId,
+    form: HoloPokemonForm = HoloPokemonForm.FORM_UNSET,
+    temp_evo: HoloTempEvoId = HoloTempEvoId.TEMP_EVOLUTION_UNSET,
+    level: float = 50.0,
+    iv_atk: int = 15,
+    iv_def: int = 15,
+    iv_sta: int = 15,
+    character: HoloCharacterCategory = HoloCharacterCategory.UNSET,
+):
+    ps = PokeSpecies(name=pokemon, form=form, temp_evo=temp_evo)
+
+    if is_tgr_member(character):
+        if not float(level).is_integer():
+            raise ValidationError("TGR members Pokémons cannot be of half levels.")
+        level = int(level)
+
+        a, d, _ = get_tgr_stats(ps, level, character, iv_atk, iv_def, iv_sta)
+        hp = get_tgr_hp(ps, level, character, iv_sta)
+        cp = get_tgr_cp(ps, level, character, iv_atk, iv_def, iv_sta)
+    else:
+        a, d, _ = get_stats(ps, level, iv_atk, iv_def, iv_sta)
+        hp = get_hp(ps, level, iv_sta)
+        cp = get_cp(ps, level, iv_atk, iv_def, iv_sta)
+
+    return PokemonStats(a, d, hp, cp)
 
 
 ### Other Examples of APIs ###
