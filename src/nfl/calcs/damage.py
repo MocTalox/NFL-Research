@@ -15,6 +15,7 @@ from nfl.data import (
     WEATHER_BONUS_SETTINGS,
     PokeSpecies,
     get_pokemon_settings,
+    is_tgr_member,
 )
 from nfl.exceptions import ValidationError
 from nfl.proto import (
@@ -318,12 +319,12 @@ def calc_damage_raw(
         get_tgr_stats_raw(
             attacker_pokemon_settings,
             attacker.cpm,
-            target.owner,
+            attacker.owner,
             attacker.atk_iv,
             attacker.def_iv,
             attacker.sta_iv,
         )
-        if attacker.owner
+        if is_tgr_member(attacker.owner)
         else get_stats_raw(
             attacker_pokemon_settings,
             attacker.cpm,
@@ -341,7 +342,7 @@ def calc_damage_raw(
             target.def_iv,
             target.sta_iv,
         )
-        if target.owner
+        if is_tgr_member(target.owner)
         else get_stats_raw(
             target_pokemon_settings,
             target.cpm,
