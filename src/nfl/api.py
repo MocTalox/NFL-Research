@@ -113,7 +113,8 @@ def get_characters(include_unset: bool = False, only_tgr: bool = False):
     return [
         _enum_name(character)
         for character in HoloCharacterCategory
-        if character >= min_value and (not only_tgr or is_tgr_member(character))
+        if character >= min_value
+        and (not only_tgr or is_tgr_member(character) or character == 0)
     ]
 
 
