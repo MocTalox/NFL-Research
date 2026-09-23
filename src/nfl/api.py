@@ -41,6 +41,14 @@ def _enum_name(enum: Enum) -> str:
     return enum.name.replace("_", " ").title()
 
 
+def get_pokemon_types(include_none: bool = True):
+    min_value = 0 if include_none else 1
+
+    return [
+        _enum_name(poke_type) for poke_type in HoloPokemonType if poke_type >= min_value
+    ]
+
+
 def get_pokemon():
     return [_enum_name(pokemon) for pokemon in HoloPokemonId if pokemon > 0]
 
