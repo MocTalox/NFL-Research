@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from enum import Enum
 from typing import Any
 
 from nfl.calcs import (
@@ -37,53 +36,41 @@ class PokemonStats:
     cp: int
 
 
-def _enum_name(enum: Enum) -> str:
-    return enum.name.replace("_", " ").title()
-
-
 def get_pokemon_types(include_none: bool = True):
     min_value = 0 if include_none else 1
 
-    return [
-        _enum_name(poke_type) for poke_type in HoloPokemonType if poke_type >= min_value
-    ]
+    return [poke_type for poke_type in HoloPokemonType if poke_type >= min_value]
 
 
 def get_pokemon():
-    return [_enum_name(pokemon) for pokemon in HoloPokemonId if pokemon > 0]
+    return [pokemon for pokemon in HoloPokemonId if pokemon > 0]
 
 
-def get_forms(pokemon: str | None = None):
+def get_forms(pokemon: PokeSpecies | HoloPokemonId | None = None):
     if pokemon is not None:
-        pokemon_species = PokeSpecies.resolve(name=pokemon)
-        forms_src = [HoloPokemonForm.FORM_UNSET, *FORMS[pokemon_species.name]]
+        if isinstance(pokemon, PokeSpecies):
+            pokemon = pokemon.name
+        forms_src = [HoloPokemonForm.FORM_UNSET, *FORMS[pokemon]]
     else:
-        forms_src = (form for form in HoloPokemonForm if form > 0)
+        forms_src = [form for form in HoloPokemonForm if form > 0]
 
-    return [_enum_name(form) for form in forms_src]
+    return forms_src
 
 
 # TODO somehow TEMP_EVOS does not take into account forms
 # So need to find another way to not give temp evos on armored mewtwo, galarian slowbro, etc.
-def get_temp_evos(pokemon: str | None = None, form: str | None = None):
+def get_temp_evos(pokemon: PokeSpecies | None = None):
     if pokemon is not None:
-        pokemon_species = PokeSpecies.resolve(name=pokemon)
-        temp_evos = TEMP_EVOS.get(pokemon_species.name, [])
+        temp_evos = TEMP_EVOS.get(pokemon.name, [])
         temp_evos_src = [HoloTempEvoId.TEMP_EVOLUTION_UNSET, *temp_evos]
     else:
-        temp_evos_src = (temp_evo for temp_evo in HoloTempEvoId if temp_evo > 0)
+        temp_evos_src = [temp_evo for temp_evo in HoloTempEvoId if temp_evo > 0]
 
-    return [_enum_name(temp_evo) for temp_evo in temp_evos_src]
+    return temp_evos_src
 
 
-def get_pokemon_moves(
-    pokemon: str,
-    form: str | None = None,
-    temp_evo: str | None = None,
-    alignment: str | None = None,
-):
-    pokemon_species = PokeSpecies.resolve(pokemon, form, temp_evo, alignment)
-    pokemon_settings = get_pokemon_settings(pokemon_species)
+def get_pokemon_moves(pokemon: PokeSpecies):
+    pokemon_settings = get_pokemon_settings(pokemon)
 
     moves = [
         *pokemon_settings.quick_moves,
@@ -96,30 +83,28 @@ def get_pokemon_moves(
     ]
 
     if pokemon_settings.shadow is not None:
-        if pokemon_species.alignment == HoloAlignment.SHADOW:
+        if pokemon.alignment == HoloAlignment.SHADOW:
             moves.append(pokemon_settings.shadow.shadow_charge_move)
-        if pokemon_species.alignment == HoloAlignment.PURIFIED:
+        if pokemon.alignment == HoloAlignment.PURIFIED:
             moves.append(pokemon_settings.shadow.purified_charge_move)
 
     if pokemon_settings.nfl_special_move:
         moves.append(pokemon_settings.nfl_special_move)
 
-    return [_enum_name(move) for move in moves]
+    return moves
 
 
 def get_alignments(include_unset: bool = True):
     min_value = 0 if include_unset else 1
 
-    return [
-        _enum_name(alignment) for alignment in HoloAlignment if alignment >= min_value
-    ]
+    return [alignment for alignment in HoloAlignment if alignment >= min_value]
 
 
 def get_characters(include_unset: bool = False, only_tgr: bool = False):
     min_value = 0 if include_unset else 1
 
     return [
-        _enum_name(character)
+        character
         for character in HoloCharacterCategory
         if character >= min_value
         and (not only_tgr or is_tgr_member(character) or character == 0)
@@ -127,29 +112,25 @@ def get_characters(include_unset: bool = False, only_tgr: bool = False):
 
 
 def get_pokemon_stats(
-    pokemon: HoloPokemonId,
-    form: HoloPokemonForm = HoloPokemonForm.FORM_UNSET,
-    temp_evo: HoloTempEvoId = HoloTempEvoId.TEMP_EVOLUTION_UNSET,
+    pokemon: PokeSpecies,
     level: float = 50.0,
     iv_atk: int = 15,
     iv_def: int = 15,
     iv_sta: int = 15,
     character: HoloCharacterCategory = HoloCharacterCategory.UNSET,
 ):
-    ps = PokeSpecies(name=pokemon, form=form, temp_evo=temp_evo)
-
     if is_tgr_member(character):
         if not float(level).is_integer():
             raise ValidationError("TGR members Pokémons cannot be of half levels.")
         level = int(level)
 
-        a, d, _ = get_tgr_stats(ps, level, character, iv_atk, iv_def, iv_sta)
-        hp = get_tgr_hp(ps, level, character, iv_sta)
-        cp = get_tgr_cp(ps, level, character, iv_atk, iv_def, iv_sta)
+        a, d, _ = get_tgr_stats(pokemon, level, character, iv_atk, iv_def, iv_sta)
+        hp = get_tgr_hp(pokemon, level, character, iv_sta)
+        cp = get_tgr_cp(pokemon, level, character, iv_atk, iv_def, iv_sta)
     else:
-        a, d, _ = get_stats(ps, level, iv_atk, iv_def, iv_sta)
-        hp = get_hp(ps, level, iv_sta)
-        cp = get_cp(ps, level, iv_atk, iv_def, iv_sta)
+        a, d, _ = get_stats(pokemon, level, iv_atk, iv_def, iv_sta)
+        hp = get_hp(pokemon, level, iv_sta)
+        cp = get_cp(pokemon, level, iv_atk, iv_def, iv_sta)
 
     return PokemonStats(a, d, hp, cp)
 

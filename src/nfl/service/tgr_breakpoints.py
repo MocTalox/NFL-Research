@@ -14,7 +14,9 @@ from nfl.data import (
     PVP_MOVES,
     PokeSpecies,
 )
+from nfl.exceptions import ValidationError
 from nfl.proto import (
+    HoloAlignment,
     HoloCharacterCategory,
     HoloCombatType,
     HoloPokemonMove,
@@ -48,51 +50,35 @@ class CalculationResult:
 
 
 def attack_breakpoints(
-    pokemon_id: str,
-    pokemon_form: str,
-    pokemon_temp_evo: str,
-    pokemon_alignment: str,
-    pokemon_move: str,
-    enemy_character: str,
-    enemy_pokemon_id: str,
-    enemy_pokemon_form: str,
+    pokemon: PokeSpecies,
+    pokemon_move: HoloPokemonMove,
+    enemy_character: HoloCharacterCategory,
+    enemy_pokemon: PokeSpecies,
     pokemon_min_atk: int,
     pokemon_max_atk: int,
     pokemon_min_level: int,
     pokemon_max_level: int,
     trainer_level: int,
 ) -> CalculationResult:
-    pokemon_species = PokeSpecies.resolve(
-        pokemon_id,
-        pokemon_form,
-        pokemon_temp_evo,
-        pokemon_alignment,
-    )
-    enemy_species = PokeSpecies.resolve(
-        enemy_pokemon_id,
-        enemy_pokemon_form,
-        alignment="Shadow",
-    )
+    if enemy_pokemon.alignment is not HoloAlignment.SHADOW:
+        raise ValidationError("Enemy Pokémon must be shadow.")
 
-    enemy = HoloCharacterCategory[PokeSpecies.resolve_id(enemy_character)]
-    move = HoloPokemonMove[PokeSpecies.resolve_id(pokemon_move)]
-
-    a, d, _ = get_tgr_stats(enemy_species, trainer_level, enemy, 15, 15, 15)
-    hp = get_tgr_hp(enemy_species, trainer_level, enemy, 15)
-    cp = get_tgr_cp(enemy_species, trainer_level, enemy, 15, 15, 15)
+    a, d, _ = get_tgr_stats(enemy_pokemon, trainer_level, enemy_character, 15, 15, 15)
+    hp = get_tgr_hp(enemy_pokemon, trainer_level, enemy_character, 15)
+    cp = get_tgr_cp(enemy_pokemon, trainer_level, enemy_character, 15, 15, 15)
 
     enemy_stats = EnemyStats(a, d, hp, cp)
 
     b = BattleState(HoloCombatType.VS_SEEKER)
-    e = BattlePokemon(enemy_species, 15, 15, 15, get_rcpm(trainer_level), enemy)
-    m = PVP_MOVES[move]
+    e = BattlePokemon(enemy_pokemon, 15, 15, 15, get_rcpm(trainer_level), enemy_character)
+    m = PVP_MOVES[pokemon_move]
 
     damage_by_level: list[DamageByLevel] = []
     for level in range(pokemon_min_level * 2, pokemon_max_level * 2 + 1):
         level = level / 2
         damage_by_stat: list[DamageResult] = []
         for atk_iv in range(pokemon_min_atk, pokemon_max_atk + 1):
-            p = BattlePokemon(pokemon_species, atk_iv, 15, 15, get_cpm(level))
+            p = BattlePokemon(pokemon, atk_iv, 15, 15, get_cpm(level))
             dmg = calc_damage(p, e, m, False, False, b)
             damage_by_stat.append(DamageResult(atk_iv, dmg))
         damage_by_level.append(DamageByLevel(level, damage_by_stat))
@@ -101,51 +87,35 @@ def attack_breakpoints(
 
 
 def defense_breakpoints(
-    pokemon_id: str,
-    pokemon_form: str,
-    pokemon_temp_evo: str,
-    pokemon_alignment: str,
-    enemy_character: str,
-    enemy_pokemon_id: str,
-    enemy_pokemon_form: str,
-    enemy_pokemon_move: str,
+    pokemon: PokeSpecies,
+    enemy_character: HoloCharacterCategory,
+    enemy_pokemon: PokeSpecies,
+    enemy_pokemon_move: HoloPokemonMove,
     pokemon_min_def: int,
     pokemon_max_def: int,
     pokemon_min_level: int,
     pokemon_max_level: int,
     trainer_level: int,
 ) -> CalculationResult:
-    pokemon_species = PokeSpecies.resolve(
-        pokemon_id,
-        pokemon_form,
-        pokemon_temp_evo,
-        pokemon_alignment,
-    )
-    enemy_species = PokeSpecies.resolve(
-        enemy_pokemon_id,
-        enemy_pokemon_form,
-        alignment="Shadow",
-    )
+    if enemy_pokemon.alignment is not HoloAlignment.SHADOW:
+        raise ValidationError("Enemy Pokémon must be shadow.")
 
-    enemy = HoloCharacterCategory[PokeSpecies.resolve_id(enemy_character)]
-    move = HoloPokemonMove[PokeSpecies.resolve_id(enemy_pokemon_move)]
-
-    a, d, _ = get_tgr_stats(enemy_species, trainer_level, enemy, 15, 15, 15)
-    hp = get_tgr_hp(enemy_species, trainer_level, enemy, 15)
-    cp = get_tgr_cp(enemy_species, trainer_level, enemy, 15, 15, 15)
+    a, d, _ = get_tgr_stats(enemy_pokemon, trainer_level, enemy_character, 15, 15, 15)
+    hp = get_tgr_hp(enemy_pokemon, trainer_level, enemy_character, 15)
+    cp = get_tgr_cp(enemy_pokemon, trainer_level, enemy_character, 15, 15, 15)
 
     enemy_stats = EnemyStats(a, d, hp, cp)
 
     b = BattleState(HoloCombatType.VS_SEEKER)
-    e = BattlePokemon(enemy_species, 15, 15, 15, get_rcpm(trainer_level), enemy)
-    m = PVP_MOVES[move]
+    e = BattlePokemon(enemy_pokemon, 15, 15, 15, get_rcpm(trainer_level), enemy_character)
+    m = PVP_MOVES[enemy_pokemon_move]
 
     damage_by_level: list[DamageByLevel] = []
     for level in range(pokemon_min_level * 2, pokemon_max_level * 2 + 1):
         level = level / 2
         damage_by_stat: list[DamageResult] = []
         for def_iv in range(pokemon_min_def, pokemon_max_def + 1):
-            p = BattlePokemon(pokemon_species, 15, def_iv, 15, get_cpm(level))
+            p = BattlePokemon(pokemon, 15, def_iv, 15, get_cpm(level))
             dmg = calc_damage(e, p, m, False, False, b)
             damage_by_stat.append(DamageResult(def_iv, dmg))
         damage_by_level.append(DamageByLevel(level, damage_by_stat))
