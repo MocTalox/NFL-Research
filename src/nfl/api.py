@@ -47,26 +47,25 @@ def get_pokemon():
 
 
 def get_forms(pokemon: PokeSpecies | HoloPokemonId | None = None):
-    if pokemon is not None:
-        if isinstance(pokemon, PokeSpecies):
-            pokemon = pokemon.name
-        forms_src = [HoloPokemonForm.FORM_UNSET, *FORMS[pokemon]]
-    else:
-        forms_src = [form for form in HoloPokemonForm if form > 0]
+    if pokemon is None:
+        return [form for form in HoloPokemonForm if form > 0]
 
-    return forms_src
+    if isinstance(pokemon, PokeSpecies):
+        pokemon = pokemon.name
+
+    forms = FORMS[pokemon]
+    return [HoloPokemonForm.FORM_UNSET, *forms]
 
 
-# TODO somehow TEMP_EVOS does not take into account forms
-# So need to find another way to not give temp evos on armored mewtwo, galarian slowbro, etc.
-def get_temp_evos(pokemon: PokeSpecies | None = None):
-    if pokemon is not None:
-        temp_evos = TEMP_EVOS.get(pokemon.name, [])
-        temp_evos_src = [HoloTempEvoId.TEMP_EVOLUTION_UNSET, *temp_evos]
-    else:
-        temp_evos_src = [temp_evo for temp_evo in HoloTempEvoId if temp_evo > 0]
+def get_temp_evos(pokemon: PokeSpecies | HoloPokemonId | None = None):
+    if pokemon is None:
+        return [temp_evo for temp_evo in HoloTempEvoId if temp_evo > 0]
 
-    return temp_evos_src
+    if isinstance(pokemon, PokeSpecies):
+        pokemon = pokemon.name
+
+    temp_evos = TEMP_EVOS.get(pokemon, [])
+    return [HoloTempEvoId.TEMP_EVOLUTION_UNSET, *temp_evos]
 
 
 def get_pokemon_moves(pokemon: PokeSpecies):

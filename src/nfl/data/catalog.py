@@ -124,17 +124,17 @@ def get_pokemon_settings_temp_evo(
     if not temp_evo:
         return pokemon_settings
 
-    if temp_evo not in TEMP_EVOS[pokemon_settings.pokemon_id]:
+    temp_evos = {
+        temp_evo_overrides.temp_evo_id: temp_evo_overrides
+        for temp_evo_overrides in pokemon_settings.temp_evo_overrides
+    }
+    temp_evo_overrides = temp_evos.get(temp_evo)
+
+    if temp_evo_overrides is None:
         raise NotFoundError(
             f"Missing temporary evolution overrides for {pokemon_settings.pokemon_id} "
             f"({pokemon_settings.form}): {temp_evo}"
         )
-
-    temp_evo_overrides = next(
-        temp_evo_overrides
-        for temp_evo_overrides in pokemon_settings.temp_evo_overrides
-        if temp_evo_overrides.temp_evo_id == temp_evo
-    )
 
     return replace(
         pokemon_settings,
@@ -156,17 +156,17 @@ def get_size_settings_temp_evo(
     if not temp_evo:
         return pokemon_extended_settings.size_settings
 
-    if temp_evo not in TEMP_EVOS[pokemon_extended_settings.unique_id]:
+    temp_evos = {
+        temp_evo_overrides.temp_evo_id: temp_evo_overrides
+        for temp_evo_overrides in pokemon_extended_settings.temp_evo_overrides
+    }
+    temp_evo_overrides = temp_evos.get(temp_evo)
+
+    if temp_evo_overrides is None:
         raise NotFoundError(
             f"Missing temporary evolution overrides for {pokemon_extended_settings.unique_id} "
             f"({pokemon_extended_settings.form}): {temp_evo}"
         )
-
-    temp_evo_overrides = next(
-        temp_evo_overrides
-        for temp_evo_overrides in pokemon_extended_settings.temp_evo_overrides
-        if temp_evo_overrides.temp_evo_id == temp_evo
-    )
 
     return (
         temp_evo_overrides.size_settings
