@@ -39,14 +39,18 @@ def zorua_size_raw(
 ):
     if wild_zorua_weight_kg < 0 or wild_zorua_height_m < 0:
         raise ValidationError(
-            f"Invalid Zorua dimensions: weight_kg={wild_zorua_weight_kg}, "
-            f"height_m={wild_zorua_height_m}. Values must be positive."
+            "INVALID_ZORUA_DIMENSIONS",
+            weight_kg=wild_zorua_weight_kg,
+            height_m=wild_zorua_height_m,
         )
     if not wild_zorua_size_class.in_bounds(wild_zorua_height_m, _ZORUA_SIZE_SETTINGS):
         lower, upper = wild_zorua_size_class.get_bounds(_ZORUA_SIZE_SETTINGS)
         raise ValidationError(
-            f"Size class mismatch: Zorua with height {wild_zorua_height_m}m "
-            f"cannot be {wild_zorua_size_class} ([{lower}, {upper}])"
+            "SIZE_CLASS_MISMATCH_ZORUA",
+            height_m=wild_zorua_height_m,
+            size_class=wild_zorua_size_class,
+            lower=lower,
+            upper=upper,
         )
 
     power = 1 if wild_zorua_size_class == SizeClass.XXL else 2

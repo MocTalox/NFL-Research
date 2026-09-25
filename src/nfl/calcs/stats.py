@@ -8,13 +8,9 @@ from nfl.utils import f32
 
 def get_cpm(level: float) -> float:
     if level % 0.5 != 0:
-        raise ValidationError(
-            f"Invalid level {level}: must be a multiple of 0.5 (e.g. 1.0, 1.5, 2.0)."
-        )
+        raise ValidationError("INVALID_LEVEL_DECIMALS", level=level)
     if not 1.0 <= level <= len(CPM):
-        raise ValidationError(
-            f"Invalid level {level}: must be between 1.0 and {len(CPM):.1f}."
-        )
+        raise ValidationError("INVALID_LEVEL_RANGE", level=level, max_level=len(CPM))
     if level % 1 == 0:
         return CPM[int(level) - 1]
     cpm_prev = get_cpm(level - 0.5)
@@ -25,7 +21,7 @@ def get_cpm(level: float) -> float:
 def get_rcpm(level: int) -> float:
     if not 1 <= level <= len(RCPM):
         raise ValidationError(
-            f"Invalid level {level}: must be between 1 and {len(RCPM)}."
+            "INVALID_LEVEL_RANGE_TGR", level=level, max_level=len(RCPM)
         )
     return RCPM[level - 1]
 

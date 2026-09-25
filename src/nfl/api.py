@@ -120,7 +120,7 @@ def get_pokemon_stats(
 ):
     if is_tgr_member(character):
         if not float(level).is_integer():
-            raise ValidationError("TGR members Pokémons cannot be of half levels.")
+            raise ValidationError("TGR_POKEMON_LEVEL")
         level = int(level)
 
         a, d, _ = get_tgr_stats(pokemon, level, character, iv_atk, iv_def, iv_sta)

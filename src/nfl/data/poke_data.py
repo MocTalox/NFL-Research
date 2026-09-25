@@ -39,9 +39,7 @@ class PokeData(Generic[P]):
 
         for pokemon in unique_pokemon:
             if pokemon.identity in self._data:
-                raise ValidationError(
-                    f"Duplicate entry for identity: {pokemon.identity}"
-                )
+                raise ValidationError("DUPLICATE_IDENTITY", identity=pokemon.identity)
             self._data[pokemon.identity] = pokemon
 
     def get(self, poke: PokeSpecies) -> P | None:
@@ -90,8 +88,10 @@ def _normalize_forms(
         if not poke.form:
             if poke_group.main is not None:
                 raise ValidationError(
-                    f"Multiple main species in group {group_key!r}: "
-                    f"{poke_group.main!r} and {poke!r}"
+                    "MULTIPLE_MAIN_SPECIES",
+                    category=group_key,
+                    old=poke_group.main,
+                    new=poke,
                 )
             poke_group.main = poke
 
@@ -104,9 +104,7 @@ def _collapse_forms(poke_group: _PokeGroup[P]) -> Iterator[P]:
     forms = poke_group.forms
 
     if main is None:
-        raise ValidationError(
-            f"Species group contains forms but no main species: {forms!r}"
-        )
+        raise ValidationError("MISSING_MAIN_SPECIES", forms_list=forms)
 
     if all(main.is_the_same(p) for p in forms):
         yield main

@@ -13,7 +13,9 @@ from .template import Template
 
 
 class GameMasterAccess(Protocol):
-    def get_game_master(self) -> tuple[dict[str, dict[str, Template]], list[int], int]: ...
+    def get_game_master(
+        self,
+    ) -> tuple[dict[str, dict[str, Template]], list[int], int]: ...
 
     def get_templates(self, key: str) -> dict[str, Template]: ...
 
@@ -37,7 +39,7 @@ class DefaultGameMasterAccess:
             return build_game_master(game_master_text, overrides_text)
 
         except (ValueError, TypeError, KeyError) as e:
-            raise ConfigurationError("Configured game master is invalid") from e
+            raise ConfigurationError("INVALID_GAME_MASTER") from e
 
     def get_templates(self, key: str) -> dict[str, Template]:
         return self.get_game_master()[0][key]

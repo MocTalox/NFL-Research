@@ -41,7 +41,7 @@ def _load_set(key: str, constructor: Callable[[Message], T]) -> set[T]:
         }
 
     except ValueError as e:
-        raise ConfigurationError("Configured game master is invalid") from e
+        raise ConfigurationError("INVALID_GAME_MASTER") from e
 
     return elements
 
@@ -56,7 +56,7 @@ def _load_elem(key: str, constructor: Callable[[Message], T]) -> T:
             raise ValueError(f"Multiple or none templates for key: {key}")
 
     except ValueError as e:
-        raise ConfigurationError("Configured game master is invalid") from e
+        raise ConfigurationError("INVALID_GAME_MASTER") from e
 
     return elements[0]
 

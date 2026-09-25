@@ -310,7 +310,9 @@ def calc_damage_raw(
     state: BattleState,
 ) -> float:
     if attacker.cpm <= 0 or target.cpm <= 0:
-        raise ValidationError()  # TODO err msg
+        raise ValidationError(
+            "INVALID_CPM_VALUES", attacker_cpm=attacker.cpm, target_cpm=target.cpm
+        )
 
     attacker_pokemon_settings = get_pokemon_settings(attacker.pokemon)
     target_pokemon_settings = get_pokemon_settings(target.pokemon)

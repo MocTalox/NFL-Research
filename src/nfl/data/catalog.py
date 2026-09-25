@@ -89,7 +89,9 @@ def is_tgr_member(character_category: HoloCharacterCategory) -> bool:
 
 def get_tgr_rank_mult(character_category: HoloCharacterCategory) -> float:
     if not is_tgr_member(character_category):
-        raise ValidationError(f"No rank multiplier configured for {character_category}")
+        raise ValidationError(
+            "NO_RANK_MULTIPLIER", character_category=character_category
+        )
     return RANKS[character_category].rank_multiplier
 
 
@@ -101,7 +103,7 @@ def get_pokemon_settings(poke: PokeSpecies):
     pokemon_settings = POKEMON.get(poke)
 
     if pokemon_settings is None:
-        raise NotFoundError()  # TODO err msg
+        raise NotFoundError("MISSIGN_SPECIES_DATA", poke_species=poke)
 
     return get_pokemon_settings_temp_evo(pokemon_settings, poke.temp_evo)
 
@@ -110,7 +112,7 @@ def get_size_settings(poke: PokeSpecies, glitched_temp_evo: bool = False):
     pokemon_extended_settings = EXTENDED.get(poke)
 
     if pokemon_extended_settings is None:
-        raise NotFoundError()  # TODO err msg
+        raise NotFoundError("MISSIGN_SPECIES_DATA", poke_species=poke)
 
     return get_size_settings_temp_evo(
         pokemon_extended_settings, poke.temp_evo, glitched_temp_evo
@@ -132,8 +134,10 @@ def get_pokemon_settings_temp_evo(
 
     if temp_evo_overrides is None:
         raise NotFoundError(
-            f"Missing temporary evolution overrides for {pokemon_settings.pokemon_id} "
-            f"({pokemon_settings.form}): {temp_evo}"
+            "MISSING_TEMP_EVO",
+            pokemon_id=pokemon_settings.pokemon_id,
+            pokemon_form=pokemon_settings.form,
+            temp_evo_id=temp_evo,
         )
 
     return replace(
@@ -164,8 +168,10 @@ def get_size_settings_temp_evo(
 
     if temp_evo_overrides is None:
         raise NotFoundError(
-            f"Missing temporary evolution overrides for {pokemon_extended_settings.unique_id} "
-            f"({pokemon_extended_settings.form}): {temp_evo}"
+            "MISSING_TEMP_EVO",
+            pokemon_id=pokemon_extended_settings.unique_id,
+            pokemon_form=pokemon_extended_settings.form,
+            temp_evo_id=temp_evo,
         )
 
     return (

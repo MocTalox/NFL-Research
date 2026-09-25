@@ -29,8 +29,9 @@ class SizeData:
     ) -> SizeData:
         if weight_kg < 0 or height_m < 0:
             raise ValidationError(
-                f"Invalid Pokémon dimensions: weight_kg={weight_kg}, height_m={height_m}. "
-                f"Values must be positive."
+                "INVALID_POKÉMON_DIMENSIONS",
+                weight_kg=weight_kg,
+                height_m=height_m,
             )
 
         if size_class is None:
@@ -67,8 +68,11 @@ def _validate_size_class(
         return
     lower, upper = size_class.get_bounds(size_settings)
     raise ValidationError(
-        f"Size class mismatch: height_m={height_m} for the given Pokémon "
-        f"cannot be {size_class} ([{lower}, {upper}])"
+        "SIZE_CLASS_MISMATCH",
+        height_m=height_m,
+        size_class=size_class,
+        lower=lower,
+        upper=upper,
     )
 
 

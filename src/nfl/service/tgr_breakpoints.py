@@ -61,7 +61,7 @@ def attack_breakpoints(
     trainer_level: int,
 ) -> CalculationResult:
     if enemy_pokemon.alignment is not HoloAlignment.SHADOW:
-        raise ValidationError("Enemy Pokémon must be shadow.")
+        raise ValidationError("SHADOW_ENEMY")
 
     a, d, _ = get_tgr_stats(enemy_pokemon, trainer_level, enemy_character, 15, 15, 15)
     hp = get_tgr_hp(enemy_pokemon, trainer_level, enemy_character, 15)
@@ -70,7 +70,9 @@ def attack_breakpoints(
     enemy_stats = EnemyStats(a, d, hp, cp)
 
     b = BattleState(HoloCombatType.VS_SEEKER)
-    e = BattlePokemon(enemy_pokemon, 15, 15, 15, get_rcpm(trainer_level), enemy_character)
+    e = BattlePokemon(
+        enemy_pokemon, 15, 15, 15, get_rcpm(trainer_level), enemy_character
+    )
     m = PVP_MOVES[pokemon_move]
 
     damage_by_level: list[DamageByLevel] = []
@@ -98,7 +100,7 @@ def defense_breakpoints(
     trainer_level: int,
 ) -> CalculationResult:
     if enemy_pokemon.alignment is not HoloAlignment.SHADOW:
-        raise ValidationError("Enemy Pokémon must be shadow.")
+        raise ValidationError("SHADOW_ENEMY")
 
     a, d, _ = get_tgr_stats(enemy_pokemon, trainer_level, enemy_character, 15, 15, 15)
     hp = get_tgr_hp(enemy_pokemon, trainer_level, enemy_character, 15)
@@ -107,7 +109,9 @@ def defense_breakpoints(
     enemy_stats = EnemyStats(a, d, hp, cp)
 
     b = BattleState(HoloCombatType.VS_SEEKER)
-    e = BattlePokemon(enemy_pokemon, 15, 15, 15, get_rcpm(trainer_level), enemy_character)
+    e = BattlePokemon(
+        enemy_pokemon, 15, 15, 15, get_rcpm(trainer_level), enemy_character
+    )
     m = PVP_MOVES[enemy_pokemon_move]
 
     damage_by_level: list[DamageByLevel] = []

@@ -200,7 +200,7 @@ def tgr_best_pokemon_moveset(
 
     pokemon = _POKEMON_DATA.get(poke_species)
     if pokemon is None:
-        raise NotFoundError(f"No Pokémon data found for species: {poke_species}")
+        raise NotFoundError("MISSIGN_SPECIES_DATA", poke_species=poke_species)
 
     defender = _EnemyData(
         enemy_type,
