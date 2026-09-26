@@ -1,4 +1,4 @@
-from .contest import contest_score
+from .contest import contest_score, contest_score_range
 from .damage import BattlePokemon, BattleState, DummyMove, DummyPokemon, calc_damage
 from .hp_bar import bar_percent
 from .sizes import evolution_size, evolution_size_range
@@ -22,6 +22,7 @@ __all__ = [
     "bar_percent",
     "calc_damage",
     "contest_score",
+    "contest_score_range",
     "evolution_size",
     "evolution_size_range",
     "get_cp",
