@@ -37,7 +37,7 @@ class SizeData:
         if size_class is None:
             size_class = SizeClass.from_height(height_m, size_settings)
         else:
-            _validate_size_class(size_settings, height_m, size_class)
+            SizeData._validate_size_class(size_settings, height_m, size_class)
 
         return cls(weight_kg, height_m, size_class)
 
@@ -51,29 +51,29 @@ class SizeData:
 
         return SizeData(weight, height, self.size_class)
 
+    @staticmethod
+    def _validate_size_class(
+        size_settings: SizeSettings, height_m: float, size_class: SizeClass
+    ):
+        candidates = (
+            (height_m - 0.005, height_m + 0.005)
+            if has_decimals(height_m, 2)
+            else (height_m,)
+        )
+        if any(size_class.in_bounds(h, size_settings) for h in candidates):
+            return
+        lower, upper = size_class.get_bounds(size_settings)
+        raise ValidationError(
+            "SIZE_CLASS_MISMATCH",
+            height_m=height_m,
+            size_class=size_class,
+            lower=lower,
+            upper=upper,
+        )
+
 
 def _lerp(value: float, a_min: float, a_max: float, b_min: float, b_max: float):
     return b_min + (b_max - b_min) * (value - a_min) / (a_max - a_min)
-
-
-def _validate_size_class(
-    size_settings: SizeSettings, height_m: float, size_class: SizeClass
-):
-    candidates = (
-        (height_m - 0.005, height_m + 0.005)
-        if has_decimals(height_m, 2)
-        else (height_m,)
-    )
-    if any(size_class.in_bounds(h, size_settings) for h in candidates):
-        return
-    lower, upper = size_class.get_bounds(size_settings)
-    raise ValidationError(
-        "SIZE_CLASS_MISMATCH",
-        height_m=height_m,
-        size_class=size_class,
-        lower=lower,
-        upper=upper,
-    )
 
 
 def evolution_size(

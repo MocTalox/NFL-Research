@@ -1,3 +1,4 @@
+from nfl.calcs.sizes import SizeData
 from nfl.data import (
     CONTEST_SETTINGS,
     PokeSpecies,
@@ -33,11 +34,27 @@ def contest_score(
 
 def contest_score_raw(
     pokemon_settings: PokemonSettings,
-    size_settings: SizeSettings | None,
+    size_settings: SizeSettings,
     individual_values: int,
     weight_kg: float,
     height_m: float,
     size_class: SizeClass,
+):
+    pokemon_size_data = SizeData.build(size_settings, weight_kg, height_m, size_class)
+
+    return contest_score_formula(
+        pokemon_settings,
+        size_settings,
+        individual_values,
+        pokemon_size_data,
+    )
+
+
+def contest_score_formula(
+    pokemon_settings: PokemonSettings,
+    size_settings: SizeSettings | None,
+    individual_values: int,
+    pokemon_size_data: SizeData,
 ):
     max_height = (
         size_settings.xxl_upper_bound
@@ -56,13 +73,13 @@ def contest_score_raw(
     xxl_adjustment = (
         (_WEIGHT_COEFFICIENT * 0.853658536585366 + _IV_COEFFICIENT)
         * _XXL_ADJUSTMENT_FACTOR
-        if size_class == SizeClass.XXL
+        if pokemon_size_data.size_class == SizeClass.XXL
         else 0.0
     )
 
     iv_ratio = individual_values / 45
-    weight_ratio = weight_kg / max_weight
-    height_ratio = height_m / max_height
+    weight_ratio = pokemon_size_data.weight_kg / max_weight
+    height_ratio = pokemon_size_data.height_m / max_height
 
     return (
         xxl_adjustment
@@ -70,3 +87,61 @@ def contest_score_raw(
         + _WEIGHT_COEFFICIENT * weight_ratio
         + _HEIGHT_COEFFICIENT * height_ratio
     )
+
+
+def contest_score_range(
+    pokemon: PokeSpecies,
+    individual_values: int,
+    weight_kg: float,
+    height_m: float,
+    size_class: SizeClass,
+):
+    return contest_score_range_raw(
+        get_pokemon_settings(pokemon),
+        get_size_settings(pokemon),
+        individual_values,
+        weight_kg,
+        height_m,
+        size_class,
+    )
+
+
+def contest_score_range_raw(
+    pokemon_settings: PokemonSettings,
+    size_settings: SizeSettings,
+    individual_values: int,
+    weight_kg: float,
+    height_m: float,
+    size_class: SizeClass,
+):
+    pokemon_size_data = SizeData.build(size_settings, weight_kg, height_m, size_class)
+
+    min_min = contest_score_formula(
+        pokemon_settings,
+        size_settings,
+        individual_values,
+        pokemon_size_data.change_size(size_settings, -0.005, -0.005),
+    )
+    min_max = contest_score_formula(
+        pokemon_settings,
+        size_settings,
+        individual_values,
+        pokemon_size_data.change_size(size_settings, -0.005, 0.005),
+    )
+    max_min = contest_score_formula(
+        pokemon_settings,
+        size_settings,
+        individual_values,
+        pokemon_size_data.change_size(size_settings, 0.005, -0.005),
+    )
+    max_max = contest_score_formula(
+        pokemon_settings,
+        size_settings,
+        individual_values,
+        pokemon_size_data.change_size(size_settings, 0.005, 0.005),
+    )
+
+    score_min = min(min_min, min_max, max_min, max_max)
+    score_max = max(min_min, min_max, max_min, max_max)
+
+    return score_min, score_max
