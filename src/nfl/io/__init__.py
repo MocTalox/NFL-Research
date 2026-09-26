@@ -16,6 +16,10 @@ def configure_game_master_access(access: GameMasterAccess) -> None:
     _access = access
 
 
+def get_templates_keys() -> set[str]:
+    return _access.get_templates_keys()
+
+
 def get_templates(key: str) -> dict[str, Template]:
     return _access.get_templates(key)
 
@@ -39,5 +43,6 @@ __all__ = [
     "configure_game_master_access",
     "get_experiments",
     "get_templates",
+    "get_templates_keys",
     "get_timestamp",
 ]
