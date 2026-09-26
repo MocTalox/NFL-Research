@@ -8,8 +8,8 @@ from nfl.calcs import (
     BattleState,
     get_cpm,
 )
-from nfl.calcs.damage import calc_damage_raw, get_effect
-from nfl.calcs.stats import get_hp_raw
+from nfl.calcs.damage import calc_damage, get_effect
+from nfl.calcs.stats import get_hp
 from nfl.data import (
     POKEMON,
     PVE_MOVES,
@@ -71,16 +71,7 @@ defenders = [poke for s in POKEMON.values() for poke in s]
 def raw_dmg_func(
     move: HoloPokemonMove, state: BattleState, defender: BattlePokemon, mult: float
 ):
-    move_settings = PVE_MOVES[move]
-    return mult * calc_damage_raw(
-        boss,
-        defender,
-        move_settings.power,
-        move_settings.pokemon_type,
-        False,
-        False,
-        state,
-    )
+    return mult * calc_damage(state, boss, defender, PVE_MOVES[move], rounded=False)
 
 
 """
@@ -210,11 +201,18 @@ for move in boss_moves:
                     raw_dmg_hig = dmg_func(hig)
                     if floor(raw_dmg_low) != floor(raw_dmg_hig):
                         max_dmg = floor(raw_dmg_hig) + 1
-                        hp_func = partial(
-                            get_hp_raw, defender_pokemon_settings, defender.cpm
-                        )
                         min_iv_sta = next(
-                            (sta for sta in range(16) if hp_func(sta) > max_dmg), None
+                            (
+                                sta
+                                for sta in range(16)
+                                if get_hp(
+                                    poke_sett=defender_pokemon_settings,
+                                    cpm=defender.cpm,
+                                    iv_sta=sta,
+                                )
+                                > max_dmg
+                            ),
+                            None,
                         )
                         if min_iv_sta is not None:
                             dmg = dmg_func(base)

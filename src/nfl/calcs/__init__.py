@@ -1,5 +1,5 @@
 from .contest import contest_score
-from .damage import BattlePokemon, BattleState, calc_damage
+from .damage import BattlePokemon, BattleState, DummyMove, DummyPokemon, calc_damage
 from .hp_bar import bar_percent
 from .sizes import evolution_size, evolution_size_range
 from .stats import (
@@ -17,6 +17,8 @@ from .zorua import zorua_size
 __all__ = [
     "BattlePokemon",
     "BattleState",
+    "DummyMove",
+    "DummyPokemon",
     "bar_percent",
     "calc_damage",
     "contest_score",

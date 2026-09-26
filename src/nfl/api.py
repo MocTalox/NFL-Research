@@ -123,13 +123,39 @@ def get_pokemon_stats(
             raise ValidationError("TGR_POKEMON_LEVEL")
         level = int(level)
 
-        a, d, _ = get_tgr_stats(pokemon, level, character, iv_atk, iv_def, iv_sta)
-        hp = get_tgr_hp(pokemon, level, character, iv_sta)
-        cp = get_tgr_cp(pokemon, level, character, iv_atk, iv_def, iv_sta)
+        a, d, _ = get_tgr_stats(
+            poke=pokemon,
+            level=level,
+            enemy=character,
+            iv_atk=iv_atk,
+            iv_def=iv_def,
+            iv_sta=iv_sta,
+        )
+        hp = get_tgr_hp(poke=pokemon, level=level, enemy=character, iv_sta=iv_sta)
+        cp = get_tgr_cp(
+            poke=pokemon,
+            level=level,
+            enemy=character,
+            iv_atk=iv_atk,
+            iv_def=iv_def,
+            iv_sta=iv_sta,
+        )
     else:
-        a, d, _ = get_stats(pokemon, level, iv_atk, iv_def, iv_sta)
-        hp = get_hp(pokemon, level, iv_sta)
-        cp = get_cp(pokemon, level, iv_atk, iv_def, iv_sta)
+        a, d, _ = get_stats(
+            poke=pokemon,
+            level=level,
+            iv_atk=iv_atk,
+            iv_def=iv_def,
+            iv_sta=iv_sta,
+        )
+        hp = get_hp(poke=pokemon, level=level, iv_sta=iv_sta)
+        cp = get_cp(
+            poke=pokemon,
+            level=level,
+            iv_atk=iv_atk,
+            iv_def=iv_def,
+            iv_sta=iv_sta,
+        )
 
     return PokemonStats(a, d, hp, cp)
 

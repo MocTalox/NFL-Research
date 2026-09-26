@@ -63,25 +63,25 @@ def attack_breakpoints(
     if enemy_pokemon.alignment is not HoloAlignment.SHADOW:
         raise ValidationError("SHADOW_ENEMY")
 
-    a, d, _ = get_tgr_stats(enemy_pokemon, trainer_level, enemy_character, 15, 15, 15)
-    hp = get_tgr_hp(enemy_pokemon, trainer_level, enemy_character, 15)
-    cp = get_tgr_cp(enemy_pokemon, trainer_level, enemy_character, 15, 15, 15)
+    a, d, _ = get_tgr_stats(poke=enemy_pokemon, level=trainer_level, enemy=enemy_character)
+    hp = get_tgr_hp(poke=enemy_pokemon, level=trainer_level, enemy=enemy_character)
+    cp = get_tgr_cp(poke=enemy_pokemon, level=trainer_level, enemy=enemy_character)
 
     enemy_stats = EnemyStats(a, d, hp, cp)
 
-    b = BattleState(HoloCombatType.VS_SEEKER)
-    e = BattlePokemon(
+    state = BattleState(HoloCombatType.VS_SEEKER)
+    enemy = BattlePokemon(
         enemy_pokemon, 15, 15, 15, get_rcpm(trainer_level), enemy_character
     )
-    m = PVP_MOVES[pokemon_move]
+    move = PVP_MOVES[pokemon_move]
 
     damage_by_level: list[DamageByLevel] = []
     for level in range(pokemon_min_level * 2, pokemon_max_level * 2 + 1):
         level = level / 2
         damage_by_stat: list[DamageResult] = []
         for atk_iv in range(pokemon_min_atk, pokemon_max_atk + 1):
-            p = BattlePokemon(pokemon, atk_iv, 15, 15, get_cpm(level))
-            dmg = calc_damage(p, e, m, False, False, b)
+            poke = BattlePokemon(pokemon, atk_iv, 15, 15, get_cpm(level))
+            dmg = calc_damage(state, poke, enemy, move)
             damage_by_stat.append(DamageResult(atk_iv, dmg))
         damage_by_level.append(DamageByLevel(level, damage_by_stat))
 
@@ -102,25 +102,25 @@ def defense_breakpoints(
     if enemy_pokemon.alignment is not HoloAlignment.SHADOW:
         raise ValidationError("SHADOW_ENEMY")
 
-    a, d, _ = get_tgr_stats(enemy_pokemon, trainer_level, enemy_character, 15, 15, 15)
-    hp = get_tgr_hp(enemy_pokemon, trainer_level, enemy_character, 15)
-    cp = get_tgr_cp(enemy_pokemon, trainer_level, enemy_character, 15, 15, 15)
+    a, d, _ = get_tgr_stats(poke=enemy_pokemon, level=trainer_level, enemy=enemy_character)
+    hp = get_tgr_hp(poke=enemy_pokemon, level=trainer_level, enemy=enemy_character)
+    cp = get_tgr_cp(poke=enemy_pokemon, level=trainer_level, enemy=enemy_character)
 
     enemy_stats = EnemyStats(a, d, hp, cp)
 
-    b = BattleState(HoloCombatType.VS_SEEKER)
-    e = BattlePokemon(
+    state = BattleState(HoloCombatType.VS_SEEKER)
+    enemy = BattlePokemon(
         enemy_pokemon, 15, 15, 15, get_rcpm(trainer_level), enemy_character
     )
-    m = PVP_MOVES[enemy_pokemon_move]
+    move = PVP_MOVES[enemy_pokemon_move]
 
     damage_by_level: list[DamageByLevel] = []
     for level in range(pokemon_min_level * 2, pokemon_max_level * 2 + 1):
         level = level / 2
         damage_by_stat: list[DamageResult] = []
         for def_iv in range(pokemon_min_def, pokemon_max_def + 1):
-            p = BattlePokemon(pokemon, 15, def_iv, 15, get_cpm(level))
-            dmg = calc_damage(e, p, m, False, False, b)
+            poke = BattlePokemon(pokemon, 15, def_iv, 15, get_cpm(level))
+            dmg = calc_damage(state, enemy, poke, move)
             damage_by_stat.append(DamageResult(def_iv, dmg))
         damage_by_level.append(DamageByLevel(level, damage_by_stat))
 

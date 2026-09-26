@@ -27,105 +27,187 @@ def get_rcpm(level: int) -> float:
 
 
 def get_stats(
-    poke: PokeSpecies, level: float, iv_atk: int, iv_def: int, iv_sta: int
+    poke: PokeSpecies | None = None,
+    poke_sett: PokemonSettings | None = None,
+    base_atk: int | None = None,
+    base_def: int | None = None,
+    base_sta: int | None = None,
+    level: float | None = None,
+    cpm: float | None = None,
+    iv_atk: int = 15,
+    iv_def: int = 15,
+    iv_sta: int = 15,
 ) -> tuple[float, float, float]:
-    poke_sett = get_pokemon_settings(poke)
-    cpm = get_cpm(level)
-    return get_stats_raw(poke_sett, cpm, iv_atk, iv_def, iv_sta)
+    if poke is not None:
+        poke_sett = get_pokemon_settings(poke)
+    if poke_sett is not None:
+        base_atk = poke_sett.stats.base_attack
+        base_def = poke_sett.stats.base_defense
+        base_sta = poke_sett.stats.base_stamina
+    if base_atk is None or base_def is None or base_sta is None:
+        raise ValidationError("")  # TODO Add error code
 
+    if level is not None:
+        cpm = get_cpm(level)
+    if cpm is None:
+        raise ValidationError("")  # TODO Add error code
 
-def get_stats_raw(
-    poke_sett: PokemonSettings, cpm: float, iv_atk: int, iv_def: int, iv_sta: int
-) -> tuple[float, float, float]:
-    atk_stat = (poke_sett.stats.base_attack + iv_atk) * cpm
-    def_stat = (poke_sett.stats.base_defense + iv_def) * cpm
-    sta_stat = (poke_sett.stats.base_stamina + iv_sta) * cpm
+    atk_stat = (base_atk + iv_atk) * cpm
+    def_stat = (base_def + iv_def) * cpm
+    sta_stat = (base_sta + iv_sta) * cpm
+
     return atk_stat, def_stat, sta_stat
 
 
 def get_tgr_stats(
-    poke: PokeSpecies,
-    level: int,
-    rank: HoloCharacterCategory,
-    iv_atk: int,
-    iv_def: int,
-    iv_sta: int,
+    poke: PokeSpecies | None = None,
+    poke_sett: PokemonSettings | None = None,
+    base_atk: int | None = None,
+    base_def: int | None = None,
+    base_sta: int | None = None,
+    level: int | None = None,
+    rcpm: float | None = None,
+    enemy: HoloCharacterCategory | None = None,
+    rank_mult: float | None = None,
+    iv_atk: int = 15,
+    iv_def: int = 15,
+    iv_sta: int = 15,
 ) -> tuple[float, float, float]:
-    poke_sett = get_pokemon_settings(poke)
-    rcpm = get_rcpm(level)
-    return get_tgr_stats_raw(poke_sett, rcpm, rank, iv_atk, iv_def, iv_sta)
+    if poke is not None:
+        poke_sett = get_pokemon_settings(poke)
+    if poke_sett is not None:
+        base_atk = poke_sett.stats.base_attack
+        base_def = poke_sett.stats.base_defense
+        base_sta = poke_sett.stats.base_stamina
+    if base_atk is None or base_def is None or base_sta is None:
+        raise ValidationError("")  # TODO Add error code
 
+    if level is not None:
+        rcpm = get_rcpm(level)
+    if rcpm is None:
+        raise ValidationError("")  # TODO Add error code
 
-def get_tgr_stats_raw(
-    poke_sett: PokemonSettings,
-    rcpm: float,
-    rank: HoloCharacterCategory,
-    iv_atk: int,
-    iv_def: int,
-    iv_sta: int,
-) -> tuple[float, float, float]:
-    rank_mult = get_tgr_rank_mult(rank)
-    atk_stat = floor((poke_sett.stats.base_attack + iv_atk) * 5 / 3) * rcpm * rank_mult
-    def_stat = (poke_sett.stats.base_defense + iv_def) * rcpm * rank_mult
-    sta_stat = floor((poke_sett.stats.base_stamina + iv_sta) * 3 / 5) * rcpm * rank_mult
+    if enemy is not None:
+        rank_mult = get_tgr_rank_mult(enemy)
+    if rank_mult is None:
+        raise ValidationError("")  # TODO Add error code
+
+    atk_stat = floor((base_atk + iv_atk) * 5 / 3) * rcpm * rank_mult
+    def_stat = (base_def + iv_def) * rcpm * rank_mult
+    sta_stat = floor((base_sta + iv_sta) * 3 / 5) * rcpm * rank_mult
+
     return atk_stat, def_stat, sta_stat
 
 
 def get_cp(
-    poke: PokeSpecies, level: float, iv_atk: int, iv_def: int, iv_sta: int
+    poke: PokeSpecies | None = None,
+    poke_sett: PokemonSettings | None = None,
+    base_atk: int | None = None,
+    base_def: int | None = None,
+    base_sta: int | None = None,
+    level: float | None = None,
+    cpm: float | None = None,
+    iv_atk: int = 15,
+    iv_def: int = 15,
+    iv_sta: int = 15,
 ) -> int:
-    return _get_cp(*get_stats(poke, level, iv_atk, iv_def, iv_sta))
+    atk_stat, def_stat, sta_stat = get_stats(
+        poke,
+        poke_sett,
+        base_atk,
+        base_def,
+        base_sta,
+        level,
+        cpm,
+        iv_atk,
+        iv_def,
+        iv_sta,
+    )
+
+    return _get_cp(atk_stat, def_stat, sta_stat)
 
 
-def get_cp_raw(
-    poke_sett: PokemonSettings, cpm: float, iv_atk: int, iv_def: int, iv_sta: int
+def get_hp(
+    poke: PokeSpecies | None = None,
+    poke_sett: PokemonSettings | None = None,
+    base_sta: int | None = None,
+    level: float | None = None,
+    cpm: float | None = None,
+    iv_sta: int = 15,
 ) -> int:
-    return _get_cp(*get_stats_raw(poke_sett, cpm, iv_atk, iv_def, iv_sta))
+    _, _, sta_stat = get_stats(
+        poke,
+        poke_sett,
+        0,
+        0,
+        base_sta,
+        level,
+        cpm,
+        0,
+        0,
+        iv_sta,
+    )
 
-
-def get_hp(poke: PokeSpecies, level: float, iv_sta: int) -> int:
-    _, _, sta_stat = get_stats(poke, level, 0, 0, iv_sta)
-    return _get_hp(sta_stat)
-
-
-def get_hp_raw(poke_sett: PokemonSettings, cpm: float, iv_sta: int) -> int:
-    _, _, sta_stat = get_stats_raw(poke_sett, cpm, 0, 0, iv_sta)
     return _get_hp(sta_stat)
 
 
 def get_tgr_cp(
-    poke: PokeSpecies,
-    level: int,
-    rank: HoloCharacterCategory,
-    iv_atk: int,
-    iv_def: int,
-    iv_sta: int,
+    poke: PokeSpecies | None = None,
+    poke_sett: PokemonSettings | None = None,
+    base_atk: int | None = None,
+    base_def: int | None = None,
+    base_sta: int | None = None,
+    level: int | None = None,
+    rcpm: float | None = None,
+    enemy: HoloCharacterCategory | None = None,
+    rank_mult: float | None = None,
+    iv_atk: int = 15,
+    iv_def: int = 15,
+    iv_sta: int = 15,
 ) -> int:
-    return _get_cp(*get_tgr_stats(poke, level, rank, iv_atk, iv_def, iv_sta))
+    atk_stat, def_stat, sta_stat = get_tgr_stats(
+        poke,
+        poke_sett,
+        base_atk,
+        base_def,
+        base_sta,
+        level,
+        rcpm,
+        enemy,
+        rank_mult,
+        iv_atk,
+        iv_def,
+        iv_sta,
+    )
 
-
-def get_tgr_cp_raw(
-    poke_sett: PokemonSettings,
-    rcpm: float,
-    rank: HoloCharacterCategory,
-    iv_atk: int,
-    iv_def: int,
-    iv_sta: int,
-) -> int:
-    return _get_cp(*get_tgr_stats_raw(poke_sett, rcpm, rank, iv_atk, iv_def, iv_sta))
+    return _get_cp(atk_stat, def_stat, sta_stat)
 
 
 def get_tgr_hp(
-    poke: PokeSpecies, level: int, rank: HoloCharacterCategory, iv_sta: int
+    poke: PokeSpecies | None = None,
+    poke_sett: PokemonSettings | None = None,
+    base_sta: int | None = None,
+    level: int | None = None,
+    rcpm: float | None = None,
+    enemy: HoloCharacterCategory | None = None,
+    rank_mult: float | None = None,
+    iv_sta: int = 15,
 ) -> int:
-    _, _, sta_stat = get_tgr_stats(poke, level, rank, 0, 0, iv_sta)
-    return _get_hp(sta_stat)
+    _, _, sta_stat = get_tgr_stats(
+        poke,
+        poke_sett,
+        0,
+        0,
+        base_sta,
+        level,
+        rcpm,
+        enemy,
+        rank_mult,
+        0,
+        0,
+        iv_sta,
+    )
 
-
-def get_tgr_hp_raw(
-    poke_sett: PokemonSettings, rcpm: float, rank: HoloCharacterCategory, iv_sta: int
-) -> int:
-    _, _, sta_stat = get_tgr_stats_raw(poke_sett, rcpm, rank, 0, 0, iv_sta)
     return _get_hp(sta_stat)
 
 

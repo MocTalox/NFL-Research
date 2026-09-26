@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from functools import reduce
+from typing import Literal, overload
 
 from nfl.data import (
     BATTLE_SETTINGS,
@@ -30,12 +31,28 @@ from nfl.proto import (
 )
 from nfl.utils import f32
 
-from .stats import get_stats_raw, get_tgr_stats_raw
+from .stats import get_stats, get_tgr_stats
+
+
+@dataclass
+class DummyPokemon:
+    base_atk: int
+    base_def: int
+    base_sta: int
+    type_1: HoloPokemonType
+    type_2: HoloPokemonType
+    alignment: HoloAlignment
+
+
+@dataclass
+class DummyMove:
+    power: int
+    type: HoloPokemonType
 
 
 @dataclass
 class BattlePokemon:
-    pokemon: PokeSpecies
+    pokemon: PokeSpecies | DummyPokemon
     atk_iv: int
     def_iv: int
     sta_iv: int
@@ -254,9 +271,9 @@ def get_charge_boost(combat_type: HoloCombatType, charge: bool) -> float:
     return mults.charge_attack if charge else 1.0
 
 
-def get_dodge_boost(combat_type: HoloCombatType, dodged: bool) -> float:
+def get_dodge_boost(combat_type: HoloCombatType, is_dodged: bool) -> float:
     mults = _DAMAGE_MULTIPLIERS[combat_type]
-    return f32(1.0 - mults.dodge_damage_reduction) if dodged else 1.0
+    return f32(1.0 - mults.dodge_damage_reduction) if is_dodged else 1.0
 
 
 def get_remote_boost(combat_type: HoloCombatType, remote: bool) -> float:
@@ -271,110 +288,68 @@ def get_blade_bash_boost(combat_type: HoloCombatType, blade: bool, bash: bool) -
     return f32(attack_bonus / defense_bonus)
 
 
-# TODO its a bit sus that this one accepts settings rather than name but ok...
+@overload
 def calc_damage(
+    state: BattleState,
     attacker: BattlePokemon,
     target: BattlePokemon,
-    move_settings: MoveSettings | CombatMove,
-    charged_move: bool,
-    dodged: bool,
+    move_data: MoveSettings | CombatMove | DummyMove,
+    is_charge_move: bool = False,
+    is_dodged: bool = False,
+    rounded: Literal[True] = True,
+) -> int: ...
+
+
+@overload
+def calc_damage(
     state: BattleState,
-) -> int:
-    move_power = move_settings.power
-    move_type = (
-        move_settings.pokemon_type
-        if isinstance(move_settings, MoveSettings)
-        else move_settings.type
-    )
-
-    base_damage = calc_damage_raw(
-        attacker,
-        target,
-        move_power,
-        move_type,
-        charged_move,
-        dodged,
-        state,
-    )
-
-    return int(f32(base_damage + 1.0))
-
-
-def calc_damage_raw(
     attacker: BattlePokemon,
     target: BattlePokemon,
-    move_power: float,
-    move_type: HoloPokemonType,
-    charged_move: bool,
-    dodged: bool,
+    move_data: MoveSettings | CombatMove | DummyMove,
+    is_charge_move: bool = False,
+    is_dodged: bool = False,
+    rounded: Literal[False] = False,
+) -> float: ...
+
+
+def calc_damage(
     state: BattleState,
-) -> float:
+    attacker: BattlePokemon,
+    target: BattlePokemon,
+    move_data: MoveSettings | CombatMove | DummyMove,
+    is_charge_move: bool = False,
+    is_dodged: bool = False,
+    rounded: bool = True,
+) -> int | float:
     if attacker.cpm <= 0 or target.cpm <= 0:
         raise ValidationError(
             "INVALID_CPM_VALUES", attacker_cpm=attacker.cpm, target_cpm=target.cpm
         )
 
-    attacker_pokemon_settings = get_pokemon_settings(attacker.pokemon)
-    target_pokemon_settings = get_pokemon_settings(target.pokemon)
+    move_power = move_data.power
+    move_type = (
+        move_data.pokemon_type
+        if isinstance(move_data, MoveSettings)
+        else move_data.type
+    )
 
-    atk_stat, _, _ = (
-        get_tgr_stats_raw(
-            attacker_pokemon_settings,
-            attacker.cpm,
-            attacker.owner,
-            attacker.atk_iv,
-            attacker.def_iv,
-            attacker.sta_iv,
-        )
-        if is_tgr_member(attacker.owner)
-        else get_stats_raw(
-            attacker_pokemon_settings,
-            attacker.cpm,
-            attacker.atk_iv,
-            attacker.def_iv,
-            attacker.sta_iv,
-        )
-    )
-    _, def_stat, _ = (
-        get_tgr_stats_raw(
-            target_pokemon_settings,
-            target.cpm,
-            target.owner,
-            target.atk_iv,
-            target.def_iv,
-            target.sta_iv,
-        )
-        if is_tgr_member(target.owner)
-        else get_stats_raw(
-            target_pokemon_settings,
-            target.cpm,
-            target.atk_iv,
-            target.def_iv,
-            target.sta_iv,
-        )
-    )
+    atk_stat, _, _, atk_type_1, atk_type_2 = _get_pokemon_stats(attacker)
+    _, def_stat, _, tar_type_1, tar_type_2 = _get_pokemon_stats(target)
+    atk_alignment = attacker.pokemon.alignment
+    tar_alignment = target.pokemon.alignment
 
     attack_ratio = f32(f32(f32(atk_stat) * move_power) / f32(def_stat))
 
     multipliers = [
         get_mega_boost(state.combat_type, move_type, state.mega_boosted_types),
-        get_shadow_attack_bonus(
-            state.combat_type, attacker.pokemon.alignment, target.pokemon.alignment
-        ),
+        get_shadow_attack_bonus(state.combat_type, atk_alignment, tar_alignment),
         get_weather_boost(state.combat_type, move_type, state.weather_id),
-        get_stab(
-            state.combat_type,
-            move_type,
-            attacker_pokemon_settings.type,
-            attacker_pokemon_settings.type_2,
-        ),
+        get_stab(state.combat_type, move_type, atk_type_1, atk_type_2),
         get_fiendship_boost(state.combat_type, state.friendship_level),
-        get_effect(
-            move_type, target_pokemon_settings.type, target_pokemon_settings.type_2
-        ),
-        get_fast_boost(state.combat_type, not charged_move),
-        get_charge_boost(state.combat_type, charged_move),
-        get_dodge_boost(state.combat_type, dodged),
+        get_effect(move_type, tar_type_1, tar_type_2),
+        get_fast_boost(state.combat_type, not is_charge_move),
+        get_charge_boost(state.combat_type, is_charge_move),
+        get_dodge_boost(state.combat_type, is_dodged),
         get_remote_boost(state.combat_type, state.remote_raid),
         get_helpers_boost(state.combat_type, state.num_helpers),
         get_blade_bash_boost(state.combat_type, state.blade_ae, state.bash_ae),
@@ -382,4 +357,56 @@ def calc_damage_raw(
         0.5,
     ]
 
-    return reduce(lambda a, b: f32(a * b), multipliers, 1.0)
+    base_damage = reduce(lambda a, b: f32(a * b), multipliers, 1.0)
+
+    return int(f32(base_damage + 1.0)) if rounded else base_damage
+
+
+def _get_pokemon_stats(battle_pokemon: BattlePokemon):
+    if isinstance(battle_pokemon.pokemon, DummyPokemon):
+        type_1, type_2 = battle_pokemon.pokemon.type_1, battle_pokemon.pokemon.type_2
+
+        if is_tgr_member(battle_pokemon.owner):
+            atk_stat, def_stat, sta_stat = get_tgr_stats(
+                base_atk=battle_pokemon.pokemon.base_atk,
+                base_def=battle_pokemon.pokemon.base_def,
+                base_sta=battle_pokemon.pokemon.base_sta,
+                rcpm=battle_pokemon.cpm,
+                enemy=battle_pokemon.owner,
+                iv_atk=battle_pokemon.atk_iv,
+                iv_def=battle_pokemon.def_iv,
+                iv_sta=battle_pokemon.sta_iv,
+            )
+        else:
+            atk_stat, def_stat, sta_stat = get_stats(
+                base_atk=battle_pokemon.pokemon.base_atk,
+                base_def=battle_pokemon.pokemon.base_def,
+                base_sta=battle_pokemon.pokemon.base_sta,
+                cpm=battle_pokemon.cpm,
+                iv_atk=battle_pokemon.atk_iv,
+                iv_def=battle_pokemon.def_iv,
+                iv_sta=battle_pokemon.sta_iv,
+            )
+    else:
+        pokemon_settings = get_pokemon_settings(battle_pokemon.pokemon)
+        type_1, type_2 = pokemon_settings.type, pokemon_settings.type_2
+
+        if is_tgr_member(battle_pokemon.owner):
+            atk_stat, def_stat, sta_stat = get_tgr_stats(
+                poke=battle_pokemon.pokemon,
+                rcpm=battle_pokemon.cpm,
+                enemy=battle_pokemon.owner,
+                iv_atk=battle_pokemon.atk_iv,
+                iv_def=battle_pokemon.def_iv,
+                iv_sta=battle_pokemon.sta_iv,
+            )
+        else:
+            atk_stat, def_stat, sta_stat = get_stats(
+                poke=battle_pokemon.pokemon,
+                cpm=battle_pokemon.cpm,
+                iv_atk=battle_pokemon.atk_iv,
+                iv_def=battle_pokemon.def_iv,
+                iv_sta=battle_pokemon.sta_iv,
+            )
+
+    return atk_stat, def_stat, sta_stat, type_1, type_2
