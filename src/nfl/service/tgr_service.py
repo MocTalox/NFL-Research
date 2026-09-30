@@ -271,7 +271,10 @@ def _tgr_calc_damage(
     attacker: PokeSpecies, combat_move: CombatMove, defender: _EnemyData, rounded: bool
 ) -> float:
     enemy = BattleDummyPokemon(
-        0, defender.defense, 0, defender.type_1, defender.type_2, defender.alignment
+        base_def=defender.defense,
+        type_1=defender.type_1,
+        type_2=defender.type_2,
+        alignment=defender.alignment,
     )
 
     return calc_damage(
@@ -318,7 +321,10 @@ def _tgr_calc_charged_rate(quick: CombatMove, charged: CombatMove) -> float:
 
 def _tgr_calc_total_bulk(attacker: _PokemonData, defender: _EnemyData) -> float:
     enemy = BattleDummyPokemon(
-        100, 0, 0, defender.type_1, defender.type_2, defender.alignment
+        base_atk=100,
+        type_1=defender.type_1,
+        type_2=defender.type_2,
+        alignment=defender.alignment,
     )
     combat_move = BattleDummyMove(10, defender.move_type)
 

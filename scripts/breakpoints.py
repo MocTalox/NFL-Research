@@ -187,7 +187,7 @@ for move in boss_moves:
                 name=defender_pokemon_settings.pokemon_id,
                 form=defender_pokemon_settings.form,
             )
-            defender = BattlePokemon(ps, 0, 0, 0, 0.0)
+            defender = BattlePokemon(ps)
             for level, defender.cpm in get_cpm_list(
                 [(n + 1) / 2 for n in range(1, 70)]
             ):

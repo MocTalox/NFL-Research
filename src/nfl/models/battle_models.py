@@ -28,26 +28,26 @@ class BattleState:
 
 @dataclass
 class BattleDummyPokemon:
-    base_atk: int
-    base_def: int
-    base_sta: int
-    type_1: HoloPokemonType
-    type_2: HoloPokemonType
+    base_atk: int = 0
+    base_def: int = 0
+    base_sta: int = 0
+    type_1: HoloPokemonType = HoloPokemonType.POKEMON_TYPE_NONE
+    type_2: HoloPokemonType = HoloPokemonType.POKEMON_TYPE_NONE
     temp_evo: HoloTempEvoId = HoloTempEvoId.TEMP_EVOLUTION_UNSET
     alignment: HoloAlignment = HoloAlignment.ALIGNMENT_UNSET
 
 
 @dataclass
 class BattleDummyMove:
-    power: int
-    type: HoloPokemonType
+    power: int = 0
+    type: HoloPokemonType = HoloPokemonType.POKEMON_TYPE_NONE
 
 
 @dataclass
 class BattlePokemon:
     pokemon: PokeSpecies | BattleDummyPokemon
-    atk_iv: int
-    def_iv: int
-    sta_iv: int
-    cpm: float
+    atk_iv: int = 0
+    def_iv: int = 0
+    sta_iv: int = 0
+    cpm: float = 0.0
     owner: HoloCharacterCategory = HoloCharacterCategory.UNSET
