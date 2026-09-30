@@ -27,7 +27,7 @@ from nfl.proto import (
 )
 
 
-def attack_breakpoints(
+def tgr_attack_breakpoints(
     pokemon: PokeSpecies,
     pokemon_move: HoloPokemonMove,
     enemy_character: HoloCharacterCategory,
@@ -68,7 +68,7 @@ def attack_breakpoints(
     return TgrBreakpointsResult(enemy_stats, damage_by_level)
 
 
-def defense_breakpoints(
+def tgr_defense_breakpoints(
     pokemon: PokeSpecies,
     enemy_character: HoloCharacterCategory,
     enemy_pokemon: PokeSpecies,

@@ -20,8 +20,9 @@ def save_csv(csv_list: CsvList[T], file_name: str) -> None:
 
 
 def tgr_service_all():
+    from nfl.models import TgrMovesetData
     from nfl.proto import HoloPokemonType
-    from nfl.service.tgr_service import MoveSetRanking, tgr_best_attackers
+    from nfl.service import tgr_best_attackers
 
     for typing in HoloPokemonType:
         if typing is HoloPokemonType.UNDEFINED:
@@ -39,8 +40,9 @@ def tgr_service_all():
 
 
 def tgr_service_all_for():
+    from nfl.models import TgrMovesetData
     from nfl.proto import HoloPokemonType
-    from nfl.service.tgr_service import MoveSetRanking, tgr_best_attackers
+    from nfl.service import tgr_best_attackers
 
     for typing in HoloPokemonType:
         if typing is HoloPokemonType.UNDEFINED:
@@ -59,10 +61,8 @@ def tgr_service_all_for():
 
 def tgr_service_single():
     from nfl.data import PokeSpecies
-    from nfl.service.tgr_service import (
-        MoveSetRanking,
-        tgr_best_pokemon_moveset,
-    )
+    from nfl.models import TgrMovesetData
+    from nfl.service import tgr_best_pokemon_moveset
 
     rank: CsvList[TgrMovesetData] = CsvList()
     rank.add_colum("Pokemon", lambda r: str(r.moveset.pokemon))
