@@ -7,6 +7,7 @@ from nfl.data import (
     BEHEMOTH_BASH_AE,
     BEHEMOTH_BLADE_AE,
     COMBAT_SETTINGS,
+    DYNAMIC_PUNCH_AE,
     FRIENDSHIP_DMG_BONUS,
     HELPERS_DMG_BONUS,
     MEGA_EVO_SETTINGS,
@@ -14,6 +15,7 @@ from nfl.data import (
     TYPES,
     WEATHER,
     WEATHER_BONUS_SETTINGS,
+    PokeSpecies,
     get_pokemon_settings,
     is_tgr_member,
 )
@@ -29,7 +31,9 @@ from nfl.proto import (
     HoloAlignment,
     HoloCombatType,
     HoloFriendshipLevel,
+    HoloPokemonMove,
     HoloPokemonType,
+    HoloTempEvoId,
     HoloWeatherCondition,
     MoveSettings,
 )
@@ -55,6 +59,7 @@ class _DamageMultipliers:
     helpers_attack: dict[int, int] = field(default_factory=dict)
     blade_ae_attack: float = 1.0
     bash_ae_defense: float = 1.0
+    mega_age_attack: float = 1.0
 
 
 _DAMAGE_MULTIPLIERS = {
@@ -90,6 +95,7 @@ _DAMAGE_MULTIPLIERS = {
         different_type_mega_attack=MEGA_EVO_SETTINGS.attack_boost_from_mega_different_type,
         blade_ae_attack=BEHEMOTH_BLADE_AE[HoloCombatType.COMBAT_TYPE_RAID],
         bash_ae_defense=BEHEMOTH_BASH_AE[HoloCombatType.COMBAT_TYPE_RAID],
+        mega_age_attack=DYNAMIC_PUNCH_AE,
     ),
     HoloCombatType.COMBAT_TYPE_DMAX: _DamageMultipliers(
         same_type_attack=BATTLE_SETTINGS.same_type_attack_bonus_multiplier,
@@ -105,6 +111,7 @@ _DAMAGE_MULTIPLIERS = {
         helpers_attack=HELPERS_DMG_BONUS,
         blade_ae_attack=BEHEMOTH_BLADE_AE[HoloCombatType.COMBAT_TYPE_DMAX],
         bash_ae_defense=BEHEMOTH_BASH_AE[HoloCombatType.COMBAT_TYPE_DMAX],
+        mega_age_attack=DYNAMIC_PUNCH_AE,
     ),
     HoloCombatType.COMBAT_TYPE_GMAX: _DamageMultipliers(
         same_type_attack=BATTLE_SETTINGS.same_type_attack_bonus_multiplier,
@@ -120,6 +127,7 @@ _DAMAGE_MULTIPLIERS = {
         helpers_attack=HELPERS_DMG_BONUS,
         blade_ae_attack=BEHEMOTH_BLADE_AE[HoloCombatType.COMBAT_TYPE_GMAX],
         bash_ae_defense=BEHEMOTH_BASH_AE[HoloCombatType.COMBAT_TYPE_GMAX],
+        mega_age_attack=DYNAMIC_PUNCH_AE,
     ),
 }
 
@@ -247,11 +255,48 @@ def get_remote_boost(combat_type: HoloCombatType, remote: bool) -> float:
     return mults.remote_attack if remote else 1.0
 
 
-def get_blade_bash_boost(combat_type: HoloCombatType, blade: bool, bash: bool) -> float:
+def get_blade_bash_ae_boost(
+    combat_type: HoloCombatType, blade: bool, bash: bool
+) -> float:
     mults = _DAMAGE_MULTIPLIERS[combat_type]
     attack_bonus = mults.blade_ae_attack if blade else 1.0
     defense_bonus = mults.bash_ae_defense if bash else 1.0
     return f32(attack_bonus / defense_bonus)
+
+
+def get_mega_ae_boost(
+    combat_type: HoloCombatType,
+    mega_ae: bool,
+    enemy_temp_evo: HoloTempEvoId,
+) -> float:
+    mults = _DAMAGE_MULTIPLIERS[combat_type]
+    return (
+        mults.mega_age_attack
+        if mega_ae
+        and enemy_temp_evo
+        in (
+            HoloTempEvoId.TEMP_EVOLUTION_MEGA,
+            HoloTempEvoId.TEMP_EVOLUTION_MEGA_X,
+            HoloTempEvoId.TEMP_EVOLUTION_MEGA_Y,
+        )
+        else 1.0
+    )
+
+
+def get_temp_evo_level_boost(
+    temp_evo_level: int,
+    pokemon: PokeSpecies | BattleDummyPokemon,
+    move: HoloPokemonMove,
+) -> float:
+    if isinstance(pokemon, BattleDummyPokemon):
+        return 1.0
+    if move == HoloPokemonMove.MOVE_UNSET:
+        return 1.0
+    pokemon_settings = get_pokemon_settings(pokemon)
+    if move != pokemon_settings.nfl_special_move:
+        return 1.0
+    temp_evo_move_boost = [1.0, 1.0, 1.1, 1.2, 1.3]  # TODO hardcoded
+    return temp_evo_move_boost[temp_evo_level]
 
 
 @overload
@@ -292,6 +337,14 @@ def calc_damage(
             "INVALID_CPM_VALUES", attacker_cpm=attacker.cpm, target_cpm=target.cpm
         )
 
+    move_id = (
+        move_data.movement_id
+        if isinstance(move_data, MoveSettings)
+        else
+        move_data.unique_id
+        if isinstance(move_data, CombatMove)
+        else HoloPokemonMove.MOVE_UNSET
+    )
     move_power = move_data.power
     move_type = (
         move_data.pokemon_type
@@ -318,7 +371,9 @@ def calc_damage(
         get_dodge_boost(state.combat_type, is_dodged),
         get_remote_boost(state.combat_type, state.remote_raid),
         get_helpers_boost(state.combat_type, state.num_helpers),
-        get_blade_bash_boost(state.combat_type, state.blade_ae, state.bash_ae),
+        get_blade_bash_ae_boost(state.combat_type, state.blade_ae, state.bash_ae),
+        get_mega_ae_boost(state.combat_type, state.mega_ae, target.pokemon.temp_evo),
+        get_temp_evo_level_boost(state.temp_evo_level, attacker.pokemon, move_id),
         attack_ratio,
         0.5,
     ]

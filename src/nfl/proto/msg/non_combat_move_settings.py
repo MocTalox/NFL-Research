@@ -22,12 +22,16 @@ class NonCombatMoveSettings:
 @dataclass(frozen=True)
 class BonusEffect:
     attack_defense_bonus: AttackDefenseBonus | None
+    mega_move_bonus: MegaMoveBonus | None
 
     @classmethod
     def from_message(cls, msg: Message) -> BonusEffect:
         return cls(
             attack_defense_bonus=msg.get_object_or_none(
                 "attackDefenseBonus", AttackDefenseBonus.from_message
+            ),
+            mega_move_bonus=msg.get_object_or_none(
+                "megaMoveBonus", MegaMoveBonus.from_message
             ),
         )
 
@@ -55,4 +59,15 @@ class Attributes:
             combat_types=msg.get_enum_list("combatTypes", HoloCombatType),
             attack_multiplier=msg.get_float_or_zero("attackMultiplier"),
             defense_multiplier=msg.get_float_or_zero("defenseMultiplier"),
+        )
+
+
+@dataclass(frozen=True)
+class MegaMoveBonus:
+    attack_multiplier: float
+
+    @classmethod
+    def from_message(cls, msg: Message) -> MegaMoveBonus:
+        return cls(
+            attack_multiplier=msg.get_float("attackMultiplier"),
         )

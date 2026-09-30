@@ -36,6 +36,12 @@ def _get_non_combat_move_attack_defense_bonus(move: HoloPokemonMove):
     return move_ae.attack_defense_bonus.attributes
 
 
+def _get_non_combat_move_mega_move_bonus(move: HoloPokemonMove):
+    move_ae = NON_COMBAT_MOVES[move].bonus_effect
+    assert move_ae.mega_move_bonus
+    return move_ae.mega_move_bonus.attack_multiplier
+
+
 CPM = [cpm for cpm in PLAYER_LEVEL.cp_multiplier]
 RCPM = [cpm for cpm in ROCKET_SETTINGS.cp_multiplier]
 RANKS = {rank.character_category: rank for rank in ROCKET_SETTINGS.rank}
@@ -81,6 +87,9 @@ BEHEMOTH_BASH_AE = {
     )
     for combat_type in attributes.combat_types
 }
+DYNAMIC_PUNCH_AE = _get_non_combat_move_mega_move_bonus(
+    HoloPokemonMove.TEMP_EVOLUTION_MEGA_X_V0150_POKEMON_MEWTWO
+)
 
 
 def is_tgr_member(character_category: HoloCharacterCategory) -> bool:

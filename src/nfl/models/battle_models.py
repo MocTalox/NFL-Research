@@ -7,6 +7,7 @@ from nfl.proto import (
     HoloCombatType,
     HoloFriendshipLevel,
     HoloPokemonType,
+    HoloTempEvoId,
     HoloWeatherCondition,
 )
 
@@ -14,6 +15,7 @@ from nfl.proto import (
 @dataclass
 class BattleState:
     combat_type: HoloCombatType
+    temp_evo_level: int = 0
     mega_boosted_types: tuple[HoloPokemonType, ...] | None = None
     weather_id: HoloWeatherCondition = HoloWeatherCondition.NONE
     friendship_level: HoloFriendshipLevel = HoloFriendshipLevel.FRIENDSHIP_LEVEL_UNSET
@@ -21,6 +23,7 @@ class BattleState:
     num_helpers: int = 0
     blade_ae: bool = False
     bash_ae: bool = False
+    mega_ae: bool = False
 
 
 @dataclass
@@ -30,7 +33,8 @@ class BattleDummyPokemon:
     base_sta: int
     type_1: HoloPokemonType
     type_2: HoloPokemonType
-    alignment: HoloAlignment
+    temp_evo: HoloTempEvoId = HoloTempEvoId.TEMP_EVOLUTION_UNSET
+    alignment: HoloAlignment = HoloAlignment.ALIGNMENT_UNSET
 
 
 @dataclass
