@@ -1,7 +1,6 @@
-from typing import Any
-
 from nfl.calcs import evolution_size_range
-from nfl.data import PokeSpecies, SizeClass
+from nfl.data import PokeSpecies
+from nfl.models import SizeClass, SizeDataRange
 from nfl.proto import HoloTempEvoId
 
 
@@ -11,13 +10,13 @@ def _format_value(min_val: str, max_val: str) -> str:
     return f"{min_val}-{max_val}"
 
 
-def print_size(values: dict[str, Any], decimals: int = 2):
-    weight_min = f"{values['weight']['min']:.{decimals}f}"
-    weight_max = f"{values['weight']['max']:.{decimals}f}"
-    height_min = f"{values['height']['min']:.{decimals}f}"
-    height_max = f"{values['height']['max']:.{decimals}f}"
-    size_class_min = str(values["size_class"]["min"])
-    size_class_max = str(values["size_class"]["max"])
+def print_size(values: SizeDataRange, decimals: int = 2):
+    weight_min = f"{values.weight_range[0]:.{decimals}f}"
+    weight_max = f"{values.weight_range[1]:.{decimals}f}"
+    height_min = f"{values.height_range[0]:.{decimals}f}"
+    height_max = f"{values.height_range[1]:.{decimals}f}"
+    size_class_min = str(values.size_class_range[0])
+    size_class_max = str(values.size_class_range[1])
     print(
         f"Weight: {_format_value(weight_min, weight_max)}kg, "
         f"Height: {_format_value(height_min, height_max)}m, "

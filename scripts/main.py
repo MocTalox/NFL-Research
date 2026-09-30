@@ -26,9 +26,9 @@ def tgr_service_all():
     for typing in HoloPokemonType:
         if typing is HoloPokemonType.UNDEFINED:
             continue
-        rank: CsvList[MoveSetRanking] = CsvList()
-        rank.add_colum("Pokemon", lambda r: str(r.pokemon.pokemon))
-        rank.add_colum("Fast Move", lambda r: str(r.pokemon.quick.unique_id))
+        rank: CsvList[TgrMovesetData] = CsvList()
+        rank.add_colum("Pokemon", lambda r: str(r.moveset.pokemon))
+        rank.add_colum("Fast Move", lambda r: str(r.moveset.quick))
         rank.add_colum("Dmg per Turn", lambda r: r.damage_per_turn)
         rank.add_colum("Survival", lambda r: r.total_bulk)
 
@@ -45,9 +45,9 @@ def tgr_service_all_for():
     for typing in HoloPokemonType:
         if typing is HoloPokemonType.UNDEFINED:
             continue
-        rank: CsvList[MoveSetRanking] = CsvList()
-        rank.add_colum("Pokemon", lambda r: str(r.pokemon.pokemon))
-        rank.add_colum("Fast Move", lambda r: str(r.pokemon.quick.unique_id))
+        rank: CsvList[TgrMovesetData] = CsvList()
+        rank.add_colum("Pokemon", lambda r: str(r.moveset.pokemon))
+        rank.add_colum("Fast Move", lambda r: str(r.moveset.quick))
         rank.add_colum("Dmg per Turn", lambda r: r.damage_per_turn)
         rank.add_colum("Survival", lambda r: r.total_bulk)
 
@@ -64,10 +64,10 @@ def tgr_service_single():
         tgr_best_pokemon_moveset,
     )
 
-    rank: CsvList[MoveSetRanking] = CsvList()
-    rank.add_colum("Pokemon", lambda r: str(r.pokemon.pokemon))
-    rank.add_colum("Fast Move", lambda r: str(r.pokemon.quick.unique_id))
-    rank.add_colum("Charged Move", lambda r: str(r.pokemon.charged.unique_id))
+    rank: CsvList[TgrMovesetData] = CsvList()
+    rank.add_colum("Pokemon", lambda r: str(r.moveset.pokemon))
+    rank.add_colum("Fast Move", lambda r: str(r.moveset.quick))
+    rank.add_colum("Charged Move", lambda r: str(r.moveset.charged))
     rank.add_colum("Dmg per Turn", lambda r: r.damage_per_turn)
     rank.add_colum("Charged Dmg", lambda r: r.charged_damage)
     rank.add_colum("Charged Inxed", lambda r: r.charged_index)

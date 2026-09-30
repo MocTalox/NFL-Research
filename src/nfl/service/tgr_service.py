@@ -3,15 +3,7 @@ from collections.abc import Iterator
 from dataclasses import dataclass
 from itertools import product
 
-from nfl.calcs import (
-    BattlePokemon,
-    BattleState,
-    DummyMove,
-    DummyPokemon,
-    calc_damage,
-    get_cpm,
-    get_rcpm,
-)
+from nfl.calcs import calc_damage, get_cpm, get_rcpm
 from nfl.data import (
     POKEMON,
     PVP_MOVES,
@@ -20,6 +12,14 @@ from nfl.data import (
 )
 from nfl.data.catalog import get_pokemon_settings_temp_evo
 from nfl.exceptions import NotFoundError
+from nfl.models import (
+    BattleDummyMove,
+    BattleDummyPokemon,
+    BattlePokemon,
+    BattleState,
+    TgrMovesetData,
+    TgrPokemonMoveset,
+)
 from nfl.proto import (
     CombatMove,
     HoloAlignment,
@@ -74,16 +74,6 @@ class _PokemonMoveSet:
     pokemon: _PokemonData
     quick: CombatMove
     charged: CombatMove
-
-
-@dataclass(frozen=True)
-class MoveSetRanking:
-    pokemon: _PokemonMoveSet  # TODO visibility or structure fix
-    damage_per_turn: float
-    charged_damage: float
-    charged_index: float
-    charged_rate: float
-    total_bulk: float
 
 
 def _to_pokemon_data(
@@ -159,9 +149,6 @@ def get_all_pokemon() -> list[PokeSpecies]:
     return sorted(_POKEMON_DATA.get_all_species())
 
 
-_COMBAT_TYPE = HoloCombatType.VS_SEEKER
-
-
 # =========================
 # DATA GENERATION
 # =========================
@@ -189,7 +176,7 @@ def tgr_best_pokemon_moveset(
     enemy_type_2: HoloPokemonType = HoloPokemonType.POKEMON_TYPE_NONE,
     enemy_defense: int = 150,
     rounded: bool = False,
-) -> list[MoveSetRanking]:
+) -> list[TgrMovesetData]:
 
     pokemon = _POKEMON_DATA.get(poke_species)
     if pokemon is None:
@@ -222,7 +209,7 @@ def tgr_best_attackers(
     exclude_purified: bool = True,
     exclude_temp_evos: bool = True,
     rounded: bool = False,
-) -> list[MoveSetRanking]:
+) -> list[TgrMovesetData]:
 
     defender = _EnemyData(
         enemy_type,
@@ -232,7 +219,7 @@ def tgr_best_attackers(
         enemy_type,  # TODO separate enemy move type
     )
 
-    rankings: list[MoveSetRanking] = []
+    rankings: list[TgrMovesetData] = []
 
     for poke in _POKEMON_DATA.get_all_pokes():
         if exclude_purified and poke.alignment == HoloAlignment.PURIFIED:
@@ -259,17 +246,20 @@ def tgr_best_attackers(
 
 def _create_ranking(
     poke: _PokemonMoveSet, defender: _EnemyData, rounded: bool
-) -> MoveSetRanking:
+) -> TgrMovesetData:
 
-    return MoveSetRanking(
-        pokemon=poke,
+    return TgrMovesetData(
+        moveset=TgrPokemonMoveset(
+            pokemon=poke.pokemon.identity,
+            quick=poke.quick.unique_id,
+            charged=poke.charged.unique_id,
+        ),
         damage_per_turn=_tgr_calc_damage_per_turn(poke, defender, rounded),
         charged_damage=_tgr_calc_charged_damage(poke, defender, rounded),
         charged_index=_tgr_calc_charged_index(poke, defender, rounded),
         charged_rate=_tgr_calc_charged_rate(poke.quick, poke.charged),
         total_bulk=_tgr_calc_total_bulk(poke.pokemon, defender),
     )
-
 
 
 # =========================
@@ -280,7 +270,7 @@ def _create_ranking(
 def _tgr_calc_damage(
     attacker: PokeSpecies, combat_move: CombatMove, defender: _EnemyData, rounded: bool
 ) -> float:
-    enemy = DummyPokemon(
+    enemy = BattleDummyPokemon(
         0, defender.defense, 0, defender.type_1, defender.type_2, defender.alignment
     )
 
@@ -326,13 +316,11 @@ def _tgr_calc_charged_rate(quick: CombatMove, charged: CombatMove) -> float:
     return -1 * charged.energy_delta / quick.energy_delta * (quick.duration_turns + 1)
 
 
-def _tgr_calc_total_bulk(
-    attacker: _PokemonData, defender: _EnemyData
-) -> float:
-    enemy = DummyPokemon(
+def _tgr_calc_total_bulk(attacker: _PokemonData, defender: _EnemyData) -> float:
+    enemy = BattleDummyPokemon(
         100, 0, 0, defender.type_1, defender.type_2, defender.alignment
     )
-    combat_move = DummyMove(10, defender.move_type)
+    combat_move = BattleDummyMove(10, defender.move_type)
 
     damage = calc_damage(
         BattleState(HoloCombatType.VS_SEEKER),

@@ -1,5 +1,6 @@
 from nfl.calcs import contest_score
-from nfl.data import PokeSpecies, SizeClass
+from nfl.data import PokeSpecies
+from nfl.models import SizeClass
 
 print(
     contest_score(

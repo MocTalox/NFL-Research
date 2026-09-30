@@ -14,15 +14,19 @@ from nfl.data import (
     TYPES,
     WEATHER,
     WEATHER_BONUS_SETTINGS,
-    PokeSpecies,
     get_pokemon_settings,
     is_tgr_member,
 )
 from nfl.exceptions import ValidationError
+from nfl.models import (
+    BattleDummyMove,
+    BattleDummyPokemon,
+    BattlePokemon,
+    BattleState,
+)
 from nfl.proto import (
     CombatMove,
     HoloAlignment,
-    HoloCharacterCategory,
     HoloCombatType,
     HoloFriendshipLevel,
     HoloPokemonType,
@@ -32,44 +36,6 @@ from nfl.proto import (
 from nfl.utils import f32
 
 from .stats import get_stats, get_tgr_stats
-
-
-@dataclass
-class DummyPokemon:
-    base_atk: int
-    base_def: int
-    base_sta: int
-    type_1: HoloPokemonType
-    type_2: HoloPokemonType
-    alignment: HoloAlignment
-
-
-@dataclass
-class DummyMove:
-    power: int
-    type: HoloPokemonType
-
-
-@dataclass
-class BattlePokemon:
-    pokemon: PokeSpecies | DummyPokemon
-    atk_iv: int
-    def_iv: int
-    sta_iv: int
-    cpm: float
-    owner: HoloCharacterCategory = HoloCharacterCategory.UNSET
-
-
-@dataclass
-class BattleState:
-    combat_type: HoloCombatType
-    mega_boosted_types: tuple[HoloPokemonType] | None = None
-    weather_id: HoloWeatherCondition = HoloWeatherCondition.NONE
-    friendship_level: HoloFriendshipLevel = HoloFriendshipLevel.FRIENDSHIP_LEVEL_UNSET
-    remote_raid: bool = False
-    num_helpers: int = 0
-    blade_ae: bool = False
-    bash_ae: bool = False
 
 
 @dataclass(frozen=True)
@@ -161,7 +127,7 @@ _DAMAGE_MULTIPLIERS = {
 def get_mega_boost(
     combat_type: HoloCombatType,
     move_type: HoloPokemonType,
-    mega_boosted_types: tuple[HoloPokemonType] | None,
+    mega_boosted_types: tuple[HoloPokemonType, ...] | None,
 ) -> float:
     mults = _DAMAGE_MULTIPLIERS[combat_type]
     if not mega_boosted_types:
@@ -293,7 +259,7 @@ def calc_damage(
     state: BattleState,
     attacker: BattlePokemon,
     target: BattlePokemon,
-    move_data: MoveSettings | CombatMove | DummyMove,
+    move_data: MoveSettings | CombatMove | BattleDummyMove,
     is_charge_move: bool = False,
     is_dodged: bool = False,
     rounded: Literal[True] = True,
@@ -305,7 +271,7 @@ def calc_damage(
     state: BattleState,
     attacker: BattlePokemon,
     target: BattlePokemon,
-    move_data: MoveSettings | CombatMove | DummyMove,
+    move_data: MoveSettings | CombatMove | BattleDummyMove,
     is_charge_move: bool = False,
     is_dodged: bool = False,
     rounded: Literal[False] = False,
@@ -316,7 +282,7 @@ def calc_damage(
     state: BattleState,
     attacker: BattlePokemon,
     target: BattlePokemon,
-    move_data: MoveSettings | CombatMove | DummyMove,
+    move_data: MoveSettings | CombatMove | BattleDummyMove,
     is_charge_move: bool = False,
     is_dodged: bool = False,
     rounded: bool = True,
@@ -363,7 +329,7 @@ def calc_damage(
 
 
 def _get_pokemon_stats(battle_pokemon: BattlePokemon):
-    if isinstance(battle_pokemon.pokemon, DummyPokemon):
+    if isinstance(battle_pokemon.pokemon, BattleDummyPokemon):
         type_1, type_2 = battle_pokemon.pokemon.type_1, battle_pokemon.pokemon.type_2
 
         if is_tgr_member(battle_pokemon.owner):

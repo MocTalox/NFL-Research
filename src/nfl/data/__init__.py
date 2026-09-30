@@ -28,7 +28,6 @@ from .catalog import (
 from .poke_data import PokeData
 from .poke_form_map import PokeFormMap
 from .poke_species import PokeSpecies
-from .size_class import SizeClass
 from .templates import (
     BATTLE_SETTINGS,
     BREAD_MOVE_MAPPINGS,
@@ -106,7 +105,6 @@ __all__ = [
     "PokeData",
     "PokeFormMap",
     "PokeSpecies",
-    "SizeClass",
     "get_move_boosting_weather",
     "get_pokemon_settings",
     "get_size_settings",

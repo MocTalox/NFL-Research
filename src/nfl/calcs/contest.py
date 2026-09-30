@@ -1,11 +1,10 @@
-from nfl.calcs.sizes import SizeData
 from nfl.data import (
     CONTEST_SETTINGS,
     PokeSpecies,
-    SizeClass,
     get_pokemon_settings,
     get_size_settings,
 )
+from nfl.models import SizeClass, SizeData
 from nfl.proto import PokemonSettings, SizeSettings
 
 _CONTEST_SCORE_COEFFICIENT = CONTEST_SETTINGS.contest_score_coefficient.pokemon_size

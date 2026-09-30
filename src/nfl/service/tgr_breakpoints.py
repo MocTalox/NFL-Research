@@ -1,8 +1,4 @@
-from dataclasses import dataclass
-
 from nfl.calcs import (
-    BattlePokemon,
-    BattleState,
     calc_damage,
     get_cpm,
     get_rcpm,
@@ -15,38 +11,20 @@ from nfl.data import (
     PokeSpecies,
 )
 from nfl.exceptions import ValidationError
+from nfl.models import (
+    BattlePokemon,
+    BattleState,
+    PokemonStats,
+    TgrBreakpointsDamageByLevel,
+    TgrBreakpointsDamageResult,
+    TgrBreakpointsResult,
+)
 from nfl.proto import (
     HoloAlignment,
     HoloCharacterCategory,
     HoloCombatType,
     HoloPokemonMove,
 )
-
-
-@dataclass
-class DamageResult:
-    stat: int
-    damage: int
-
-
-@dataclass
-class DamageByLevel:
-    level: float
-    damage_by_stat: list[DamageResult]
-
-
-@dataclass
-class EnemyStats:
-    attack: float
-    defense: float
-    hp: int
-    cp: int
-
-
-@dataclass
-class CalculationResult:
-    enemy_stats: EnemyStats
-    damage_by_level: list[DamageByLevel]
 
 
 def attack_breakpoints(
@@ -59,15 +37,17 @@ def attack_breakpoints(
     pokemon_min_level: int,
     pokemon_max_level: int,
     trainer_level: int,
-) -> CalculationResult:
+) -> TgrBreakpointsResult:
     if enemy_pokemon.alignment is not HoloAlignment.SHADOW:
         raise ValidationError("SHADOW_ENEMY")
 
-    a, d, _ = get_tgr_stats(poke=enemy_pokemon, level=trainer_level, enemy=enemy_character)
+    a, d, _ = get_tgr_stats(
+        poke=enemy_pokemon, level=trainer_level, enemy=enemy_character
+    )
     hp = get_tgr_hp(poke=enemy_pokemon, level=trainer_level, enemy=enemy_character)
     cp = get_tgr_cp(poke=enemy_pokemon, level=trainer_level, enemy=enemy_character)
 
-    enemy_stats = EnemyStats(a, d, hp, cp)
+    enemy_stats = PokemonStats(a, d, hp, cp)
 
     state = BattleState(HoloCombatType.VS_SEEKER)
     enemy = BattlePokemon(
@@ -75,17 +55,17 @@ def attack_breakpoints(
     )
     move = PVP_MOVES[pokemon_move]
 
-    damage_by_level: list[DamageByLevel] = []
+    damage_by_level: list[TgrBreakpointsDamageByLevel] = []
     for level in range(pokemon_min_level * 2, pokemon_max_level * 2 + 1):
         level = level / 2
-        damage_by_stat: list[DamageResult] = []
+        damage_by_stat: list[TgrBreakpointsDamageResult] = []
         for atk_iv in range(pokemon_min_atk, pokemon_max_atk + 1):
             poke = BattlePokemon(pokemon, atk_iv, 15, 15, get_cpm(level))
             dmg = calc_damage(state, poke, enemy, move)
-            damage_by_stat.append(DamageResult(atk_iv, dmg))
-        damage_by_level.append(DamageByLevel(level, damage_by_stat))
+            damage_by_stat.append(TgrBreakpointsDamageResult(atk_iv, dmg))
+        damage_by_level.append(TgrBreakpointsDamageByLevel(level, damage_by_stat))
 
-    return CalculationResult(enemy_stats, damage_by_level)
+    return TgrBreakpointsResult(enemy_stats, damage_by_level)
 
 
 def defense_breakpoints(
@@ -98,15 +78,17 @@ def defense_breakpoints(
     pokemon_min_level: int,
     pokemon_max_level: int,
     trainer_level: int,
-) -> CalculationResult:
+) -> TgrBreakpointsResult:
     if enemy_pokemon.alignment is not HoloAlignment.SHADOW:
         raise ValidationError("SHADOW_ENEMY")
 
-    a, d, _ = get_tgr_stats(poke=enemy_pokemon, level=trainer_level, enemy=enemy_character)
+    a, d, _ = get_tgr_stats(
+        poke=enemy_pokemon, level=trainer_level, enemy=enemy_character
+    )
     hp = get_tgr_hp(poke=enemy_pokemon, level=trainer_level, enemy=enemy_character)
     cp = get_tgr_cp(poke=enemy_pokemon, level=trainer_level, enemy=enemy_character)
 
-    enemy_stats = EnemyStats(a, d, hp, cp)
+    enemy_stats = PokemonStats(a, d, hp, cp)
 
     state = BattleState(HoloCombatType.VS_SEEKER)
     enemy = BattlePokemon(
@@ -114,14 +96,14 @@ def defense_breakpoints(
     )
     move = PVP_MOVES[enemy_pokemon_move]
 
-    damage_by_level: list[DamageByLevel] = []
+    damage_by_level: list[TgrBreakpointsDamageByLevel] = []
     for level in range(pokemon_min_level * 2, pokemon_max_level * 2 + 1):
         level = level / 2
-        damage_by_stat: list[DamageResult] = []
+        damage_by_stat: list[TgrBreakpointsDamageResult] = []
         for def_iv in range(pokemon_min_def, pokemon_max_def + 1):
             poke = BattlePokemon(pokemon, 15, def_iv, 15, get_cpm(level))
             dmg = calc_damage(state, enemy, poke, move)
-            damage_by_stat.append(DamageResult(def_iv, dmg))
-        damage_by_level.append(DamageByLevel(level, damage_by_stat))
+            damage_by_stat.append(TgrBreakpointsDamageResult(def_iv, dmg))
+        damage_by_level.append(TgrBreakpointsDamageByLevel(level, damage_by_stat))
 
-    return CalculationResult(enemy_stats, damage_by_level)
+    return TgrBreakpointsResult(enemy_stats, damage_by_level)

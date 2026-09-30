@@ -3,13 +3,8 @@ from functools import partial
 from itertools import count
 from math import floor
 
-from nfl.calcs import (
-    BattlePokemon,
-    BattleState,
-    get_cpm,
-)
-from nfl.calcs.damage import calc_damage, get_effect
-from nfl.calcs.stats import get_hp
+from nfl.calcs import calc_damage, get_cpm, get_hp
+from nfl.calcs.damage import get_effect
 from nfl.data import (
     POKEMON,
     PVE_MOVES,
@@ -17,6 +12,7 @@ from nfl.data import (
     get_move_boosting_weather,
     get_pokemon_settings,
 )
+from nfl.models import BattlePokemon, BattleState
 from nfl.proto import (
     HoloCombatType,
     HoloPokemonMove,

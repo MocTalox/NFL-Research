@@ -9,10 +9,10 @@ from nfl.data import (
     FORM_SETTINGS,
     POKEMON,
     PokeSpecies,
-    SizeClass,
     get_pokemon_settings,
     get_size_settings,
 )
+from nfl.models import SizeClass
 from nfl.proto import HoloPokemonForm
 
 

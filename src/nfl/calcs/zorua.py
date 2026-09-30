@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from nfl.data import (
     PokeSpecies,
-    SizeClass,
     get_pokemon_settings,
     get_size_settings,
 )
 from nfl.exceptions import ValidationError
+from nfl.models import SizeClass
 from nfl.proto import HoloPokemonId, PokemonSettings, SizeSettings
 
 _ZORUA = PokeSpecies(name=HoloPokemonId.ZORUA)
@@ -37,6 +37,7 @@ def zorua_size_raw(
     wild_zorua_height_m: float,
     wild_zorua_size_class: SizeClass,
 ):
+    # TODO review if its better to use SizeData for this (validations mainly)
     if wild_zorua_weight_kg < 0 or wild_zorua_height_m < 0:
         raise ValidationError(
             "INVALID_ZORUA_DIMENSIONS",
