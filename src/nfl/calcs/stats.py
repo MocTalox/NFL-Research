@@ -112,16 +112,16 @@ def get_cp(
     iv_sta: int = 15,
 ) -> int:
     atk_stat, def_stat, sta_stat = get_stats(
-        poke,
-        poke_sett,
-        base_atk,
-        base_def,
-        base_sta,
-        level,
-        cpm,
-        iv_atk,
-        iv_def,
-        iv_sta,
+        poke=poke,
+        poke_sett=poke_sett,
+        base_atk=base_atk,
+        base_def=base_def,
+        base_sta=base_sta,
+        level=level,
+        cpm=cpm,
+        iv_atk=iv_atk,
+        iv_def=iv_def,
+        iv_sta=iv_sta,
     )
 
     return _get_cp(atk_stat, def_stat, sta_stat)
@@ -136,16 +136,16 @@ def get_hp(
     iv_sta: int = 15,
 ) -> int:
     _, _, sta_stat = get_stats(
-        poke,
-        poke_sett,
-        0,
-        0,
-        base_sta,
-        level,
-        cpm,
-        0,
-        0,
-        iv_sta,
+        poke=poke,
+        poke_sett=poke_sett,
+        base_atk=0,
+        base_def=0,
+        base_sta=base_sta,
+        level=level,
+        cpm=cpm,
+        iv_atk=0,
+        iv_def=0,
+        iv_sta=iv_sta,
     )
 
     return _get_hp(sta_stat)
@@ -166,18 +166,18 @@ def get_tgr_cp(
     iv_sta: int = 15,
 ) -> int:
     atk_stat, def_stat, sta_stat = get_tgr_stats(
-        poke,
-        poke_sett,
-        base_atk,
-        base_def,
-        base_sta,
-        level,
-        rcpm,
-        enemy,
-        rank_mult,
-        iv_atk,
-        iv_def,
-        iv_sta,
+        poke=poke,
+        poke_sett=poke_sett,
+        base_atk=base_atk,
+        base_def=base_def,
+        base_sta=base_sta,
+        level=level,
+        rcpm=rcpm,
+        enemy=enemy,
+        rank_mult=rank_mult,
+        iv_atk=iv_atk,
+        iv_def=iv_def,
+        iv_sta=iv_sta,
     )
 
     return _get_cp(atk_stat, def_stat, sta_stat)
@@ -194,18 +194,18 @@ def get_tgr_hp(
     iv_sta: int = 15,
 ) -> int:
     _, _, sta_stat = get_tgr_stats(
-        poke,
-        poke_sett,
-        0,
-        0,
-        base_sta,
-        level,
-        rcpm,
-        enemy,
-        rank_mult,
-        0,
-        0,
-        iv_sta,
+        poke=poke,
+        poke_sett=poke_sett,
+        base_atk=0,
+        base_def=0,
+        base_sta=base_sta,
+        level=level,
+        rcpm=rcpm,
+        enemy=enemy,
+        rank_mult=rank_mult,
+        iv_atk=0,
+        iv_def=0,
+        iv_sta=iv_sta,
     )
 
     return _get_hp(sta_stat)
