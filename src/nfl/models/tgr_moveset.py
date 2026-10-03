@@ -8,14 +8,14 @@ from nfl.proto import HoloPokemonMove
 class TgrPokemonMoveset:
     pokemon: PokeSpecies
     quick: HoloPokemonMove
-    charged: HoloPokemonMove
+    charge: HoloPokemonMove
 
 
 @dataclass(frozen=True)
 class TgrMovesetData:
     moveset: TgrPokemonMoveset
     damage_per_turn: float
-    charged_damage: float
-    charged_index: float
-    charged_rate: float
+    charge_damage: float
+    charge_index: float
+    charge_rate: float
     total_bulk: float

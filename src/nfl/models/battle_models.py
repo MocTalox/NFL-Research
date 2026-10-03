@@ -39,7 +39,7 @@ class BattleDummyPokemon:
 
 @dataclass
 class BattleDummyMove:
-    power: int = 0
+    power: float = 0.0
     type: HoloPokemonType = HoloPokemonType.POKEMON_TYPE_NONE
 
 

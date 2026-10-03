@@ -67,11 +67,11 @@ def tgr_service_single():
     rank: CsvList[TgrMovesetData] = CsvList()
     rank.add_colum("Pokemon", lambda r: str(r.moveset.pokemon))
     rank.add_colum("Fast Move", lambda r: str(r.moveset.quick))
-    rank.add_colum("Charged Move", lambda r: str(r.moveset.charged))
+    rank.add_colum("Charge Move", lambda r: str(r.moveset.charge))
     rank.add_colum("Dmg per Turn", lambda r: r.damage_per_turn)
-    rank.add_colum("Charged Dmg", lambda r: r.charged_damage)
-    rank.add_colum("Charged Inxed", lambda r: r.charged_index)
-    rank.add_colum("Charged Rate", lambda r: r.charged_rate)
+    rank.add_colum("Charge Dmg", lambda r: r.charge_damage)
+    rank.add_colum("Charge Inxed", lambda r: r.charge_index)
+    rank.add_colum("Charge Rate", lambda r: r.charge_rate)
     rank.add_colum("Survival", lambda r: r.total_bulk)
 
     for pokemon in tgr_best_pokemon_moveset(

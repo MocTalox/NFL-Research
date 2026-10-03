@@ -414,7 +414,7 @@ def _get_pokemon_stats(battle_pokemon: BattlePokemon):
 
         if is_tgr_member(battle_pokemon.owner):
             atk_stat, def_stat, sta_stat = get_tgr_stats(
-                poke=battle_pokemon.pokemon,
+                poke_sett=pokemon_settings,
                 rcpm=battle_pokemon.cpm,
                 enemy=battle_pokemon.owner,
                 iv_atk=battle_pokemon.atk_iv,
@@ -423,7 +423,7 @@ def _get_pokemon_stats(battle_pokemon: BattlePokemon):
             )
         else:
             atk_stat, def_stat, sta_stat = get_stats(
-                poke=battle_pokemon.pokemon,
+                poke_sett=pokemon_settings,
                 cpm=battle_pokemon.cpm,
                 iv_atk=battle_pokemon.atk_iv,
                 iv_def=battle_pokemon.def_iv,
