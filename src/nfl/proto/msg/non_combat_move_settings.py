@@ -69,5 +69,5 @@ class MegaMoveBonus:
     @classmethod
     def from_message(cls, msg: Message) -> MegaMoveBonus:
         return cls(
-            attack_multiplier=msg.get_float("attackMultiplier"),
+            attack_multiplier=msg.get_float_or_zero("attackMultiplier"),
         )
