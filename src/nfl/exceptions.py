@@ -6,7 +6,6 @@ ERROR_MESSAGES = {
     "MISSING_TEMP_EVO": "Missing temporary evolution overrides for {pokemon_id} ({pokemon_form}): {temp_evo_id}",
     "MISSIGN_SPECIES_DATA": "No Pokémon data found for species: {poke_species}",
     "SHADOW_ENEMY": "Enemy Pokémon must be shadow.",
-    "TGR_POKEMON_LEVEL": "TGR members Pokémons cannot be of half levels.",
     "INVALID_POKÉMON_DIMENSIONS": "Invalid Pokémon dimensions: weight_kg={weight_kg}, height_m={height_m}. Values must be positive.",
     "SIZE_CLASS_MISMATCH": "Size class mismatch: Pokémon with height {height_m}m cannot be {size_class} ([{lower}, {upper}])",
     "INVALID_ZORUA_DIMENSIONS": "Invalid Zorua dimensions: weight_kg={weight_kg}, height_m={height_m}. Values must be positive.",
