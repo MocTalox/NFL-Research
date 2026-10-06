@@ -38,6 +38,7 @@ def zorua_size_raw(
     wild_zorua_size_class: SizeClass,
 ):
     # TODO review if its better to use SizeData for this (validations mainly)
+    # That can also help making `wild_zorua_size_class` nullable
     if wild_zorua_weight_kg < 0 or wild_zorua_height_m < 0:
         raise ValidationError(
             "INVALID_ZORUA_DIMENSIONS",

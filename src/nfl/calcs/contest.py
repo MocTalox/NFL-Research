@@ -19,7 +19,7 @@ def contest_score(
     individual_values: int,
     weight_kg: float,
     height_m: float,
-    size_class: SizeClass,
+    size_class: SizeClass | None = None,
 ):
     return contest_score_raw(
         get_pokemon_settings(pokemon),
@@ -37,7 +37,7 @@ def contest_score_raw(
     individual_values: int,
     weight_kg: float,
     height_m: float,
-    size_class: SizeClass,
+    size_class: SizeClass | None = None,
 ):
     pokemon_size_data = SizeData.build(size_settings, weight_kg, height_m, size_class)
 
@@ -93,7 +93,7 @@ def contest_score_range(
     individual_values: int,
     weight_kg: float,
     height_m: float,
-    size_class: SizeClass,
+    size_class: SizeClass | None = None,
 ):
     return contest_score_range_raw(
         get_pokemon_settings(pokemon),
@@ -111,7 +111,7 @@ def contest_score_range_raw(
     individual_values: int,
     weight_kg: float,
     height_m: float,
-    size_class: SizeClass,
+    size_class: SizeClass | None = None,
 ):
     pokemon_size_data = SizeData.build(size_settings, weight_kg, height_m, size_class)
 
