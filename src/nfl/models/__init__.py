@@ -13,7 +13,7 @@ from .tgr_breakpoints import (
     TgrBreakpointsDamageResult,
     TgrBreakpointsResult,
 )
-from .tgr_moveset import TgrMovesetData, TgrPokemonMoveset
+from .tgr_moveset import TgrMovesetData, TgrPokemonInfo, TgrPokemonMoveset
 
 __all__ = [
     "BattleDummyMove",
@@ -28,5 +28,6 @@ __all__ = [
     "TgrBreakpointsDamageResult",
     "TgrBreakpointsResult",
     "TgrMovesetData",
+    "TgrPokemonInfo",
     "TgrPokemonMoveset",
 ]

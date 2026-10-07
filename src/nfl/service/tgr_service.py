@@ -18,6 +18,7 @@ from nfl.models import (
     BattlePokemon,
     BattleState,
     TgrMovesetData,
+    TgrPokemonInfo,
     TgrPokemonMoveset,
 )
 from nfl.proto import (
@@ -64,7 +65,7 @@ class _PokemonInstance:
     battle_pokemon: BattlePokemon
     quick: CombatMove
     charge: CombatMove
-    temp_evo_level: int
+    temp_evo_level: int = 0
 
 
 def _to_pokemon_data(
@@ -151,13 +152,13 @@ def _gen_pokemon_instances(
     for quick, charge in product(pokemon.quick_moves, charge_moves):
         data_quick = PVP_MOVES[quick]
         data_charge = PVP_MOVES[charge]
-        yield _PokemonInstance(pokemon, bp, data_quick, data_charge, 0)
+        yield _PokemonInstance(pokemon, bp, data_quick, data_charge)
 
     if include_charge and pokemon.special_move:
         data_charge = PVP_MOVES[pokemon.special_move]
         for quick in pokemon.quick_moves:
             data_quick = PVP_MOVES[quick]
-            for mega_level in range(5):
+            for mega_level in range(1, 5):
                 yield _PokemonInstance(pokemon, bp, data_quick, data_charge, mega_level)
 
 
@@ -267,9 +268,15 @@ def _create_ranking(
 
     return TgrMovesetData(
         moveset=TgrPokemonMoveset(
-            pokemon=poke.pokemon_species,
+            pokemon=TgrPokemonInfo(
+                id=poke.pokemon_species.name,
+                form=poke.pokemon_species.form,
+                temp_evo=poke.pokemon_species.temp_evo,
+                alignment=poke.pokemon_species.alignment,
+            ),
             quick=poke.quick.unique_id,
             charge=poke.charge.unique_id,
+            temp_evo_level=poke.temp_evo_level,
         ),
         damage_per_turn=_tgr_calc_damage_per_turn(poke, enemy, rounded),
         charge_damage=_tgr_calc_charge_damage(poke, enemy, rounded),
