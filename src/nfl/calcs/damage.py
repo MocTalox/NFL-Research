@@ -357,7 +357,7 @@ def calc_damage(
     atk_alignment = attacker.pokemon.alignment
     tar_alignment = target.pokemon.alignment
 
-    attack_ratio = f32(f32(f32(atk_stat) * move_power) / f32(def_stat))
+    attack_ratio = f32(f32(f32(atk_stat) * f32(move_power)) / f32(def_stat))
 
     multipliers = [
         get_mega_boost(state.combat_type, move_type, state.mega_boosted_types),
