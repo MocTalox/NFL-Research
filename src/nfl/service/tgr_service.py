@@ -34,6 +34,11 @@ from nfl.proto import (
 
 @dataclass(frozen=True)
 class _PokemonData(PokeSpecies):
+    type_1: HoloPokemonType
+    type_2: HoloPokemonType
+    attack: int
+    defense: int
+    stamina: int
     quick_moves: list[HoloPokemonMove]
     charge_moves: list[HoloPokemonMove]
     special_move: HoloPokemonMove
@@ -47,6 +52,11 @@ class _PokemonData(PokeSpecies):
             self.name == other.name
             and self.temp_evo == other.temp_evo
             and self.alignment == other.alignment
+            and self.type_1 == other.type_1
+            and self.type_2 == other.type_2
+            and self.attack == other.attack
+            and self.defense == other.defense
+            and self.stamina == other.stamina
             and self.quick_moves == other.quick_moves
             and self.charge_moves == other.charge_moves
             and self.special_move == other.special_move
@@ -99,6 +109,11 @@ def _to_pokemon_data(
         form=pokemon_settings.form,
         temp_evo=temp_evo_id,
         alignment=alignment,
+        type_1=pokemon_settings.type,
+        type_2=pokemon_settings.type_2,
+        attack=pokemon_settings.stats.base_attack,
+        defense=pokemon_settings.stats.base_defense,
+        stamina=pokemon_settings.stats.base_stamina,
         quick_moves=quick_moves,
         charge_moves=charge_moves,
         special_move=pokemon_settings.nfl_special_move,
@@ -353,4 +368,4 @@ def _tgr_calc_total_bulk(
         iv_sta=pokemon.battle_pokemon.sta_iv,
     )
 
-    return hp / damage
+    return hp / damage if damage != 0 else 0
