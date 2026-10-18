@@ -178,3 +178,112 @@ def evolution_size_range_raw(
         upper_wei_lower_hei,
         upper_wei_upper_hei,
     )
+
+
+def weight_std_dev(
+    pokemon: PokeSpecies,
+    weight_kg: float,
+    height_m: float,
+    size_class: SizeClass | None = None,
+) -> float:
+    pokemon_settings = get_pokemon_settings(pokemon)
+    size_settings = get_size_settings(pokemon)
+
+    return weight_std_dev_raw(
+        pokemon_settings,
+        size_settings,
+        weight_kg,
+        height_m,
+        size_class,
+    )
+
+
+def weight_std_dev_raw(
+    pokemon_settings: PokemonSettings,
+    size_settings: SizeSettings,
+    weight_kg: float,
+    height_m: float,
+    size_class: SizeClass | None = None,
+) -> float:
+    pokemon_size_data = SizeData.build(size_settings, weight_kg, height_m, size_class)
+
+    return weight_std_dev_formula(
+        pokemon_settings,
+        pokemon_size_data,
+    )
+
+
+def weight_std_dev_formula(
+    pokemon_settings: PokemonSettings,
+    pokemon_size_data: SizeData,
+) -> float:
+    weight = pokemon_size_data.weight_kg
+    height = pokemon_size_data.height_m
+    size_class = pokemon_size_data.size_class
+    temp_evo_xxl_glitch = bool(pokemon_settings.nfl_temp_evo_id)
+
+    power = 2 if size_class != SizeClass.XXL or temp_evo_xxl_glitch else 1
+
+    height_variant = height / pokemon_settings.pokedex_height_m
+    avg_weight = height_variant**power * pokemon_settings.pokedex_weight_kg
+    return (weight - avg_weight) / pokemon_settings.weight_std_dev
+
+
+def weight_std_dev_range(
+    pokemon: PokeSpecies,
+    weight_kg: float,
+    height_m: float,
+    size_class: SizeClass | None = None,
+) -> tuple[float, float]:
+    pokemon_settings = get_pokemon_settings(pokemon)
+    size_settings = get_size_settings(pokemon)
+
+    return weight_std_dev_range_raw(
+        pokemon_settings,
+        size_settings,
+        weight_kg,
+        height_m,
+        size_class,
+    )
+
+
+def weight_std_dev_range_raw(
+    pokemon_settings: PokemonSettings,
+    size_settings: SizeSettings,
+    weight_kg: float,
+    height_m: float,
+    size_class: SizeClass | None = None,
+) -> tuple[float, float]:
+    pokemon_size_data = SizeData.build(size_settings, weight_kg, height_m, size_class)
+
+    lower_wei_lower_hei = weight_std_dev_formula(
+        pokemon_settings,
+        pokemon_size_data.change_size(size_settings, -0.005, -0.005),
+    )
+    lower_wei_upper_hei = weight_std_dev_formula(
+        pokemon_settings,
+        pokemon_size_data.change_size(size_settings, -0.005, 0.005),
+    )
+    upper_wei_lower_hei = weight_std_dev_formula(
+        pokemon_settings,
+        pokemon_size_data.change_size(size_settings, 0.005, -0.005),
+    )
+    upper_wei_upper_hei = weight_std_dev_formula(
+        pokemon_settings,
+        pokemon_size_data.change_size(size_settings, 0.005, 0.005),
+    )
+
+    weight_std_dev_min = min(
+        lower_wei_lower_hei,
+        lower_wei_upper_hei,
+        upper_wei_lower_hei,
+        upper_wei_upper_hei,
+    )
+    weight_std_dev_max = max(
+        lower_wei_lower_hei,
+        lower_wei_upper_hei,
+        upper_wei_lower_hei,
+        upper_wei_upper_hei,
+    )
+
+    return (weight_std_dev_min, weight_std_dev_max)

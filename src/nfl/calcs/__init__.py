@@ -1,7 +1,12 @@
 from .contest import contest_score, contest_score_range
 from .damage import calc_damage
 from .hp_bar import bar_percent
-from .sizes import evolution_size, evolution_size_range
+from .sizes import (
+    evolution_size,
+    evolution_size_range,
+    weight_std_dev,
+    weight_std_dev_range,
+)
 from .stats import (
     get_cp,
     get_cpm,
@@ -29,5 +34,7 @@ __all__ = [
     "get_tgr_cp",
     "get_tgr_hp",
     "get_tgr_stats",
+    "weight_std_dev",
+    "weight_std_dev_range",
     "zorua_size",
 ]
