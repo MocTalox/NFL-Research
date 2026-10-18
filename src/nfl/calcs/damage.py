@@ -347,6 +347,9 @@ def calc_damage(
     )
     move_power = move_data.power
     move_type = (
+        HoloPokemonType(attacker.uuid % 16 + 2)
+        if move_id == HoloPokemonMove.HIDDEN_POWER_FAST
+        else
         move_data.pokemon_type
         if isinstance(move_data, MoveSettings)
         else move_data.type

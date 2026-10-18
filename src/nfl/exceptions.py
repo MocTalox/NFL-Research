@@ -18,6 +18,7 @@ ERROR_MESSAGES = {
     "MULTIPLE_MAIN_SPECIES": "Multiple main species in group {category!r}: {old!r} and {new!r}",
     "MISSING_MAIN_SPECIES": "Species group contains forms but no main species: {forms_list!r}",
     "INVALID_CPM_VALUES": "Invalid CPM values: {attacker_cpm}, {target_cpm}. Values must be positive.",
+    "HIDDEN_POWER_TYPE": "Hidden Power cannot be of type {type}",
 }
 
 

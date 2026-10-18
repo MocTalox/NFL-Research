@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from nfl.data import PokeSpecies
+from nfl.exceptions import ValidationError
 from nfl.proto import (
     HoloAlignment,
     HoloCharacterCategory,
@@ -51,3 +52,11 @@ class BattlePokemon:
     sta_iv: int = 0
     cpm: float = 0.0
     owner: HoloCharacterCategory = HoloCharacterCategory.UNSET
+    uuid: int = 0  # Used for Hidden Power typing
+
+    @staticmethod
+    def uuid_for_hp_type(hp_type: HoloPokemonType) -> int:
+        value = hp_type - 2
+        if value < 0 or value >= 16:
+            raise ValidationError("HIDDEN_POWER_TYPE", type=hp_type)
+        return value
