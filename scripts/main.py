@@ -94,53 +94,7 @@ def debug_ext_service():
     save_text("\n".join(str(p) for p in get_all_pokemon()), "_ext_species.txt")
 
 
-def main():
-    tgr_service_all()
-    return
-    from nfl import data
-    from nfl.calcs import SizedPokemon, evolution_size
-    from nfl.data import PokeSpecies, SizeClass
-    from nfl.utils import f32
-
-    ps = data.POKEMON.get(PokeSpecies.resolve("Shroodle"))
-    pes = data.EXTENDED.get(PokeSpecies.resolve("Shroodle"))
-    assert ps and pes
-    res = evolution_size(
-        SizedPokemon.build(
-            pokemon=PokeSpecies.resolve("CORPHISH"),
-            weight_kg=24.26,
-            height_m=0.89,
-            size_class=SizeClass.XL,
-        ),
-        PokeSpecies.resolve("CRAWDAUNT"),
-    )
-    print(res)
-    return
-    from nfl.cals import ShowcasePokemon, contest_score
-
-    from nfl import data
-    from nfl.data import PokeSpecies, SizeClass
-    from nfl.utils import f32
-
-    ps = data.POKEMON.get(PokeSpecies.resolve("Shroodle"))
-    pes = data.EXTENDED.get(PokeSpecies.resolve("Shroodle"))
-    assert ps and pes
-    res = contest_score(
-        ShowcasePokemon(
-            ps,
-            pes.size_settings,
-            individual_values=13 + 13 + 13,
-            weight_kg=f32(1.165),
-            height_m=f32(0.3),
-            size_class=SizeClass.XXL,
-        )
-    )
-    print(res)
-    return
-    from nfl import data
-
-    print(list(data.FORM_POKEMON.items())[:50])
-    return
+def debug_proto_file():
     from nfl.io._proto_parser import Data, read_proto_file
 
     names: set[str] = set()
@@ -173,82 +127,6 @@ def main():
     print(len(names))
     for vartype, rep in vartypes:
         print(f"repeated {vartype}" if rep else vartype)
-    return
-    from nfl.data import TEMPORARY_EVOLUTION_SETTINGS
-    from nfl.proto import HoloPokemonId
-
-    for tes in TEMPORARY_EVOLUTION_SETTINGS:
-        if tes.pokemon_id == HoloPokemonId.RAICHU:
-            print(tes)
-    return
-    from nfl.data import FORM_SETTINGS, POKEMON_SETTINGS
-    from nfl.proto import HoloPokemonId, game_master
-
-    """
-    for template in game_master()["friendshipMilestoneSettings"].values():
-        print(f"template {template}")
-    for template in game_master()["nonCombatMoveSettings"].values():
-        print(f"template {template}")
-    for template in game_master()["type_effective"].values():
-        print(f"template {template}")
-    for template in game_master()["weather_affinities"].values():
-        print(f"template {template}")
-    """
-    for template in game_master()["formSettings"].values():
-        if (
-            template.value.get_enum("pokemon", HoloPokemonId)
-            == HoloPokemonId.GIMMIGHOUL
-        ):
-            print(f"template {template}")
-    for template in game_master()["pokemonSettings"].values():
-        if (
-            template.value.get_enum("pokemonId", HoloPokemonId)
-            == HoloPokemonId.BAXCALIBUR
-        ):
-            print(f"template {template}")
-    for form in FORM_SETTINGS:
-        if form.pokemon == HoloPokemonId.GIMMIGHOUL:
-            print(form)
-    for pokemon in POKEMON_SETTINGS:
-        if pokemon.pokemon_id == HoloPokemonId.BAXCALIBUR:
-            print(pokemon)
-    return
-    from nfl.cals import (
-        BattlePokemon,
-        BattleState,
-        calc_damage_raw,
-        get_cpm,
-        get_rcpm,
-        get_tgr_hp,
-    )
-
-    from nfl.data import POKEMON, PVP_MOVES, PokeSpecies
-    from nfl.proto import (
-        HoloCharacterCategory,
-        HoloCombatType,
-        HoloPokemonMove,
-    )
-
-    e = PokeSpecies.resolve("excadrill")
-    v = PokeSpecies.resolve("voltorb")
-    eps = POKEMON.get(e)
-    vps = POKEMON.get(v)
-    assert eps and vps
-
-    vrcpm = get_rcpm(80)
-    vp = BattlePokemon(vps, 15, 15, 15, vrcpm, True, False, HoloCharacterCategory.GRUNT)
-    vhp = get_tgr_hp(vps, vrcpm, vp.tgr_member, 15)
-    print(f"Voltorb HP: {vhp}")
-
-    m = PVP_MOVES[HoloPokemonMove.MUD_SLAP_FAST]
-    b = BattleState(HoloCombatType.VS_SEEKER)
-
-    for lvl in range(80, 101):
-        lvl = lvl / 2
-        cpm = get_cpm(lvl)
-        ep = BattlePokemon(eps, 15, 15, 15, cpm, True, False)
-        dmg = calc_damage_raw(ep, vp, m.power, m.type, 0, False, b)
-        print(f"Level: {lvl} -> Damage: {int(dmg) + 1} ({dmg})")
 
 
 ##### MAIN SCRIPT #####
@@ -257,5 +135,9 @@ if __name__ == "__main__":
     from time import perf_counter
 
     start = perf_counter()
-    main()
+
+    # Main code start
+    tgr_service_all()
+    # Main code end
+
     print(f"Execution time: {perf_counter() - start:.3f}s")

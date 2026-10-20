@@ -72,20 +72,21 @@ def raw_dmg_func(
 
 """
 def test_dmg_func(
-    move: HoloPokemonMove,
-    weather_id: HoloWeatherCondition,
+    move_name: str,
+    weather_name: str | None,
     defender_ps: PokeSpecies,
     level: float,
     iv_def: int
 ):
-    state = BattleState()
-    state.weather_id = weather_id
-    defender = BattlePokemon()
-    defender.pokemon_settings = get_poke_settings(defender_ps)
+    move = HoloPokemonMove[move_name]
+    state = BattleState(HoloCombatType.COMBAT_TYPE_RAID)
+    if weather_name:
+        state.weather_id = HoloWeatherCondition[weather_name]
+    defender = BattlePokemon(defender_ps)
     defender.def_iv = iv_def
     defender.cpm = get_cpm(level)
     low, hig = f32_step(1.7989907554974764, -10), f32_step(1.7989907554974764, 10)
-    return raw_dmg_func(low, move, state, defender), raw_dmg_func(hig, move, state, defender)
+    return raw_dmg_func(move, state, defender, low), raw_dmg_func(move, state, defender, hig)
 
 print(test_dmg_func("IRON_HEAD", None, PokeSpecies.resolve("CHARIZARD"), 19.5, 10))
 print(test_dmg_func("IRON_HEAD", None, PokeSpecies.resolve("SLOWKING"), 16.0, 13))
@@ -104,8 +105,8 @@ print(test_dmg_func("DRACO_METEOR", None, PokeSpecies.resolve("NINETALES", "NINE
 print(test_dmg_func("DRACO_METEOR", None, PokeSpecies.resolve("COBALION"), 34.5, 15))
 
 exit(0)
-
 """
+
 """
 print(test_dmg_func("DRACO_METEOR", None, PokeSpecies.resolve("COBALION"), 34.5, 15))
 print(test_dmg_func("DRACO_METEOR", None, PokeSpecies.resolve("HATTERENE"), 34.5, 13))
