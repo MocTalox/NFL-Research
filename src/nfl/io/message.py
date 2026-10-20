@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Iterable
 from enum import IntEnum
-from typing import Literal, TypeVar, cast, overload
+from typing import Literal, TypeVar, overload
 
 from nfl.utils import f32
 from nfl.utils._raw_value import RawValue
@@ -162,15 +162,7 @@ class Message:
         if len(values) > 1:
             raise ValueError(f"Multiple values found for key '{key}'")
 
-        value = values[0]
-
-        if not isinstance(value, expected_type):
-            raise TypeError(
-                f"Expected {expected_type.__name__} for key '{key}', "
-                f"got {type(value).__name__}"
-            )
-
-        return value
+        return Message._type_check(values[0], expected_type, key)
 
     def _get_many_elements(
         self,
@@ -179,14 +171,7 @@ class Message:
     ) -> list[T]:
         values = self._data.get(key) or []
 
-        for value in values:
-            if not isinstance(value, expected_type):
-                raise TypeError(
-                    f"Expected {expected_type.__name__} for key '{key}', "
-                    f"got {type(value).__name__}"
-                )
-
-        return cast(list[T], values)
+        return [Message._type_check(value, expected_type, key) for value in values]
 
     @staticmethod
     def _to_enum(id: RawValue | None, enum_class: type[E]) -> E:
@@ -203,3 +188,15 @@ class Message:
                     f"{enum_class.__name__}: {id.str_value}"
                 )
                 return enum_class(-1)
+
+    @staticmethod
+    def _type_check(
+        value: str | RawValue | Message, expected_type: type[T], key: str
+    ) -> T:
+        if isinstance(value, expected_type):
+            return value
+
+        raise TypeError(
+            f"Expected {expected_type.__name__} for key '{key}', "
+            f"got {type(value).__name__}"
+        )
