@@ -12,6 +12,10 @@ _HEIGHT_COEFFICIENT = _CONTEST_SCORE_COEFFICIENT.height_coefficient
 _WEIGHT_COEFFICIENT = _CONTEST_SCORE_COEFFICIENT.weight_coefficient
 _IV_COEFFICIENT = _CONTEST_SCORE_COEFFICIENT.iv_coefficient
 _XXL_ADJUSTMENT_FACTOR = _CONTEST_SCORE_COEFFICIENT.xxl_adjustment_factor
+_XXL_ADJUSTMENT_VALUE = (
+    _WEIGHT_COEFFICIENT * 0.853658536585366 + _IV_COEFFICIENT
+) * _XXL_ADJUSTMENT_FACTOR
+# Value `0.853658536585366` comes from  `1.75 / 2.05`
 
 
 def contest_score(
@@ -39,6 +43,10 @@ def contest_score_formula(
     individual_values: int,
     pokemon_size_data: SizeData,
 ):
+    weight = pokemon_size_data.weight_kg
+    height = pokemon_size_data.height_m
+    size_class = pokemon_size_data.size_class
+
     max_height = (
         size_settings.xxl_upper_bound
         if size_settings
@@ -52,17 +60,10 @@ def contest_score_formula(
         + pokemon_settings.weight_std_dev * 4
     )
 
-    # Value `0.853658536585366` comes from  `1.75 / 2.05`
-    xxl_adjustment = (
-        (_WEIGHT_COEFFICIENT * 0.853658536585366 + _IV_COEFFICIENT)
-        * _XXL_ADJUSTMENT_FACTOR
-        if pokemon_size_data.size_class == SizeClass.XXL
-        else 0.0
-    )
-
+    xxl_adjustment = _XXL_ADJUSTMENT_VALUE if size_class == SizeClass.XXL else 0.0
     iv_ratio = individual_values / 45
-    weight_ratio = pokemon_size_data.weight_kg / max_weight
-    height_ratio = pokemon_size_data.height_m / max_height
+    weight_ratio = weight / max_weight
+    height_ratio = height / max_height
 
     return (
         xxl_adjustment

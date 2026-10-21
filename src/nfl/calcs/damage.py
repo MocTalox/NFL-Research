@@ -340,8 +340,7 @@ def calc_damage(
     move_id = (
         move_data.movement_id
         if isinstance(move_data, MoveSettings)
-        else
-        move_data.unique_id
+        else move_data.unique_id
         if isinstance(move_data, CombatMove)
         else HoloPokemonMove.MOVE_UNSET
     )
@@ -349,8 +348,7 @@ def calc_damage(
     move_type = (
         HoloPokemonType(attacker.uuid % 16 + 2)
         if move_id == HoloPokemonMove.HIDDEN_POWER_FAST
-        else
-        move_data.pokemon_type
+        else move_data.pokemon_type
         if isinstance(move_data, MoveSettings)
         else move_data.type
     )
