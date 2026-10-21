@@ -3,14 +3,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from nfl.calcs.sizes import evolution_size_raw
+from nfl.calcs import evolution_size
 from nfl.data import (
     EXTENDED,
     FORM_SETTINGS,
     POKEMON,
     PokeSpecies,
-    get_pokemon_settings,
-    get_size_settings,
 )
 from nfl.models import SizeClass
 from nfl.proto import HoloPokemonForm
@@ -209,14 +207,16 @@ def run():
         if fs.pokemon.name == "BASCULEGION":
             continue
         assert p and e
+        poke = PokeSpecies(
+            name=fs.pokemon,
+            form=HoloPokemonForm.FORM_UNSET,
+        )
         for teo in p.temp_evo_overrides:
-            poke = PokeSpecies(
+            evo = PokeSpecies(
                 name=fs.pokemon,
                 form=HoloPokemonForm.FORM_UNSET,
                 temp_evo=teo.temp_evo_id,
             )
-            p_evo = get_pokemon_settings(poke)
-            e_evo = get_size_settings(poke)
             res: list[tuple[float, float, int]] = []
             for hvi in range(49, 201):
                 hv = hvi / 100
@@ -230,16 +230,8 @@ def run():
                     w = (wv + hv**n) * p.pokedex_weight_kg
                     if w <= 0:
                         w = (hv**n) * p.pokedex_weight_kg
-                    _ = evolution_size_raw(
-                        p,
-                        e.size_settings,
-                        p_evo,
-                        e_evo,
-                        w,
-                        h,
-                        s,
-                    )
+                    _ = evolution_size(poke, evo, w, h, s)
                     if False:  # TODO hardcore activation
                         res.append((hv, wv, n))
             if res:
-                create_plot(str(poke), res, p.pokedex_weight_kg, p.pokedex_height_m)
+                create_plot(str(evo), res, p.pokedex_weight_kg, p.pokedex_height_m)

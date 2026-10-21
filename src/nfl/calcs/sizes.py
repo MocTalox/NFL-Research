@@ -30,27 +30,6 @@ def evolution_size(
     size_settings = get_size_settings(pokemon)
     evo_pokemon_settings = get_pokemon_settings(evo_pokemon)
     evo_size_settings = get_size_settings(evo_pokemon, glitched_temp_evo)
-
-    return evolution_size_raw(
-        pokemon_settings,
-        size_settings,
-        evo_pokemon_settings,
-        evo_size_settings,
-        weight_kg,
-        height_m,
-        size_class,
-    )
-
-
-def evolution_size_raw(
-    pokemon_settings: PokemonSettings,
-    size_settings: SizeSettings,
-    evo_pokemon_settings: PokemonSettings,
-    evo_size_settings: SizeSettings,
-    weight_kg: float,
-    height_m: float,
-    size_class: SizeClass | None = None,
-) -> SizeData:
     pokemon_size_data = SizeData.build(size_settings, weight_kg, height_m, size_class)
 
     return evolution_size_formula(
@@ -120,27 +99,6 @@ def evolution_size_range(
     size_settings = get_size_settings(pokemon)
     evo_pokemon_settings = get_pokemon_settings(evo_pokemon)
     evo_size_settings = get_size_settings(evo_pokemon, glitched_temp_evo)
-
-    return evolution_size_range_raw(
-        pokemon_settings,
-        size_settings,
-        evo_pokemon_settings,
-        evo_size_settings,
-        weight_kg,
-        height_m,
-        size_class,
-    )
-
-
-def evolution_size_range_raw(
-    pokemon_settings: PokemonSettings,
-    size_settings: SizeSettings,
-    evo_pokemon_settings: PokemonSettings,
-    evo_size_settings: SizeSettings,
-    weight_kg: float,
-    height_m: float,
-    size_class: SizeClass | None = None,
-) -> SizeDataRange:
     pokemon_size_data = SizeData.build(size_settings, weight_kg, height_m, size_class)
 
     lower_wei_lower_hei = evolution_size_formula(
@@ -188,23 +146,6 @@ def weight_std_dev(
 ) -> float:
     pokemon_settings = get_pokemon_settings(pokemon)
     size_settings = get_size_settings(pokemon)
-
-    return weight_std_dev_raw(
-        pokemon_settings,
-        size_settings,
-        weight_kg,
-        height_m,
-        size_class,
-    )
-
-
-def weight_std_dev_raw(
-    pokemon_settings: PokemonSettings,
-    size_settings: SizeSettings,
-    weight_kg: float,
-    height_m: float,
-    size_class: SizeClass | None = None,
-) -> float:
     pokemon_size_data = SizeData.build(size_settings, weight_kg, height_m, size_class)
 
     return weight_std_dev_formula(
@@ -237,23 +178,6 @@ def weight_std_dev_range(
 ) -> tuple[float, float]:
     pokemon_settings = get_pokemon_settings(pokemon)
     size_settings = get_size_settings(pokemon)
-
-    return weight_std_dev_range_raw(
-        pokemon_settings,
-        size_settings,
-        weight_kg,
-        height_m,
-        size_class,
-    )
-
-
-def weight_std_dev_range_raw(
-    pokemon_settings: PokemonSettings,
-    size_settings: SizeSettings,
-    weight_kg: float,
-    height_m: float,
-    size_class: SizeClass | None = None,
-) -> tuple[float, float]:
     pokemon_size_data = SizeData.build(size_settings, weight_kg, height_m, size_class)
 
     lower_wei_lower_hei = weight_std_dev_formula(
