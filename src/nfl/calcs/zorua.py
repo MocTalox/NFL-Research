@@ -5,8 +5,7 @@ from nfl.data import (
     get_pokemon_settings,
     get_size_settings,
 )
-from nfl.exceptions import ValidationError
-from nfl.models import SizeClass
+from nfl.models import SizeClass, SizeData
 from nfl.proto import HoloPokemonId, PokemonSettings, SizeSettings
 
 _ZORUA = PokeSpecies(name=HoloPokemonId.ZORUA)
@@ -18,56 +17,45 @@ def zorua_size(
     buddy_pokemon: PokeSpecies,
     wild_zorua_weight_kg: float,
     wild_zorua_height_m: float,
-    wild_zorua_size_class: SizeClass,
+    wild_zorua_size_class: SizeClass | None,
     glitched_temp_evo: bool = False,
 ):
-    return zorua_size_raw(
-        get_pokemon_settings(buddy_pokemon),
-        get_size_settings(buddy_pokemon, glitched_temp_evo),
+    wild_zorua_size_data = SizeData.build(
+        _ZORUA_SIZE_SETTINGS,
         wild_zorua_weight_kg,
         wild_zorua_height_m,
         wild_zorua_size_class,
     )
 
+    return zorua_size_formula(
+        get_pokemon_settings(buddy_pokemon),
+        get_size_settings(buddy_pokemon, glitched_temp_evo),
+        wild_zorua_size_data,
+    )
 
-def zorua_size_raw(
+
+def zorua_size_formula(
     buddy_pokemon_settings: PokemonSettings,
     buddy_size_settings: SizeSettings,
-    wild_zorua_weight_kg: float,
-    wild_zorua_height_m: float,
-    wild_zorua_size_class: SizeClass,
+    wild_zorua_size_data: SizeData,
 ):
-    # TODO review if its better to use SizeData for this (validations mainly)
-    # That can also help making `wild_zorua_size_class` nullable
-    if wild_zorua_weight_kg < 0 or wild_zorua_height_m < 0:
-        raise ValidationError(
-            "INVALID_ZORUA_DIMENSIONS",
-            weight_kg=wild_zorua_weight_kg,
-            height_m=wild_zorua_height_m,
-        )
-    if not wild_zorua_size_class.in_bounds(wild_zorua_height_m, _ZORUA_SIZE_SETTINGS):
-        lower, upper = wild_zorua_size_class.get_bounds(_ZORUA_SIZE_SETTINGS)
-        raise ValidationError(
-            "SIZE_CLASS_MISMATCH_ZORUA",
-            height_m=wild_zorua_height_m,
-            size_class=wild_zorua_size_class,
-            lower=lower,
-            upper=upper,
-        )
+    wild_zorua_weight = wild_zorua_size_data.weight_kg
+    wild_zorua_height = wild_zorua_size_data.height_m
+    wild_zorua_size_class = wild_zorua_size_data.size_class
 
     power = 1 if wild_zorua_size_class == SizeClass.XXL else 2
 
     wild_buddy_height_variant = (
-        wild_zorua_height_m / buddy_pokemon_settings.pokedex_height_m
+        wild_zorua_height / buddy_pokemon_settings.pokedex_height_m
     )
     avg_weight = (
         wild_buddy_height_variant**power * buddy_pokemon_settings.pokedex_weight_kg
     )
     weight_index = (
-        wild_zorua_weight_kg - avg_weight
+        wild_zorua_weight - avg_weight
     ) / buddy_pokemon_settings.weight_std_dev
 
-    buddy_size_class = SizeClass.from_height(wild_zorua_height_m, buddy_size_settings)
+    buddy_size_class = SizeClass.from_height(wild_zorua_height, buddy_size_settings)
     power = 1 if buddy_size_class == SizeClass.XXL else 2
 
     zorua_height_variant = min(max(wild_buddy_height_variant, 0.49), 1.75)
@@ -85,6 +73,6 @@ def zorua_size_raw(
 
     # TODO Verify if it should be the same as `buddy_size_class`
     # Note: No, it is not the same on sus pokemon (+pumpkaboo, h-lilligant, h-avalugg, etc)
-    zorua_size_class = SizeClass.from_height(wild_zorua_height_m, buddy_size_settings)
+    zorua_size_class = SizeClass.from_height(wild_zorua_height, buddy_size_settings)
 
     return (zorua_weight, zorua_height, zorua_size_class)

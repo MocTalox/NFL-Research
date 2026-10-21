@@ -8,8 +8,6 @@ ERROR_MESSAGES = {
     "SHADOW_ENEMY": "Enemy Pokémon must be shadow.",
     "INVALID_POKÉMON_DIMENSIONS": "Invalid Pokémon dimensions: weight_kg={weight_kg}, height_m={height_m}. Values must be positive.",
     "SIZE_CLASS_MISMATCH": "Size class mismatch: Pokémon with height {height_m}m cannot be {size_class} ([{lower}, {upper}])",
-    "INVALID_ZORUA_DIMENSIONS": "Invalid Zorua dimensions: weight_kg={weight_kg}, height_m={height_m}. Values must be positive.",
-    "SIZE_CLASS_MISMATCH_ZORUA": "Size class mismatch: Zorua with height {height_m}m cannot be {size_class} ([{lower}, {upper}])",
     "INVALID_LEVEL_DECIMALS": "Invalid level {level}: must be a multiple of 0.5 (e.g. 1.0, 1.5, 2.0).",
     "INVALID_LEVEL_RANGE": "Invalid level {level}: must be between 1.0 and {max_level:.1f}.",
     "INVALID_LEVEL_RANGE_TGR": "Invalid level {level}: must be between 1 and {max_level}.",
