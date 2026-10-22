@@ -110,15 +110,15 @@ def get_move_boosting_weather(move: HoloPokemonMove) -> HoloWeatherCondition:
     return TYPES_WEATHER[PVE_MOVES[move].pokemon_type]
 
 
-def get_evolutions(poke: PokeSpecies) -> set[PokeSpecies]:
-    return _get_evolutions_rec(poke, set())
+def get_evolutions(poke: PokeSpecies) -> list[PokeSpecies]:
+    return _get_evolutions_rec(poke, [])
 
 
-def _get_evolutions_rec(poke: PokeSpecies, res: set[PokeSpecies]) -> set[PokeSpecies]:
+def _get_evolutions_rec(poke: PokeSpecies, res: list[PokeSpecies]) -> list[PokeSpecies]:
     pokemon_settings = get_pokemon_settings(poke)
     for eb in pokemon_settings.evolution_branch:
         evolution = PokeSpecies(name=eb.evolution, form=eb.form)
-        res.add(evolution)
+        res.append(evolution)
         _get_evolutions_rec(evolution, res)
     return res
 
