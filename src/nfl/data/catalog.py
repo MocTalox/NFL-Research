@@ -10,6 +10,7 @@ from nfl.proto import (
     PokemonSettings,
     SizeSettings,
 )
+from nfl.utils import group_by
 
 from .poke_form_map import PokeFormMap
 from .poke_species import PokeSpecies
@@ -57,6 +58,7 @@ EXTENDED = PokeFormMap(
 )
 FORMS = {fs.pokemon: [form.form for form in fs.forms] for fs in FORM_SETTINGS}
 FORM_POKEMON = {form.form: fs.pokemon for fs in FORM_SETTINGS for form in fs.forms}
+FAMILIES = group_by(POKEMON_SETTINGS, lambda ps: ps.family_id, lambda ps: ps.pokemon_id)
 TEMP_EVOS = {
     tes.pokemon_id: [te.temporary_evolution_id for te in tes.temporary_evolutions]
     for tes in TEMPORARY_EVOLUTION_SETTINGS
@@ -106,6 +108,19 @@ def get_tgr_rank_mult(character_category: HoloCharacterCategory) -> float:
 
 def get_move_boosting_weather(move: HoloPokemonMove) -> HoloWeatherCondition:
     return TYPES_WEATHER[PVE_MOVES[move].pokemon_type]
+
+
+def get_evolutions(poke: PokeSpecies) -> set[PokeSpecies]:
+    return _get_evolutions_rec(poke, set())
+
+
+def _get_evolutions_rec(poke: PokeSpecies, res: set[PokeSpecies]) -> set[PokeSpecies]:
+    pokemon_settings = get_pokemon_settings(poke)
+    for eb in pokemon_settings.evolution_branch:
+        evolution = PokeSpecies(name=eb.evolution, form=eb.form)
+        res.add(evolution)
+        _get_evolutions_rec(evolution, res)
+    return res
 
 
 def get_pokemon_settings(poke: PokeSpecies):
