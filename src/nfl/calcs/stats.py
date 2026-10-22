@@ -45,12 +45,12 @@ def get_stats(
         base_def = poke_sett.stats.base_defense
         base_sta = poke_sett.stats.base_stamina
     if base_atk is None or base_def is None or base_sta is None:
-        raise ValidationError("")  # TODO Add error code
+        raise ValidationError("INSUFFICIENT_INPUT", details="POKEMON_DATA_STATS")
 
     if level is not None:
         cpm = get_cpm(level)
     if cpm is None:
-        raise ValidationError("")  # TODO Add error code
+        raise ValidationError("INSUFFICIENT_INPUT", details="POKEMON_LEVEL_CPM")
 
     atk_stat = (base_atk + iv_atk) * cpm
     def_stat = (base_def + iv_def) * cpm
@@ -80,17 +80,17 @@ def get_tgr_stats(
         base_def = poke_sett.stats.base_defense
         base_sta = poke_sett.stats.base_stamina
     if base_atk is None or base_def is None or base_sta is None:
-        raise ValidationError("")  # TODO Add error code
+        raise ValidationError("INSUFFICIENT_INPUT", details="POKEMON_DATA_STATS")
 
     if level is not None:
         rcpm = get_rcpm(level)
     if rcpm is None:
-        raise ValidationError("")  # TODO Add error code
+        raise ValidationError("INSUFFICIENT_INPUT", details="POKEMON_LEVEL_CPM")
 
     if enemy is not None:
         rank_mult = get_tgr_rank_mult(enemy)
     if rank_mult is None:
-        raise ValidationError("")  # TODO Add error code
+        raise ValidationError("INSUFFICIENT_INPUT", details="POKEMON_ENEMY_RANK")
 
     atk_stat = floor((base_atk + iv_atk) * 5 / 3) * rcpm * rank_mult
     def_stat = (base_def + iv_def) * rcpm * rank_mult

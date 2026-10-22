@@ -12,6 +12,7 @@ ERROR_MESSAGES = {
     "INVALID_LEVEL_RANGE": "Invalid level {level}: must be between 1.0 and {max_level:.1f}.",
     "INVALID_LEVEL_RANGE_TGR": "Invalid level {level}: must be between 1 and {max_level}.",
     "NO_RANK_MULTIPLIER": "No rank multiplier configured for {character_category}",
+    "INSUFFICIENT_INPUT": "Insufficient input: {details}.",
     "DUPLICATE_IDENTITY": "Duplicate entry for identity: {identity}",
     "MULTIPLE_MAIN_SPECIES": "Multiple main species in group {category!r}: {old!r} and {new!r}",
     "MISSING_MAIN_SPECIES": "Species group contains forms but no main species: {forms_list!r}",
